@@ -19,7 +19,7 @@ alphanum  [_0-9A-Za-z]
 #define END_OF_FILE -1
 int scanner_running, scanner_linenumber = 0;
 
-void addStringToSimbleTable(char *text);
+void addStringToSymbolTable(char *text);
 %}
 
 /* Ambiente para comentário - o ambiente padrão, implícito, é initial */
@@ -74,7 +74,7 @@ void addStringToSimbleTable(char *text);
 			OU conter dentro: barra invertida seguido de
 				caracter áspas ou mais uma barra invertida ou character n; e
 		(iii) terminar com áspas. */
-\"([^\"\\\n]|\\[\"\\n])*\"	{addStringToSimbleTable(yytext); return LIT_STRING;}
+\"([^\"\\\n]|\\[\"\\n])*\"	{addStringToSymbolTable(yytext); return LIT_STRING;}
 
   /* New Line */
 \n    		       {scanner_linenumber++;}
@@ -105,7 +105,7 @@ void initMe(void) {
   scanner_linenumber = 0;
 }
 
-void addStringToSimbleTable(char *text) {
+void addStringToSymbolTable(char *text) {
 	char *stringValue;
 	int inputSize;
 
