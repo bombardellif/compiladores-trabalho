@@ -1,7 +1,10 @@
 /* INF01147 -­‐ Compiladores -­‐ 2016/1
  * Trabalho Prático - Etapa 1
  * Autores: Fernando Bombardelli da Silva (218324)
- *          Pedro Faustini ()
+ *          Pedro Henrique Arruda Faustini (217432)
+ * Compilação: lex scanner.l && gcc lex.yy.c
+ * Uso1:       ./a.out
+ * Uso2:       ./a.out < file
  */
 
 /* Definitions */
@@ -10,31 +13,73 @@ digit   [0-9]
 alphanum  [_0-9A-Za-z]
 %{
 #include "tokens.h"
-int scanner_running, scanner_linenumber;
+#include<stdio.h>
+#define END_OF_FILE -1
+int scanner_running, scanner_linenumber = 0;
 %}
+
+/* Ambiente para comentário - o ambiente padrão, implícito, é initial */
+%x COMMENT
+
 /* Rules */
 %%
   /* Palavras reservadas */
-int   {/*fazer algo, simplesmente: return KW_INT; ??? */}
-real  {/*fazer algo */}
-TRUE  {/*fazer algo */}
-FALSE {/*fazer algo */}
-  /* Caracteres especiais */
-,     {/*fazer algo */}
-;     {/*fazer algo */}
-  /* Operadores Compostos */
-=    {/*fazer algo */}
+"int"                 {return KW_INT;}
+"real"                {return KW_REAL;}
+"TRUE"                {return LIT_TRUE;}
+"FALSE"               {return LIT_FALSE;}
+"bool"                {return KW_BOOL;}
+"char"                {return KW_CHAR;}
+"if"                  {return KW_IF;}
+"else"                {return KW_ELSE;}
+"while"               {return KW_WHILE;}
+"input"               {return KW_INPUT;}
+"output"              {return KW_OUTPUT;}
+"return"              {return KW_RETURN;}
+
+  /* Ignora comentários */
+"/*"                {BEGIN(COMMENT);}
+<COMMENT>"*/"       {BEGIN(INITIAL);}
+<COMMENT>.          {}
+"//".*              {}
+<COMMENT>\n		{scanner_linenumber++;}
+
+  /* Caracteres especiais: retornamos o próprio código ASCII dele */
+[\,|\;|\:|\(\|\)|\[|\]|\{|\}|\+|\-|\*|\/|\<|\>|\=|\!|\&|\$]			{return yytext[0];}
+
+  /* Operadores compostos */
+"<="                  {return OPERATOR_LE;}
+">="                  {return OPERATOR_GE;}
+"=="                  {return OPERATOR_EQ;}
+"!="                  {return OPERATOR_NE;}
+"&&"                  {return OPERATOR_AND;}
+"||"                  {return OPERATOR_OR;}
+
+  /*Ignora space e tab*/
+[\ |\	]                { }
   /* Identificadores */
-{alpha}{alphanum}*  {/*fazer algo */}
+{alpha}{alphanum}*  {return TK_IDENTIFIER;}
   /* Literais */
 '.'   {/*fazer algo */}
-\"([^\"\\\n]|\\[\"\\n])*\"  printf("Match: %s|", yytext);
+[0-9]+		    {return LIT_INTEGER;}
+
+\"[0-9|a-z|A-Z|\\n|"\""]*\"	    {return LIT_STRING;}
+
+
+	/*\"([^\"\\\n]|\\[\"\\n])*\"  printf("Match: %s|", yytext); // O que eh isso? */
   /* Comentários */
   /* New Line */
-\n    {/*fazer algo */}
+\n    		       {scanner_linenumber++;}
+
+<<EOF>>     		{scanner_running=0; return END_OF_FILE;}
+
   /* Erro léxico */
-.     {/*fazer algo */}
+.                   {return TOKEN_ERROR;}
+
+
+
 %%
+
 /* Subroutines */
 int yywrap(void) {
   scanner_running = 0;
@@ -53,3 +98,5 @@ void initMe(void) {
   scanner_running = 1;
   scanner_linenumber = 0;
 }
+
+#include "main.c"
