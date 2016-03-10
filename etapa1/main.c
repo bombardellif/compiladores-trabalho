@@ -13,8 +13,8 @@ int main(int argc, int *argv[])
 	initMe();
 	do{
 		ret = yylex();
-		if(ret > 127 && ret > -1) printf("Token lido: %i\n",ret);
-		else printf("Token lido: %c\n",ret);
+		if(ret > 127 && ret > -1) printf("Token lido foi: %i\n",ret);
+		else printf("Token lido foi: %c\n",ret);
 	}while(isRunning());
 
 	printf("Numero de linhas: %i \n",getLineNumber());
