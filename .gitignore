@@ -1,3 +1,7 @@
+# Lex Files
+*.yy.c
+*.yy.h
+
 # Object files
 *.o
 *.ko
