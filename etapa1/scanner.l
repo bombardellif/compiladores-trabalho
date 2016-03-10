@@ -13,9 +13,13 @@ digit   [0-9]
 alphanum  [_0-9A-Za-z]
 %{
 #include "tokens.h"
+#include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 #define END_OF_FILE -1
 int scanner_running, scanner_linenumber = 0;
+
+void addStringToSimbleTable(char *text);
 %}
 
 /* Ambiente para comentário - o ambiente padrão, implícito, é initial */
@@ -70,7 +74,7 @@ int scanner_running, scanner_linenumber = 0;
 			OU conter dentro: barra invertida seguido de
 				caracter áspas ou mais uma barra invertida ou character n; e
 		(iii) terminar com áspas. */
-\"([^\"\\\n]|\\[\"\\n])*\"	{return LIT_STRING;}
+\"([^\"\\\n]|\\[\"\\n])*\"	{addStringToSimbleTable(yytext); return LIT_STRING;}
 
   /* New Line */
 \n    		       {scanner_linenumber++;}
@@ -78,7 +82,7 @@ int scanner_running, scanner_linenumber = 0;
 <<EOF>>     		{scanner_running=0; return END_OF_FILE;}
 
   /* Erro léxico */
-.                   {return TOKEN_ERROR;}
+.+							{return TOKEN_ERROR;}
 
 %%
 
@@ -99,4 +103,21 @@ int isRunning(void) {
 void initMe(void) {
   scanner_running = 1;
   scanner_linenumber = 0;
+}
+
+void addStringToSimbleTable(char *text) {
+	char *stringValue;
+	int inputSize;
+
+	inputSize = strlen(text);
+	// remove áspas
+	text[inputSize-1] = '\0';
+	text++;
+	// aloca nova string para o literal lido
+	stringValue = (char*) malloc((inputSize-2) * sizeof(char));
+
+	// trata as barras invertidas
+	stripSlashes(stringValue, text);
+
+	// adiciona à tabela de símbolos
 }

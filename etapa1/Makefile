@@ -7,8 +7,8 @@
 # Therefore, there must be a header of it to be included in scanner.l
 #
 
-etapa1: lex.yy.o main.o hash.o
-	gcc -o etapa1 lex.yy.o main.o hash.o
+etapa1: lex.yy.o main.o hash.o utils.o
+	gcc -o etapa1 lex.yy.o main.o hash.o utils.o
 main.o: main.c
 	gcc -c main.c
 hash.o: hash.c
@@ -17,5 +17,7 @@ lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
+utils.o: utils.c
+	gcc -c utils.c
 clean:
 	rm -f *.o lex.yy.c lex.yy.h etapa1
