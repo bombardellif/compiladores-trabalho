@@ -13,7 +13,7 @@ digit   [0-9]
 alphanum  [_0-9A-Za-z]
 %{
 #include "tokens.h"
-#include<stdio.h>
+#include <stdio.h>
 #define END_OF_FILE -1
 int scanner_running, scanner_linenumber = 0;
 %}
@@ -45,7 +45,7 @@ int scanner_running, scanner_linenumber = 0;
 <COMMENT>\n		{scanner_linenumber++;}
 
   /* Caracteres especiais: retornamos o próprio código ASCII dele */
-[\,|\;|\:|\(\|\)|\[|\]|\{|\}|\+|\-|\*|\/|\<|\>|\=|\!|\&|\$]			{return yytext[0];}
+[,;:\(\)\[\]\{\}\+\-\*\/<>=!&\$]			{return yytext[0];}
 
   /* Operadores compostos */
 "<="                  {return OPERATOR_LE;}
@@ -56,18 +56,16 @@ int scanner_running, scanner_linenumber = 0;
 "||"                  {return OPERATOR_OR;}
 
   /*Ignora space e tab*/
-[\ |\	]                { }
+[\t ]									{ }
+
   /* Identificadores */
-{alpha}{alphanum}*  {return TK_IDENTIFIER;}
+{alpha}{alphanum}*  	{return TK_IDENTIFIER;}
+
   /* Literais */
-'.'   {/*fazer algo */}
-[0-9]+		    {return LIT_INTEGER;}
+'.'   								{return yytext[1];}
+[0-9]+		    				{return LIT_INTEGER;}
+\"([^\"\\\n]|\\[\"\\n])*\"	{return LIT_STRING;}
 
-\"[0-9|a-z|A-Z|\\n|"\""]*\"	    {return LIT_STRING;}
-
-
-	/*\"([^\"\\\n]|\\[\"\\n])*\"  printf("Match: %s|", yytext); // O que eh isso? */
-  /* Comentários */
   /* New Line */
 \n    		       {scanner_linenumber++;}
 
@@ -75,8 +73,6 @@ int scanner_running, scanner_linenumber = 0;
 
   /* Erro léxico */
 .                   {return TOKEN_ERROR;}
-
-
 
 %%
 
@@ -98,5 +94,3 @@ void initMe(void) {
   scanner_running = 1;
   scanner_linenumber = 0;
 }
-
-#include "main.c"
