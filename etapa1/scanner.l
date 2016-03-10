@@ -62,8 +62,14 @@ int scanner_running, scanner_linenumber = 0;
 {alpha}{alphanum}*  	{return TK_IDENTIFIER;}
 
   /* Literais */
-'.'   								{return yytext[1];}
+'.'   								{return LIT_CHAR;}
 [0-9]+		    				{return LIT_INTEGER;}
+	/* Literal String: Captura se (i) começar com áspas;
+		(ii) conter dentro: qualquer coisa que não seja
+				áspas, barra invertida ou quebra de linha
+			OU conter dentro: barra invertida seguido de
+				caracter áspas ou mais uma barra invertida ou character n; e
+		(iii) terminar com áspas. */
 \"([^\"\\\n]|\\[\"\\n])*\"	{return LIT_STRING;}
 
   /* New Line */
