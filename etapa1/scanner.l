@@ -65,11 +65,11 @@ void addStringToSymbolTable(char *text);
 [\t ]									{ }
 
   /* Identificadores */
-{alpha}{alphanum}*  	{hash_add(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
+{alpha}{alphanum}*  	{addIdentifierToSymbolTable(yytext); return TK_IDENTIFIER;}
 
   /* Literais */
-'.'   								{return LIT_CHAR;}
-[0-9]+		    				{hash_add(SYMBOL_LITERAL_INT, yytext); return LIT_INTEGER;}
+'.'   								{addCharToSymbolTable(yytext); return LIT_CHAR;}
+[0-9]+		    				{addIntegerToSymbolTable(yytext); return LIT_INTEGER;}
 	/* Literal String: Captura se (i) começar com áspas;
 		(ii) conter dentro: qualquer coisa que não seja
 				áspas, barra invertida ou quebra de linha
@@ -80,9 +80,6 @@ void addStringToSymbolTable(char *text);
 
   /* New Line */
 \n    		       {scanner_linenumber++;}
-
-^D     		{scanner_running=0;}
-
 
   /* Erro léxico */
 .							{return TOKEN_ERROR;}
@@ -118,18 +115,25 @@ void addIdentifierToSymbolTable(char *text) {
 	strncpy(identifierName, text, inputSize);
 
 	// adiciona à tabela de símbolos
+  hash_add(SYMBOL_IDENTIFIER, identifierName);
 }
 
 void addCharToSymbolTable(char *text) {
+  char* charValue;
+
+  charValue = (char*) malloc(sizeof(char));
+  *charValue = text[1];
 	// adiciona à tabela de símbolos
-	text[1];
+  hash_add(SYMBOL_LITERAL_CHAR, charValue);
 }
 
 void addIntegerToSymbolTable(char *text) {
-	int value;
+	int *value;
 
-	value = atoi(text);
+  value = (int*) malloc(sizeof(int));
+	*value = atoi(text);
 	// adiciona à tabela de símbolos
+  hash_add(SYMBOL_LITERAL_INT, text); //text ou value??
 }
 
 void addStringToSymbolTable(char *text) {
@@ -147,4 +151,5 @@ void addStringToSymbolTable(char *text) {
 	stripSlashes(stringValue, text);
 
 	// adiciona à tabela de símbolos
+  hash_add(SYMBOL_LITERAL_STRING, stringValue);
 }

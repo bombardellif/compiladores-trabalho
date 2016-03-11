@@ -36,6 +36,20 @@ void print_hash()
     HASH *node;
     for(i=0; i<HASH_SIZE; i++)
         for(node = symbol_table[i]; node; node=node->next)
-            if(node->type == 1) printf("Table[%d] = %s is SYMBOL_IDENTIFIER\n", i, node->text);
-            else printf("Table[%d] = %s is SYMBOL_LITERAL_INT\n", i, node->text);
+            switch (node->type) {
+              case SYMBOL_IDENTIFIER:
+                printf("Table[%d] = %s is SYMBOL_IDENTIFIER\n", i, node->text);
+              break;
+              case SYMBOL_LITERAL_CHAR:
+                printf("Table[%d] = %s is SYMBOL_LITERAL_CHAR\n", i, node->text);
+              break;
+              case SYMBOL_LITERAL_STRING:
+                printf("Table[%d] = %s is SYMBOL_LITERAL_STRING\n", i, node->text);
+              break;
+              case SYMBOL_LITERAL_INT:
+                printf("Table[%d] = %s is SYMBOL_LITERAL_INT\n", i, node->text);
+              break;
+              default:
+                printf("Table[%d]. Type not identified\n", i);
+            }
 }
