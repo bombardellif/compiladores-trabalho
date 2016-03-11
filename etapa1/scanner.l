@@ -102,7 +102,7 @@ int isRunning(void) {
 
 void initMe(void) {
   scanner_running = 1;
-  scanner_linenumber = 0;
+  scanner_linenumber = 1;
 }
 
 void addIdentifierToSymbolTable(char *text) {

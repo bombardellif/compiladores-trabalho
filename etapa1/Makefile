@@ -9,7 +9,7 @@
 
 etapa1: lex.yy.o main.o hash.o utils.o
 	gcc -o etapa1 lex.yy.o main.o hash.o utils.o
-main.o: main.c
+main.o: main.c test.c
 	gcc -c main.c
 hash.o: hash.c
 	gcc -c hash.c

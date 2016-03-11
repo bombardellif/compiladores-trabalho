@@ -6,18 +6,15 @@
  */
 
 #include <stdio.h>
-#include "hash.h"
+#include "test.c"
+
 int main(int argc, int *argv[])
 {
-		int ret;
-		initMe();
-		while(isRunning()){
-			ret = yylex();
-			if(ret > 127) printf("Token lido foi: %i\n",ret);
-			else printf("Token lido foi: %c\n",ret);
-		}
+		/*test_reserved1();
 
-		printf("Numero de linhas: %i \n\nConteudo na tabela de simbolos:\n",getLineNumber());
-		print_hash();
+		test_reserved2();
+
+		test_especiais1();*/
+		test_especiais2();
     return 0;
 }
