@@ -103,6 +103,7 @@ int isRunning(void) {
 void initMe(void) {
   scanner_running = 1;
   scanner_linenumber = 1;
+  init_hash();
 }
 
 void addIdentifierToSymbolTable(char *text) {
@@ -129,11 +130,18 @@ void addCharToSymbolTable(char *text) {
 
 void addIntegerToSymbolTable(char *text) {
 	int *value;
+  int inputSize;
+  char *integerInStr;
 
   value = (int*) malloc(sizeof(int));
 	*value = atoi(text);
+
+  inputSize = strlen(text);
+  integerInStr = (char*) malloc(inputSize * sizeof(char));
+  strncpy(integerInStr, text, inputSize);
+
 	// adiciona à tabela de símbolos
-  hash_add(SYMBOL_LITERAL_INT, text); //text ou value??
+  hash_add(SYMBOL_LITERAL_INT, integerInStr); //integerInStr ou value??
 }
 
 void addStringToSymbolTable(char *text) {

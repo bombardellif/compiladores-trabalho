@@ -1,10 +1,14 @@
+
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "hash.h"
+
+HASH *symbol_table[HASH_SIZE];
 
 void init_hash()
 {
-    int i;
-    for(i=0; i<HASH_SIZE; i++)
-        symbol_table[i] = 0;
+    memset(symbol_table, 0, HASH_SIZE * sizeof(HASH*));
 }
 
 int hash_address(char *text)
@@ -19,14 +23,23 @@ int hash_address(char *text)
 HASH* hash_add(int type, char *text)
 {
     int address;
-    HASH *node;
+    HASH *node, *insertNode;
+
     node = (HASH*)calloc(1, sizeof(HASH));
     node->type = type;
-    node->text = (char*)calloc(strlen(text)+1,sizeof(char));
-    strcpy(node->text,text);
+    node->text = text; // text já deve ter sido alocado fora da função
+
     address = hash_address(text);
-    node->next = symbol_table[address];
-    symbol_table[address] = node;
+    insertNode = symbol_table[address];
+    // Insere somente se símbolo ainda não existe na tabela
+    while (insertNode && insertNode->type != type && strcmp(insertNode->text, text))
+      insertNode = insertNode->next;
+    // Se insertNode é null, então não achou um simbolo igual na lista, pois percorreu até o fim
+    if (!insertNode) {
+      node->next = symbol_table[address];
+      symbol_table[address] = node;
+    }
+
     return node;
 }
 

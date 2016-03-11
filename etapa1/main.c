@@ -10,11 +10,12 @@
 
 int main(int argc, int *argv[])
 {
-		/*test_reserved1();
+		test_reserved1();
 
 		test_reserved2();
 
-		test_especiais1();*/
+		test_especiais1();
+		
 		test_especiais2();
     return 0;
 }

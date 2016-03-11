@@ -1,6 +1,5 @@
-#include<string.h>
-#include<stdlib.h>
-#include<stdio.h>
+#ifndef __HASH__
+#define __HASH__
 
 #define HASH_SIZE 997
 #define SYMBOL_IDENTIFIER 1
@@ -16,9 +15,9 @@ typedef struct hash_node
 
 }HASH;
 
-HASH *symbol_table[HASH_SIZE];
-
 void init_hash();
 void print_hash();
 int hash_address(char *text);
 HASH* hash_add(int type, char *text);
+
+#endif
