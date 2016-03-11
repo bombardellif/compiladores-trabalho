@@ -2,7 +2,6 @@
  * Trabalho Prático - Etapa 1
  * Autores: Fernando Bombardelli da Silva (218324)
  *          Pedro Henrique Arruda Faustini (217432)
- * Compilação: lex scanner.l && gcc lex.yy.c
  * Uso1:       ./a.out
  * Uso2:       ./a.out < file
  */
@@ -14,9 +13,9 @@ alphanum  [_0-9A-Za-z]
 %{
 #include "tokens.h"
 #include "utils.h"
+#include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define END_OF_FILE -1
 int scanner_running, scanner_linenumber = 0;
 
 void addStringToSymbolTable(char *text);
@@ -63,11 +62,11 @@ void addStringToSymbolTable(char *text);
 [\t ]									{ }
 
   /* Identificadores */
-{alpha}{alphanum}*  	{return TK_IDENTIFIER;}
+{alpha}{alphanum}*  	{hash_add(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
   /* Literais */
 '.'   								{return LIT_CHAR;}
-[0-9]+		    				{return LIT_INTEGER;}
+[0-9]+		    				{hash_add(SYMBOL_LITERAL_INT, yytext); return LIT_INTEGER;}
 	/* Literal String: Captura se (i) começar com áspas;
 		(ii) conter dentro: qualquer coisa que não seja
 				áspas, barra invertida ou quebra de linha
@@ -79,7 +78,8 @@ void addStringToSymbolTable(char *text);
   /* New Line */
 \n    		       {scanner_linenumber++;}
 
-<<EOF>>     		{scanner_running=0; return END_OF_FILE;}
+^D     		{scanner_running=0;}
+
 
   /* Erro léxico */
 .+							{return TOKEN_ERROR;}
