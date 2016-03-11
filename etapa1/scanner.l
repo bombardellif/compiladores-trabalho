@@ -19,6 +19,9 @@ alphanum  [_0-9A-Za-z]
 #define END_OF_FILE -1
 int scanner_running, scanner_linenumber = 0;
 
+void addIdentifierToSymbolTable(char *text);
+void addCharToSymbolTable(char *text);
+void addIntegerToSymbolTable(char *text);
 void addStringToSymbolTable(char *text);
 %}
 
@@ -103,6 +106,30 @@ int isRunning(void) {
 void initMe(void) {
   scanner_running = 1;
   scanner_linenumber = 0;
+}
+
+void addIdentifierToSymbolTable(char *text) {
+	char *identifierName;
+	int inputSize;
+
+	// aloca nova string para o nome do identificador
+	inputSize = strlen(text);
+	identifierName = (char*) malloc(inputSize * sizeof(char));
+	strncpy(identifierName, text, inputSize);
+
+	// adiciona à tabela de símbolos
+}
+
+void addCharToSymbolTable(char *text) {
+	// adiciona à tabela de símbolos
+	text[1];
+}
+
+void addIntegerToSymbolTable(char *text) {
+	int value;
+
+	value = atoi(text);
+	// adiciona à tabela de símbolos
 }
 
 void addStringToSymbolTable(char *text) {
