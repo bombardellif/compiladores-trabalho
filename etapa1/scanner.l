@@ -85,7 +85,7 @@ void addStringToSymbolTable(char *text);
 
 
   /* Erro léxico */
-.+							{return TOKEN_ERROR;}
+.							{return TOKEN_ERROR;}
 
 %%
 
