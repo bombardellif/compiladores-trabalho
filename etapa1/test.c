@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include "tokens.h"
+#include "hash.h"
 
 extern FILE * yyin;
 
@@ -529,3 +530,58 @@ void test_comments1() {
   test_tearDown();
   printf("/****************************/\n");
 }
+
+void test_get_hash_node()
+{
+	HASH *node;
+	printf("/**** TEST: HASH_GET_NODE ****/\n");
+  	if (! test_setUp("test-cases/literais_identificadores") ) {
+    	printf("Error by opening file %s", "test-cases/comments1");
+    	return;
+ 	}
+ 	while(isRunning())
+ 	{
+ 		yylex();
+ 	}
+ 		node = get_hash_node("sentence");
+ 		printf("Getting sentence with get_hash_node(\"sentence\"):        ");
+ 		test_assertEqual(node->type, SYMBOL_LITERAL_STRING);
+ 		
+ 		node = get_hash_node("ident12334");
+ 		printf("Getting ident12334 with get_hash_node(\"ident12334\"):    ");
+ 		test_assertEqual(node->type, SYMBOL_IDENTIFIER);
+ 		
+ 		node = get_hash_node("2331");
+ 		printf("Getting 2331 with get_hash_node(\"2331\"):		");
+ 		test_assertEqual(node->type, SYMBOL_LITERAL_INT);
+ 		
+ 		node = get_hash_node("number");
+ 		printf("Getting number with get_hash_node(\"number\"):	  	");
+ 		test_assertEqual(node->type, SYMBOL_IDENTIFIER);
+ 		
+ 		node = get_hash_node("ident12334");
+ 		printf("Getting ident12334 with get_hash_node(\"ident12334\"):    ");
+ 		test_assertEqual(node->type, SYMBOL_IDENTIFIER);
+ 		
+ 		node = get_hash_node("c");
+ 		printf("Getting c with get_hash_node(\"c\"):	  	  	");
+ 		test_assertEqual(node->type, SYMBOL_LITERAL_CHAR);
+ 		
+ 		node = get_hash_node("02");
+ 		printf("Getting 02 with get_hash_node(\"02\"):	  	  	");
+ 		test_assertEqual(node->type, SYMBOL_LITERAL_INT);
+ 		
+ 		node = get_hash_node("naoExiste");
+ 		printf("Getting naoExiste with get_hash_node(\"naoExiste\"): 	");
+ 		if(node==NULL)	printf("SUCCESS: Key inexistente na hash\n");
+ 		
+ 		node = get_hash_node("string");
+ 		printf("Getting string with get_hash_node(\"string\"): 		");
+ 		test_assertEqual(node->type, SYMBOL_LITERAL_STRING);		 		
+ 		
+  	test_tearDown();
+  	printf("/****************************/\n");
+}
+
+
+

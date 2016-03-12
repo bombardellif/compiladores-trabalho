@@ -43,6 +43,18 @@ HASH* hash_add(int type, char *text)
     return node;
 }
 
+HASH* get_hash_node(char * text)
+{
+    int i;
+    HASH *node;
+    for(i=0; i<HASH_SIZE; i++)
+        for(node = symbol_table[i]; node; node=node->next)
+	    	if(!strcmp(node->text,text))
+				return node;
+
+    return NULL;          
+}
+
 void print_hash()
 {
     int i;

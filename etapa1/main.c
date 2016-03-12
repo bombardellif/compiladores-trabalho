@@ -27,5 +27,7 @@ int main(int argc, int *argv[])
 		test_literais2();
 
 		test_comments1();
+		
+		test_get_hash_node();
     return 0;
 }

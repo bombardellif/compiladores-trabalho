@@ -18,6 +18,7 @@ typedef struct hash_node
 void init_hash();
 void print_hash();
 int hash_address(char *text);
+HASH* get_hash_node(char * text);
 HASH* hash_add(int type, char *text);
 
 #endif
