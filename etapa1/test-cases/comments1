@@ -1,0 +1,10 @@
+/* TESTE COMENTÁRIOS */
+// TESTE
+//
+/**/
+real var1 =4,9;
+/* quebra linha
+real var2 = 9;
+*/
+/* commenta dentro // abc */
+/* Comentário inter/*no */

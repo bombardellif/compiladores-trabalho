@@ -111,7 +111,7 @@ void addIdentifierToSymbolTable(char *text) {
 	int inputSize;
 
 	// aloca nova string para o nome do identificador
-	inputSize = strlen(text);
+	inputSize = strlen(text)+1;
 	identifierName = (char*) malloc(inputSize * sizeof(char));
 	strncpy(identifierName, text, inputSize);
 
@@ -122,35 +122,32 @@ void addIdentifierToSymbolTable(char *text) {
 void addCharToSymbolTable(char *text) {
   char* charValue;
 
-  charValue = (char*) malloc(sizeof(char));
-  *charValue = text[1];
+  charValue = (char*) malloc(sizeof(char)*2);
+  charValue[0] = text[1];
+  charValue[1] = '\0';
 	// adiciona à tabela de símbolos
   hash_add(SYMBOL_LITERAL_CHAR, charValue);
 }
 
 void addIntegerToSymbolTable(char *text) {
-	int *value;
   int inputSize;
   char *integerInStr;
 
-  value = (int*) malloc(sizeof(int));
-	*value = atoi(text);
-
-  inputSize = strlen(text);
+  inputSize = strlen(text)+1;
   integerInStr = (char*) malloc(inputSize * sizeof(char));
   strncpy(integerInStr, text, inputSize);
 
 	// adiciona à tabela de símbolos
-  hash_add(SYMBOL_LITERAL_INT, integerInStr); //integerInStr ou value??
+  hash_add(SYMBOL_LITERAL_INT, integerInStr);
 }
 
 void addStringToSymbolTable(char *text) {
 	char *stringValue;
 	int inputSize;
 
-	inputSize = strlen(text);
+	inputSize = strlen(text)+1;
 	// remove áspas
-	text[inputSize-1] = '\0';
+	text[inputSize-2] = '\0';
 	text++;
 	// aloca nova string para o literal lido
 	stringValue = (char*) malloc((inputSize-2) * sizeof(char));

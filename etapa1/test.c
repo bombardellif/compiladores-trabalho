@@ -146,13 +146,13 @@ void test_reserved2() {
   printf("/****************************/\n");
 }
 
-/* Test case especiais1 */
-void test_especiais1() {
+/* Test case compostos1 */
+void test_compostos1() {
   int ret;
 
-  printf("/**** TEST: ESPECIAIS 1 ****/\n");
-  if (! test_setUp("test-cases/especiais1") ) {
-    printf("Error by opening file %s", "test-cases/especiais1");
+  printf("/**** TEST: COMPOSTOS 1 ****/\n");
+  if (! test_setUp("test-cases/compostos1") ) {
+    printf("Error by opening file %s", "test-cases/compostos1");
     return;
   }
 
@@ -184,13 +184,13 @@ void test_especiais1() {
   printf("/****************************/\n");
 }
 
-/* Test case especiais2 */
-void test_especiais2() {
+/* Test case compostos2 */
+void test_compostos2() {
   int ret;
 
-  printf("/**** TEST: ESPECIAIS 2 ****/\n");
-  if (! test_setUp("test-cases/especiais2") ) {
-    printf("Error by opening file %s", "test-cases/especiais2");
+  printf("/**** TEST: COMPOSTOS 2 ****/\n");
+  if (! test_setUp("test-cases/compostos2") ) {
+    printf("Error by opening file %s", "test-cases/compostos2");
     return;
   }
 
@@ -261,6 +261,269 @@ void test_especiais2() {
     // EOF
     ret = yylex();
     test_assertEqual(ret, 0);
+  }
+
+  test_tearDown();
+  printf("/****************************/\n");
+}
+
+/* Test case especiais1 */
+void test_especiais1() {
+  int ret, i=1, j;
+  char symbols[] = {',',';',':','(',')','[',']','{','}','+','-','*','/','<','>','=','!','&','$'};
+
+  printf("/**** TEST: ESPECIAIS 1 ****/\n");
+  if (! test_setUp("test-cases/especiais1") ) {
+    printf("Error by opening file %s", "test-cases/especiais1");
+    return;
+  }
+
+  while(isRunning()) {
+    for (j=0; j<19; j++) {
+      ret = yylex();
+      test_assertEqual(ret, symbols[j]);
+      test_assertEqual(getLineNumber(), i);
+    }
+
+    if (i == 2) {
+      // EOF
+      ret = yylex();
+      test_assertEqual(ret, 0);
+    }
+    i++;
+  }
+
+  test_tearDown();
+  printf("/****************************/\n");
+}
+
+/* Test case identificadores1 */
+void test_identificadores1() {
+  int ret, i=1;
+
+  printf("/**** TEST: IDENTIFICADORES 1 ****/\n");
+  if (! test_setUp("test-cases/identificadores1") ) {
+    printf("Error by opening file %s", "test-cases/identificadores1");
+    return;
+  }
+
+  while(isRunning()) {
+    if (i<=7) {
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (i == 8) {
+      // EOF
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (i==9) {
+
+    } else if (i <= 10) {
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (i <= 12) {
+      ret = yylex();
+      test_assertEqual(ret, LIT_INTEGER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (i <= 13) {
+      ret = yylex();
+      test_assertEqual(ret, LIT_INTEGER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      test_assertEqual(getLineNumber(), i);
+    } else if (i <= 14) {
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, '-');
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, ';');
+      test_assertEqual(getLineNumber(), i);
+    } else if (i <= 15) {
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else
+      break;
+    i++;
+  }
+
+  test_tearDown();
+  printf("/****************************/\n");
+}
+
+/* Test case literais1 */
+void test_literais1() {
+  int ret, j=0;
+
+  printf("/**** TEST: LITERAIS 1 ****/\n");
+  if (! test_setUp("test-cases/literais1") ) {
+    printf("Error by opening file %s", "test-cases/literais1");
+    return;
+  }
+
+  while(isRunning()) {
+    ret = yylex();
+    if (j==0) {
+      test_assertEqual(ret, LIT_TRUE);
+    } else if (j==1) {
+      test_assertEqual(ret, LIT_FALSE);
+    } else if (j<=4) {
+      test_assertEqual(ret, LIT_CHAR);
+    } else if (j<=13) {
+      test_assertEqual(ret, LIT_STRING);
+    } else if (j<=15) {
+      test_assertEqual(ret, LIT_INTEGER);
+    } else if (j<=17) {
+      test_assertEqual(ret, TK_IDENTIFIER);
+    } else
+      test_assertEqual(ret, 0);
+    j++;
+  }
+
+  test_tearDown();
+  printf("/****************************/\n");
+}
+
+/* Test case literais2 */
+void test_literais2() {
+  int ret, j=0, i=1;
+
+  printf("/**** TEST: LITERAIS 2 ****/\n");
+  if (! test_setUp("test-cases/literais2") ) {
+    printf("Error by opening file %s", "test-cases/literais2");
+    return;
+  }
+
+  while(isRunning()) {
+    ret = yylex();
+    if (j<=2) {
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+      if (j == 2) i++;
+    } else if (j<=5) {
+      test_assertEqual(ret, LIT_STRING);
+      test_assertEqual(getLineNumber(), i);
+      if (j == 4) i++;
+    } else if (j<=6) {
+      test_assertEqual(ret, TK_IDENTIFIER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (j<=7) {
+      test_assertEqual(ret, TOKEN_ERROR);
+      test_assertEqual(getLineNumber(), i);
+      i++;
+    } else if (j<=10) {
+      test_assertEqual(ret, LIT_CHAR);
+      test_assertEqual(getLineNumber(), i);
+      if (j == 9) i++;
+    } else if (j<=11) {
+      test_assertEqual(ret, LIT_INTEGER);
+      test_assertEqual(getLineNumber(), i);
+    } else if (j<=12) {
+      test_assertEqual(ret, TOKEN_ERROR);
+      test_assertEqual(getLineNumber(), i);
+      i++;
+    } else if (j<=13) {
+      test_assertEqual(ret, LIT_STRING);
+      test_assertEqual(getLineNumber(), i);
+
+      ret = yylex();
+      test_assertEqual(ret, '+');
+      ret = yylex();
+      test_assertEqual(ret, LIT_INTEGER);
+      ret = yylex();
+      test_assertEqual(ret, '*');
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      ret = yylex();
+      test_assertEqual(ret, ';');
+      ret = yylex();
+      test_assertEqual(ret, LIT_STRING);
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+      ret = yylex();
+      test_assertEqual(ret, TOKEN_ERROR);
+    } else
+      test_assertEqual(ret, 0);
+    j++;
+  }
+
+  test_tearDown();
+  printf("/****************************/\n");
+}
+
+/* Test case comments1 */
+void test_comments1() {
+  int ret, j=0, i;
+
+  printf("/**** TEST: COMMENTS 1 ****/\n");
+  if (! test_setUp("test-cases/comments1") ) {
+    printf("Error by opening file %s", "test-cases/comments1");
+    return;
+  }
+
+  i=5;
+  while(isRunning()) {
+    ret = yylex();
+    test_assertEqual(ret, KW_REAL);
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, TK_IDENTIFIER);
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, '=');
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, LIT_INTEGER);
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, ',');
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, LIT_INTEGER);
+    test_assertEqual(getLineNumber(), i);
+    ret = yylex();
+    test_assertEqual(ret, ';');
+    test_assertEqual(getLineNumber(), i);
+
+    //EOF
+    ret = yylex();
+    test_assertEqual(ret, 0);
+    test_assertEqual(getLineNumber(), 11);
   }
 
   test_tearDown();

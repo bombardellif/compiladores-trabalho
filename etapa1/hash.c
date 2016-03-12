@@ -32,7 +32,7 @@ HASH* hash_add(int type, char *text)
     address = hash_address(text);
     insertNode = symbol_table[address];
     // Insere somente se símbolo ainda não existe na tabela
-    while (insertNode && insertNode->type != type && strcmp(insertNode->text, text))
+    while (insertNode && (insertNode->type != type || strcmp(insertNode->text, text)))
       insertNode = insertNode->next;
     // Se insertNode é null, então não achou um simbolo igual na lista, pois percorreu até o fim
     if (!insertNode) {

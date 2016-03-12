@@ -14,8 +14,18 @@ int main(int argc, int *argv[])
 
 		test_reserved2();
 
+		test_compostos1();
+
+		test_compostos2();
+
 		test_especiais1();
-		
-		test_especiais2();
+
+		test_identificadores1();
+
+		test_literais1();
+
+		test_literais2();
+
+		test_comments1();
     return 0;
 }

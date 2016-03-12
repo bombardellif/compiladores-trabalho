@@ -1,0 +1,6 @@
+TRUEFALSE true false
+"str1""str2"
+"str1"str2"
+'1''2'
+'1'2'
+"ins ide'0'"+0 *''; ""\" 
