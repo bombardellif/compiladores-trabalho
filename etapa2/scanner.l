@@ -14,7 +14,8 @@ alphanum  [_0-9A-Za-z]
 #include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
-int scanner_running, scanner_linenumber = 0;
+int scanner_running;
+extern int scanner_linenumber;
 
 /*O retorno, antes, era void; mudei para HASH*. Assim posso usar a	atribuição para yylval.symbol */
 HASH* addIdentifierToSymbolTable(char *text);
@@ -81,7 +82,7 @@ HASH* addStringToSymbolTable(char *text);
 \n    		       {scanner_linenumber++;}
 
   /* Erro léxico */
-.							{return TOKEN_ERROR;}
+.							{printf("error token: %s on line %d\n", yytext, scanner_linenumber);  return TOKEN_ERROR;}
 
 %%
 
@@ -101,7 +102,7 @@ int isRunning(void) {
 
 void initMe(void) {
   scanner_running = 1;
-  scanner_linenumber = 1;
+  //scanner_linenumber = 1;
   init_hash();
 }
 

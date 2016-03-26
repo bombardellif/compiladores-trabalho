@@ -5,7 +5,7 @@ lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
 
 y.tab.c: parser.y
-	yacc -d -v parser.y
+	bison -d -y parser.y
 
 utils.o: utils.c
 	gcc -c utils.c

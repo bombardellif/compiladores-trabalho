@@ -9,7 +9,9 @@
 #include<stdlib.h>
 #include "hash.h"
 extern FILE *yyin;
+int scanner_linenumber = 1;
 %}
+
 
 /*Tokens e declaração de tipos*/
 %token KW_INT
@@ -36,6 +38,8 @@ extern FILE *yyin;
 %token LIT_STRING
 %token TOKEN_ERROR
 
+%start program
+
 %union
 {
 	struct hash_node *symbol;
@@ -61,6 +65,6 @@ extern FILE *yyin;
 	
 	int yyerror(char *s) 
     {
-   	  	 fprintf(stderr, "%s!\n", s);
+   	  	 fprintf(stderr, "line %d: %s\n", scanner_linenumber, s);
 		 exit(3);
     }
