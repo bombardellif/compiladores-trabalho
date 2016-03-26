@@ -65,6 +65,9 @@ void print_hash()
               case SYMBOL_IDENTIFIER:
                 printf("Table[%d] = %s is SYMBOL_IDENTIFIER\n", i, node->text);
               break;
+              case SYMBOL_LITERAL_REAL:
+                printf("Table[%d] = %s is SYMBOL_LITERAL_REAL\n", i, node->text);
+              break;
               case SYMBOL_LITERAL_CHAR:
                 printf("Table[%d] = %s is SYMBOL_LITERAL_CHAR\n", i, node->text);
               break;

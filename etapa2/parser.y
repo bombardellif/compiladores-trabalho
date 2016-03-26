@@ -1,3 +1,9 @@
+/* INF01147 -­‐ Compiladores -­‐ 2016/1
+ * Trabalho Prático - Etapa 2
+ * Autores: Fernando Bombardelli da Silva (218324)
+ *          Pedro Henrique Arruda Faustini (217432)
+ */
+ 
 %{
 #include<stdio.h>
 #include<stdlib.h>
@@ -5,7 +11,7 @@
 extern FILE *yyin;
 %}
 
-/*Tokens e declaracao de tipos*/
+/*Tokens e declaração de tipos*/
 %token KW_INT
 %token KW_REAL
 %token KW_BOOL
@@ -22,7 +28,7 @@ extern FILE *yyin;
 %token OPERATOR_NE
 %token OPERATOR_AND
 %token OPERATOR_OR
-%token KW_IDENTIFIER
+%token TK_IDENTIFIER
 %token LIT_INTEGER
 %token LIT_FALSE
 %token LIT_TRUE
@@ -30,13 +36,19 @@ extern FILE *yyin;
 %token LIT_STRING
 %token TOKEN_ERROR
 
+%union
+{
+	struct hash_node *symbol;
+}
+
 
 %%
-	program: declaration ';' program
+	program: declaration program
 			|
 			;
-	declaration: KW_INT ':' KW_IDENTIFIER		/*INT a : 5 */
-			|	 KW_INT '(' ')' KW_IDENTIFIER		/* int main () */
+			
+	declaration: KW_INT ':' TK_IDENTIFIER ';'		/*int a : 5 */
+			|	 KW_INT '(' ')' TK_IDENTIFIER		/* int main () */
 			;		
    
 
@@ -47,8 +59,8 @@ extern FILE *yyin;
 		exit (yyparse());
 	}
 	
-	int yyerror() 
+	int yyerror(char *s) 
     {
-   	  	 fprintf(stderr, "Syntax error.\n");
+   	  	 fprintf(stderr, "%s!\n", s);
 		 exit(3);
     }
