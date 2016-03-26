@@ -11,4 +11,4 @@ utils.o: utils.c
 	gcc -c utils.c
 	
 clean:
-	rm lex.yy.* y.tab.* y.output *.o etapa2
+	rm lex.yy.* y.tab.* *.o etapa2

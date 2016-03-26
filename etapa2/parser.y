@@ -38,8 +38,6 @@ int scanner_linenumber = 1;
 %token LIT_STRING
 %token TOKEN_ERROR
 
-%start program
-
 %union
 {
 	struct hash_node *symbol;
@@ -51,8 +49,8 @@ int scanner_linenumber = 1;
 			|
 			;
 			
-	declaration: KW_INT ':' TK_IDENTIFIER ';'		/*int a : 5 */
-			|	 KW_INT '(' ')' TK_IDENTIFIER		/* int main () */
+	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
+			|	 KW_INT TK_IDENTIFIER '(' ')'		/* int main () */
 			;		
    
 
@@ -60,11 +58,18 @@ int scanner_linenumber = 1;
 	int main(int argc, char* argv[])
 	{
 		yyin = fopen(argv[1], "r");
-		exit (yyparse());
+		if(yyparse() == 0)
+		{
+			printf("Sucess, this is a program!\nLines: %d\n", scanner_linenumber);
+			print_hash();
+			return 0;
+		}
+		
 	}
 	
 	int yyerror(char *s) 
     {
+    	 print_hash(); // So para debugging, apagar depois
    	  	 fprintf(stderr, "line %d: %s\n", scanner_linenumber, s);
 		 exit(3);
     }
