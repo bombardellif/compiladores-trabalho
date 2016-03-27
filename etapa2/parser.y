@@ -50,8 +50,34 @@ int scanner_linenumber = 1;
 			;
 			
 	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
-			|	 KW_INT TK_IDENTIFIER '(' ')'		/* int main () */
+			|	 KW_BOOL TK_IDENTIFIER ':' LIT_FALSE ';'
+			|	 KW_BOOL TK_IDENTIFIER ':' LIT_TRUE ';'
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'
+			|	 KW_CHAR '*' TK_IDENTIFIER ':' LIT_STRING ';'
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
+			| 	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']'';'
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']'';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']'';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']'';'
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']'':' listInt ';'
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']'':'  listInt ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']'':' listChar ';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']'':' listBool ';'
 			;		
+	
+	listInt:	' ' LIT_INTEGER listInt
+			|
+			;
+			
+	listChar:	' ' LIT_CHAR listChar
+			|
+			;
+			
+	listBool:	' ' LIT_FALSE listBool
+			|	' ' LIT_TRUE listBool
+			|
+			;
    
 
 %%

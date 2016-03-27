@@ -1,0 +1,13 @@
+//This should be a valid program
+
+int var :100;
+char character:1;
+int v[11224332];
+real r : 1;
+char charVet[1];
+real realV[11];
+bool bv[98];
+bool t: TRUE;
+bool f:FALSE;
+char c:'w';
+char * c:"ww";
