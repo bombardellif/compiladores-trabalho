@@ -64,7 +64,7 @@ int scanner_linenumber = 1;
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listChar ';'
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listBool ';'
-			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' body ';'
+			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' body ';'		/*int main () */
 			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' body ';'
 			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' body ';'
 			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' body ';'
@@ -100,7 +100,11 @@ int scanner_linenumber = 1;
 			|	arguments ',' KW_BOOL TK_IDENTIFIER
 			;
 			
-	body: ';' /*Comando vazio*/
+	body:	simpleCommand
+		|	/*block*/
+		;
+		
+	simpleCommand: ';' /*Comando vazio*/
 		;
 			
    
