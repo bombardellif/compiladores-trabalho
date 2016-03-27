@@ -2,6 +2,10 @@
 *.yy.c
 *.yy.h
 
+# Bison Files
+*.tab.c
+*.tab.h
+
 # Object files
 *.o
 *.ko
