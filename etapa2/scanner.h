@@ -4,9 +4,11 @@
  *          Pedro Henrique Arruda Faustini (217432)
  */
 
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#ifndef __SCANNER_H__
+#define __SCANNER_H__
 
-void stripSlashes(char *destination, char *source);
+int getLineNumber(void);
+int isRunning(void);
+void initMe(void);
 
 #endif

@@ -12,10 +12,11 @@ alphanum  [_0-9A-Za-z]
 #include "utils.h"
 #include "y.tab.h"
 #include "hash.h"
+#include "scanner.h"
 #include <stdio.h>
 #include <stdlib.h>
 int scanner_running;
-extern int scanner_linenumber;
+int scanner_linenumber;
 
 /*O retorno, antes, era void; mudei para HASH*. Assim posso usar a	atribuição para yylval.symbol */
 HASH* addIdentifierToSymbolTable(char *text);
@@ -76,7 +77,7 @@ HASH* addStringToSymbolTable(char *text);
 			OU conter dentro: barra invertida seguido de
 				caracter áspas ou mais uma barra invertida ou character n; e
 		(iii) terminar com áspas. */
-\"([^\"\\\n]|\\[\"\\n])*\"	{addStringToSymbolTable(yytext); return LIT_STRING;}
+\"([^\"\\\n]|\\[\"\\n])*\"	{yylval.symbol = addStringToSymbolTable(yytext); return LIT_STRING;}
 
   /* New Line */
 \n    		       {scanner_linenumber++;}
@@ -102,7 +103,7 @@ int isRunning(void) {
 
 void initMe(void) {
   scanner_running = 1;
-  //scanner_linenumber = 1;
+  scanner_linenumber = 1;
   init_hash();
 }
 
@@ -124,7 +125,7 @@ HASH* addIdentifierToSymbolTable(char *text) {
 HASH* addCharToSymbolTable(char *text) {
   char* charValue;
   HASH* node;
-  
+
   charValue = (char*) malloc(sizeof(char)*2);
   charValue[0] = text[1];
   charValue[1] = '\0';
@@ -137,7 +138,7 @@ HASH* addIntegerToSymbolTable(char *text) {
   int inputSize;
   char *integerInStr;
   HASH* node;
-  
+
   inputSize = strlen(text)+1;
   integerInStr = (char*) malloc(inputSize * sizeof(char));
   strncpy(integerInStr, text, inputSize);
@@ -151,7 +152,7 @@ HASH* addStringToSymbolTable(char *text) {
 	char *stringValue;
 	int inputSize;
 	HASH* node;
-	
+
 	inputSize = strlen(text)+1;
 	// remove áspas
 	text[inputSize-2] = '\0';

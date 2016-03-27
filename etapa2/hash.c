@@ -1,3 +1,8 @@
+/* INF01147 -­‐ Compiladores -­‐ 2016/1
+ * Trabalho Prático - Etapa 2
+ * Autores: Fernando Bombardelli da Silva (218324)
+ *          Pedro Henrique Arruda Faustini (217432)
+ */
 
 #include <string.h>
 #include <stdlib.h>
@@ -52,7 +57,7 @@ HASH* get_hash_node(char * text)
 	    	if(!strcmp(node->text,text))
 				return node;
 
-    return NULL;          
+    return NULL;
 }
 
 void print_hash()

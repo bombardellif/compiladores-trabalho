@@ -9,6 +9,6 @@ y.tab.c: parser.y
 
 utils.o: utils.c
 	gcc -c utils.c
-	
+
 clean:
-	rm lex.yy.* y.tab.* *.o etapa2
+	rm -f lex.yy.* y.tab.* *.o etapa2
