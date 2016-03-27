@@ -56,27 +56,31 @@ int scanner_linenumber = 1;
 			|	 KW_CHAR '*' TK_IDENTIFIER ':' LIT_STRING ';'
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
 			| 	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']'';'
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']'';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']'';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']'';'
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']'':' listInt ';'
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']'':'  listInt ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']'':' listChar ';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']'':' listBool ';'
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listChar ';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listBool ';'
+			/*|		<declaracao de funcao>*/
 			;		
-	
-	listInt:	' ' LIT_INTEGER listInt
-			|
+    
+	listInt:	LIT_INTEGER
+			|	listInt LIT_INTEGER
 			;
 			
-	listChar:	' ' LIT_CHAR listChar
-			|
+	listChar:	LIT_CHAR
+			|	LIT_INTEGER
+			|	listChar LIT_CHAR
+			|	listChar LIT_INTEGER
 			;
 			
-	listBool:	' ' LIT_FALSE listBool
-			|	' ' LIT_TRUE listBool
-			|
+	listBool:	LIT_FALSE
+			|	LIT_TRUE
+			|	listBool LIT_FALSE
+			|	listBool LIT_TRUE
 			;
    
 
