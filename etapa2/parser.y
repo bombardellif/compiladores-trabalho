@@ -64,7 +64,14 @@ int scanner_linenumber = 1;
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listChar ';'
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listBool ';'
-			/*|		<declaracao de funcao>*/
+			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' body ';'
+			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' body ';'
+			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' body ';'
+			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' body ';'
+			|	 KW_INT	TK_IDENTIFIER 	'('  ')' body ';'
+			|	 KW_REAL TK_IDENTIFIER 	'('  ')' body ';'
+			|	 KW_CHAR TK_IDENTIFIER 	'('  ')' body ';'
+			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' body ';'
 			;		
     
 	listInt:	LIT_INTEGER
@@ -82,6 +89,20 @@ int scanner_linenumber = 1;
 			|	listBool LIT_FALSE
 			|	listBool LIT_TRUE
 			;
+			
+	arguments: KW_INT TK_IDENTIFIER
+			|	KW_CHAR TK_IDENTIFIER
+			|	KW_REAL	TK_IDENTIFIER
+			|	KW_BOOL TK_IDENTIFIER
+			|	arguments ',' KW_CHAR TK_IDENTIFIER
+			|	arguments ',' KW_REAL TK_IDENTIFIER
+			|	arguments ',' KW_INT TK_IDENTIFIER
+			|	arguments ',' KW_BOOL TK_IDENTIFIER
+			;
+			
+	body: ';' /*Comando vazio*/
+		;
+			
    
 
 %%
