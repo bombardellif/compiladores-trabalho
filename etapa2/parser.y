@@ -77,12 +77,6 @@ extern FILE *yyin;
 			;
 
 	/*
-	
-	listChar:	LIT_CHAR
-			|	LIT_INTEGER
-			|	listChar LIT_CHAR
-			|	listChar LIT_INTEGER
-			;
 
 	listBool:	LIT_FALSE
 			|	LIT_TRUE
@@ -102,75 +96,72 @@ extern FILE *yyin;
 			|	arguments ',' KW_BOOL TK_IDENTIFIER
 			;
 
-  command: simpleCommand
-      | body
-      ;
+	command: simpleCommand
+      		|    '{' listCommand '}'
+      		;
 
-	body:	'{' listCommand '}'
-		  ;
 
-  listCommand: command
-      | command listCommand
-      ;
+ 	listCommand: command
+     		| 	listCommand command
+      		;
 
-	simpleCommand: ';' /*Comando vazio*/
-      | KW_INPUT listIdentifier
-      | KW_OUTPUT listOutput
-      | KW_RETURN expression
-      | TK_IDENTIFIER '=' expression
-      | TK_IDENTIFIER '[' expression ']' '=' expression 
-      /*| expression ';' Seria permitido isso?? *TODO* */
-      | "if" '(' expression ')' command elsestmt
-      | "while" '(' expression ')' command
-      ;
+  	simpleCommand: ';' /*Comando vazio*/
+		    | 	KW_INPUT listIdentifier
+		    | 	KW_OUTPUT listOutput
+		    | 	KW_RETURN expression
+		    | 	TK_IDENTIFIER '=' expression
+	 	    | 	TK_IDENTIFIER '[' expression ']' '=' expression 
+	 	    /*| expression ';' Seria permitido isso?? *TODO* */
+	 	    | 	KW_IF '(' expression ')' command elsestmt
+		    | 	KW_IF '(' expression ')' command
+		    | 	KW_WHILE '(' expression ')' command
+		    ;
+      
+    expression: aritmeticExpression
+			| 	booleanExpression
+      		| 	TK_IDENTIFIER '(' listExpression ')'
+      		;
 
-  elsestmt: "else" command
-      |
-      ;
+  	listExpression: expression
+      		| 	listExpression ',' expression
+      		;
 
-  listIdentifier: TK_IDENTIFIER
-      | 		  listIdentifier  ',' TK_IDENTIFIER
-      ;
+  	elsestmt: KW_ELSE command
+     		;
 
-  listOutput: aritmeticExpression
-      | LIT_STRING
-      | listOutput ',' aritmeticExpression
-      | listOutput ',' LIT_STRING
-      ;
+  	listIdentifier: TK_IDENTIFIER
+     		| 	listIdentifier  ',' TK_IDENTIFIER
+     		;
 
-  aritmeticExpression: TK_IDENTIFIER
-      | TK_IDENTIFIER '[' aritmeticExpression ']'
-      | LIT_INTEGER
-      | LIT_CHAR
-      | '(' aritmeticExpression ')'
-      | '-' aritmeticExpression
-      | aritmeticExpression '+' aritmeticExpression
-      | aritmeticExpression '-' aritmeticExpression
-      | aritmeticExpression '*' aritmeticExpression
-      | aritmeticExpression '/' aritmeticExpression
-      ;
+  	listOutput: aritmeticExpression
+			| 	LIT_STRING
+			| 	listOutput ',' aritmeticExpression
+			| 	listOutput ',' LIT_STRING
+			;
 
-  booleanExpression: LIT_TRUE
-      | LIT_FALSE
-      | LIT_INTEGER
-      | aritmeticExpression "<=" aritmeticExpression
-      | aritmeticExpression "<" aritmeticExpression
-      | aritmeticExpression ">" aritmeticExpression
-      | aritmeticExpression ">=" aritmeticExpression
-      | aritmeticExpression "==" aritmeticExpression
-      | aritmeticExpression "!=" aritmeticExpression
-      | booleanExpression "&&" booleanExpression
-      | booleanExpression "||" booleanExpression
-      ;
+  	aritmeticExpression: TK_IDENTIFIER
+			| 	TK_IDENTIFIER '[' aritmeticExpression ']'
+			| 	LIT_INTEGER
+			| 	'(' aritmeticExpression ')'
+			| 	'-' aritmeticExpression
+			| 	aritmeticExpression '+' aritmeticExpression
+			| 	aritmeticExpression '-' aritmeticExpression
+			| 	aritmeticExpression '*' aritmeticExpression
+			| 	aritmeticExpression '/' aritmeticExpression
+			;
 
-  expression: aritmeticExpression
-      | booleanExpression
-      | TK_IDENTIFIER '(' listExpression ')'
-      ;
-
-  listExpression: expression
-      | expression ',' listExpression
-      ;
+  	booleanExpression: LIT_TRUE
+			| 	LIT_FALSE
+			| 	LIT_INTEGER
+			| 	aritmeticExpression "<=" aritmeticExpression
+			| 	aritmeticExpression '<' aritmeticExpression
+			| 	aritmeticExpression '>' aritmeticExpression
+			| 	aritmeticExpression ">=" aritmeticExpression
+			| 	aritmeticExpression "==" aritmeticExpression
+			| 	aritmeticExpression "!=" aritmeticExpression
+			| 	booleanExpression "&&" booleanExpression
+			| 	booleanExpression "||" booleanExpression
+			;
 
 
 %%
@@ -187,12 +178,11 @@ extern FILE *yyin;
     } else {
       printf("Usage: ./etapa2 input_filepath\n");
     }
-    return 0;
+    exit(0);
 	}
 
   int yyerror(char *s)
   {
-    print_hash(); // So para debugging, apagar depois
     fprintf(stderr, "line %d: %s\n", getLineNumber(), s);
     exit(3);
   }

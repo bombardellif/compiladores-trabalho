@@ -13,4 +13,4 @@ Funcionalidade C não será mais cobrada nesta etapa.
 
 Corrigidos bugs e corrigindo outros.
 
-Main.c fora do parser.y (Johann disse que isso não é obrigatório, mas preferível)
+Main.c fora do parser.y (Johann disse que isso não é obrigatório, mas preferível; vou deixar para o final, portanto)
