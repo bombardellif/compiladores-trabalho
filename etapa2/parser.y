@@ -51,20 +51,17 @@ extern FILE *yyin;
 			;
 
 	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
-			|	 KW_BOOL TK_IDENTIFIER ':' LIT_FALSE ';'
-			|	 KW_BOOL TK_IDENTIFIER ':' LIT_TRUE ';'
-			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'
-			|	 KW_CHAR '*' TK_IDENTIFIER ':' LIT_STRING ';'
+			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
+			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listChar ';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listBool ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
 			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'		/*int main () */
 			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'
 			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'
@@ -79,6 +76,8 @@ extern FILE *yyin;
 			|	listInt LIT_INTEGER
 			;
 
+	/*
+	
 	listChar:	LIT_CHAR
 			|	LIT_INTEGER
 			|	listChar LIT_CHAR
@@ -90,8 +89,10 @@ extern FILE *yyin;
 			|	listBool LIT_FALSE
 			|	listBool LIT_TRUE
 			;
+			
+	*/
 
-	arguments: KW_INT TK_IDENTIFIER
+	arguments:  KW_INT TK_IDENTIFIER
 			|	KW_CHAR TK_IDENTIFIER
 			|	KW_REAL	TK_IDENTIFIER
 			|	KW_BOOL TK_IDENTIFIER
@@ -113,11 +114,11 @@ extern FILE *yyin;
       ;
 
 	simpleCommand: ';' /*Comando vazio*/
-      | KW_INPUT listIdentifier ';'
-      | KW_OUTPUT listOutput ';'
-      | KW_RETURN expression ';'
-      | TK_IDENTIFIER '=' expression ';'
-      | TK_IDENTIFIER '[' expression ']' '=' expression ';'
+      | KW_INPUT listIdentifier
+      | KW_OUTPUT listOutput
+      | KW_RETURN expression
+      | TK_IDENTIFIER '=' expression
+      | TK_IDENTIFIER '[' expression ']' '=' expression 
       /*| expression ';' Seria permitido isso?? *TODO* */
       | "if" '(' expression ')' command elsestmt
       | "while" '(' expression ')' command
@@ -128,13 +129,13 @@ extern FILE *yyin;
       ;
 
   listIdentifier: TK_IDENTIFIER
-      | TK_IDENTIFIER ',' listIdentifier
+      | 		  listIdentifier  ',' TK_IDENTIFIER
       ;
 
   listOutput: aritmeticExpression
       | LIT_STRING
-      | aritmeticExpression ',' listOutput
-      | LIT_STRING ',' listOutput
+      | listOutput ',' aritmeticExpression
+      | listOutput ',' LIT_STRING
       ;
 
   aritmeticExpression: TK_IDENTIFIER
@@ -151,7 +152,10 @@ extern FILE *yyin;
 
   booleanExpression: LIT_TRUE
       | LIT_FALSE
+      | LIT_INTEGER
       | aritmeticExpression "<=" aritmeticExpression
+      | aritmeticExpression "<" aritmeticExpression
+      | aritmeticExpression ">" aritmeticExpression
       | aritmeticExpression ">=" aritmeticExpression
       | aritmeticExpression "==" aritmeticExpression
       | aritmeticExpression "!=" aritmeticExpression
