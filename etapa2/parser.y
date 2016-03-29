@@ -76,16 +76,6 @@ extern FILE *yyin;
 			|	listInt LIT_INTEGER
 			;
 
-	/*
-
-	listBool:	LIT_FALSE
-			|	LIT_TRUE
-			|	listBool LIT_FALSE
-			|	listBool LIT_TRUE
-			;
-			
-	*/
-
 	arguments:  KW_INT TK_IDENTIFIER
 			|	KW_CHAR TK_IDENTIFIER
 			|	KW_REAL	TK_IDENTIFIER
@@ -112,7 +102,7 @@ extern FILE *yyin;
 		    | 	TK_IDENTIFIER '=' expression
 	 	    | 	TK_IDENTIFIER '[' expression ']' '=' expression 
 	 	    /*| expression ';' Seria permitido isso?? *TODO* */
-	 	    | 	KW_IF '(' expression ')' command elsestmt
+	 	    | 	KW_IF '(' expression ')' command KW_ELSE command
 		    | 	KW_IF '(' expression ')' command
 		    | 	KW_WHILE '(' expression ')' command
 		    ;
@@ -125,9 +115,6 @@ extern FILE *yyin;
   	listExpression: expression
       		| 	listExpression ',' expression
       		;
-
-  	elsestmt: KW_ELSE command
-     		;
 
   	listIdentifier: TK_IDENTIFIER
      		| 	listIdentifier  ',' TK_IDENTIFIER
@@ -142,6 +129,7 @@ extern FILE *yyin;
   	aritmeticExpression: TK_IDENTIFIER
 			| 	TK_IDENTIFIER '[' aritmeticExpression ']'
 			| 	LIT_INTEGER
+			|	LIT_CHAR
 			| 	'(' aritmeticExpression ')'
 			| 	'-' aritmeticExpression
 			| 	aritmeticExpression '+' aritmeticExpression
@@ -152,15 +140,16 @@ extern FILE *yyin;
 
   	booleanExpression: LIT_TRUE
 			| 	LIT_FALSE
+			|	TK_IDENTIFIER
 			| 	LIT_INTEGER
-			| 	aritmeticExpression "<=" aritmeticExpression
+			| 	aritmeticExpression OPERATOR_LE aritmeticExpression
 			| 	aritmeticExpression '<' aritmeticExpression
 			| 	aritmeticExpression '>' aritmeticExpression
-			| 	aritmeticExpression ">=" aritmeticExpression
-			| 	aritmeticExpression "==" aritmeticExpression
-			| 	aritmeticExpression "!=" aritmeticExpression
-			| 	booleanExpression "&&" booleanExpression
-			| 	booleanExpression "||" booleanExpression
+			| 	aritmeticExpression OPERATOR_GE aritmeticExpression
+			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression
+			| 	aritmeticExpression OPERATOR_NE aritmeticExpression
+			| 	booleanExpression OPERATOR_AND booleanExpression
+			| 	booleanExpression OPERATOR_OR booleanExpression
 			;
 
 
