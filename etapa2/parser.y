@@ -173,5 +173,6 @@ extern FILE *yyin;
   int yyerror(char *s)
   {
     fprintf(stderr, "line %d: %s\n", getLineNumber(), s);
+    print_hash();
     exit(3);
   }
