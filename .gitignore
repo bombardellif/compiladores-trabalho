@@ -6,6 +6,9 @@
 *.tab.c
 *.tab.h
 
+#Backup files
+*~
+
 # Object files
 *.o
 *.ko
