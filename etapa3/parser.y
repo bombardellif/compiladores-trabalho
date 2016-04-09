@@ -1,12 +1,12 @@
 /* INF01147 -­‐ Compiladores -­‐ 2016/1
- * Trabalho Prático - Etapa 2
+ * Trabalho Prático - Etapa 3
  * Autores: Fernando Bombardelli da Silva (218324)
  *          Pedro Henrique Arruda Faustini (217432)
  */
 
 %{
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "hash.h"
 #include "scanner.h"
 
@@ -39,9 +39,15 @@ extern FILE *yyin;
 %token LIT_STRING
 %token TOKEN_ERROR
 
+%left ','
+%left OPERATOR_AND OPERATOR_OR
+%left OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
+%left '*' '/'
+%left '+' '-'
+
 %union
 {
-	struct hash_node *symbol;
+	HASH *symbol;
 }
 
 
@@ -53,7 +59,7 @@ extern FILE *yyin;
 	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
 			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
+			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
@@ -87,64 +93,60 @@ extern FILE *yyin;
 			;
 
 	command: simpleCommand
-      		|    '{' listCommand '}'
-      		;
-
+  		|    '{' listCommand '}'
+  		;
 
  	listCommand: command
-     		| 	listCommand command
-      		;
+   		| 	listCommand command
+  		;
 
-  	simpleCommand: ';' /*Comando vazio*/
-		    | 	KW_INPUT listIdentifier
-		    | 	KW_OUTPUT listOutput
-		    | 	KW_RETURN expression
-		    | 	TK_IDENTIFIER '=' expression
-	 	    | 	TK_IDENTIFIER '[' expression ']' '=' expression 
-	 	    /*| expression ';' Seria permitido isso?? *TODO* */
-	 	    | 	KW_IF '(' expression ')' command KW_ELSE command
-		    | 	KW_IF '(' expression ')' command
-		    | 	KW_WHILE '(' expression ')' command
-		    ;
-      
-    expression: aritmeticExpression
+	simpleCommand: ';' /*Comando vazio*/
+	    | 	KW_INPUT listIdentifier
+	    | 	KW_OUTPUT listOutput
+	    | 	KW_RETURN expression
+	    | 	TK_IDENTIFIER '=' expression
+ 	    | 	TK_IDENTIFIER '[' expression ']' '=' expression
+			|   expression
+	    | 	KW_IF '(' expression ')' command
+ 	    | 	KW_IF '(' expression ')' command KW_ELSE command
+	    | 	KW_WHILE '(' expression ')' command
+	    ;
+
+  expression: aritmeticExpression
 			| 	booleanExpression
-      		| 	TK_IDENTIFIER '(' listExpression ')'
-      		;
+  		| 	TK_IDENTIFIER '(' listExpression ')'
+  		;
 
-  	listExpression: expression
-      		| 	listExpression ',' expression
-      		;
+	listExpression: expression
+  		| 	listExpression ',' expression
+  		;
 
-  	listIdentifier: TK_IDENTIFIER
-     		| 	listIdentifier  ',' TK_IDENTIFIER
-     		;
+	listIdentifier: TK_IDENTIFIER
+   		| 	listIdentifier  ',' TK_IDENTIFIER
+   		;
 
-  	listOutput: aritmeticExpression
+	listOutput: aritmeticExpression
 			| 	LIT_STRING
 			| 	listOutput ',' aritmeticExpression
 			| 	listOutput ',' LIT_STRING
 			;
 
-  	aritmeticExpression: TK_IDENTIFIER
+	aritmeticExpression: TK_IDENTIFIER
 			| 	TK_IDENTIFIER '[' aritmeticExpression ']'
 			| 	LIT_INTEGER
-			|	LIT_CHAR
+			|		LIT_CHAR
 			| 	'(' aritmeticExpression ')'
-			| 	'-' aritmeticExpression
+			/*| 	'-' aritmeticExpression*/
 			| 	aritmeticExpression '+' aritmeticExpression
 			| 	aritmeticExpression '-' aritmeticExpression
 			| 	aritmeticExpression '*' aritmeticExpression
 			| 	aritmeticExpression '/' aritmeticExpression
 			;
 
-  	booleanExpression: LIT_TRUE
+	booleanExpression: LIT_TRUE
 			| 	LIT_FALSE
-			|	TK_IDENTIFIER
-			| 	LIT_INTEGER
+			|		TK_IDENTIFIER
 			| 	aritmeticExpression OPERATOR_LE aritmeticExpression
-			| 	aritmeticExpression '<' aritmeticExpression
-			| 	aritmeticExpression '>' aritmeticExpression
 			| 	aritmeticExpression OPERATOR_GE aritmeticExpression
 			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression
 			| 	aritmeticExpression OPERATOR_NE aritmeticExpression
@@ -165,7 +167,7 @@ extern FILE *yyin;
   			print_hash();
   		}
     } else {
-      printf("Usage: ./etapa2 input_filepath\n");
+      printf("Usage: ./etapa3 input_filepath\n");
     }
     exit(0);
 	}

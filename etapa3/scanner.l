@@ -1,5 +1,5 @@
 /* INF01147 -­‐ Compiladores -­‐ 2016/1
- * Trabalho Prático - Etapa 2
+ * Trabalho Prático - Etapa 3
  * Autores: Fernando Bombardelli da Silva (218324)
  *          Pedro Henrique Arruda Faustini (217432)
  */
@@ -9,12 +9,13 @@ alpha   [A-Za-z]
 digit   [0-9]
 alphanum  [_0-9A-Za-z]
 %{
-#include "utils.h"
-#include "y.tab.h"
-#include "hash.h"
-#include "scanner.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "utils.h"
+#include "hash.h"
+#include "y.tab.h"
+#include "scanner.h"
+
 int scanner_running;
 int scanner_linenumber;
 
