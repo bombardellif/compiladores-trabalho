@@ -40,10 +40,11 @@ extern FILE *yyin;
 %token TOKEN_ERROR
 
 %left ','
+%left '='
 %left OPERATOR_AND OPERATOR_OR
 %left OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
-%left '*' '/'
 %left '+' '-'
+%left '*' '/'
 
 %union
 {
@@ -105,7 +106,7 @@ extern FILE *yyin;
 	    | 	KW_OUTPUT listOutput
 	    | 	KW_RETURN expression
 	    | 	TK_IDENTIFIER '=' expression
- 	    | 	TK_IDENTIFIER '[' expression ']' '=' expression
+ 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression
 			|   expression
 	    | 	KW_IF '(' expression ')' command
  	    | 	KW_IF '(' expression ')' command KW_ELSE command
@@ -145,7 +146,6 @@ extern FILE *yyin;
 
 	booleanExpression: LIT_TRUE
 			| 	LIT_FALSE
-			|		TK_IDENTIFIER
 			| 	aritmeticExpression OPERATOR_LE aritmeticExpression
 			| 	aritmeticExpression OPERATOR_GE aritmeticExpression
 			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression
