@@ -67,8 +67,8 @@ extern FILE *yyin;
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listChar ';'
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listBool ';'
 			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'		/*int main () */
 			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'
 			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'
@@ -81,6 +81,16 @@ extern FILE *yyin;
 
 	listInt:	LIT_INTEGER
 			|	listInt LIT_INTEGER
+			;
+
+	listChar:	LIT_CHAR
+			|	listChar LIT_CHAR
+			;
+
+	listBool: LIT_TRUE
+			| LIT_FALSE
+			| LIT_TRUE listBool
+			| LIT_FALSE listBool
 			;
 
 	arguments:  KW_INT TK_IDENTIFIER
@@ -98,7 +108,7 @@ extern FILE *yyin;
   		;
 
  	listCommand: command
-   		| 	listCommand command
+   		| 	command listCommand
   		;
 
 	simpleCommand: ';' /*Comando vazio*/
@@ -146,6 +156,8 @@ extern FILE *yyin;
 
 	booleanExpression: LIT_TRUE
 			| 	LIT_FALSE
+			| 	aritmeticExpression '<' aritmeticExpression
+			| 	aritmeticExpression '>' aritmeticExpression
 			| 	aritmeticExpression OPERATOR_LE aritmeticExpression
 			| 	aritmeticExpression OPERATOR_GE aritmeticExpression
 			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression
