@@ -7,7 +7,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "hash.h"
+#include "tree.h"
 #include "scanner.h"
 
 extern FILE *yyin;
