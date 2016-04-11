@@ -60,7 +60,8 @@ extern FILE *yyin;
 	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
 			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'
+			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
@@ -123,10 +124,10 @@ extern FILE *yyin;
 	    | 	KW_WHILE '(' expression ')' command
 	    ;
 
-  expression: aritmeticExpression
+  expression:   aritmeticExpression
 			| 	booleanExpression
-  		| 	TK_IDENTIFIER '(' listExpression ')'
-  		;
+  			| 	TK_IDENTIFIER '(' listExpression ')'
+  			;
 
 	listExpression: expression
   		| 	listExpression ',' expression
@@ -147,6 +148,7 @@ extern FILE *yyin;
 			| 	LIT_INTEGER
 			|		LIT_CHAR
 			| 	'(' aritmeticExpression ')'
+			|	TK_IDENTIFIER '(' listExpression ')'
 			/*| 	'-' aritmeticExpression*/
 			| 	aritmeticExpression '+' aritmeticExpression
 			| 	aritmeticExpression '-' aritmeticExpression
