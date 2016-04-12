@@ -68,7 +68,7 @@ typedef struct tree_node
 	struct tree_node* children[MAX_CHILDREN];
 } TREE;
 
-void print_tree(TREE* root);
+void print_tree(TREE* root, int spaces);
 TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
 void decompile(TREE* node, int(*output)(const char*));
 

@@ -2,38 +2,108 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void print_tree(TREE* root)
+void print_tree(TREE* root, int spaces)
 {
-	int i = 0;
+	int i;
 	if(root != NULL)
 	{
+
+		for(i=0; i < spaces; i++)
+			fprintf(stderr, " ");
+		fprintf(stderr, "Tree ");
+
 		switch (root->type)
 		{
-			case TREE_SYMBOL : 		fprintf(stderr,"SYMBOL");
-							   		break;
-			case TREE_EXPR_ARIT_ADD : 		fprintf(stderr,"UNDEFINED");
-							   		break;
-			case TREE_EXPR_ARIT_SUB : 		fprintf(stderr,"UNDEFINED");
-							   		break;
-			case TREE_EXPR_ARIT_MUL : 		fprintf(stderr,"UNDEFINED");
-							   		break;
-			case TREE_EXPR_ARIT_DIV : 		fprintf(stderr,"UNDEFINED");
-							   		break;
-			default : 				fprintf(stderr,"UNDEFINED");
-							  		break;
+			case TREE_SYMBOL : 							fprintf(stderr,"SYMBOL");
+							   											break;
+			case TREE_EXPR_ARIT_ADD : 			fprintf(stderr,"TREE_EXPR_ARIT_ADD");
+							   											break;
+			case TREE_EXPR_ARIT_SUB : 			fprintf(stderr,"TREE_EXPR_ARIT_SUB");
+							   											break;
+			case TREE_EXPR_ARIT_MUL : 			fprintf(stderr,"TREE_EXPR_ARIT_MUL");
+							   											break;
+			case TREE_EXPR_ARIT_DIV : 			fprintf(stderr,"TREE_EXPR_ARIT_DIV");
+							   											break;
+			case TREE_EXPR_ARIT_VEC_READ:		fprintf(stderr, "TREE_EXPR_ARIT_VEC_READ");
+																			break;
+			case TREE_EXPR_ARIT_FUNCALL:		fprintf(stderr, "TREE_EXPR_ARIT_FUNCALL");
+																			break;
+			case TREE_TYPE_INT:							fprintf(stderr, "TREE_TYPE_INT");
+																			break;
+			case TREE_TYPE_REAL:						fprintf(stderr, "TREE_TYPE_REAL");
+																			break;
+			case TREE_TYPE_BOOL:						fprintf(stderr, "TREE_TYPE_BOOL");
+																			break;
+			case TREE_TYPE_CHAR:						fprintf(stderr, "TREE_TYPE_CHAR");
+																			break;
+			case TREE_VAL_TRUE:							fprintf(stderr, "TREE_VAL_TRUE");
+																			break;
+			case TREE_VAL_FALSE :						fprintf(stderr, "TREE_VAL_FALSE");
+																			break;
+			case TREE_DECL_SINGLE: 					fprintf(stderr, "TREE_DECL_SINGLE");
+																			break;
+			case TREE_DECL_VECT :						fprintf(stderr, "TREE_DECL_VECT");
+																			break;
+			case TREE_DECL_FUNC :						fprintf(stderr, "TREE_DECL_FUNC");
+																			break;
+			case TREE_LIST_SYM :						fprintf(stderr, "TREE_LIST_SYM");
+																			break;
+			case TREE_LIST_ARG :						fprintf(stderr, "TREE_LIST_ARG");
+																			break;
+			case TREE_LIST_COMM :						fprintf(stderr, "TREE_LIST_COMM");
+																			break;
+			case TREE_LIST_EXPR :						fprintf(stderr, "TREE_LIST_EXPR");
+																			break;
+			case TREE_LIST_OUT :						fprintf(stderr, "TREE_LIST_OUT");
+																			break;
+			case TREE_COMM_NOP:							fprintf(stderr, "TREE_COMM_NOP");
+																			break;
+			case TREE_COMM_IN:							fprintf(stderr, "TREE_COMM_IN");
+																			break;
+			case TREE_COMM_OUT :						fprintf(stderr, "TREE_COMM_OUT");
+																			break;
+		  case TREE_COMM_ASSIG :					fprintf(stderr, "TREE_COMM_ASSIG");
+																			break;
+			case TREE_COMM_ASSIG_VEC :			fprintf(stderr, "TREE_COMM_ASSIG_VEC");
+																			break;
+			case TREE_COMM_IF_ELSE :				fprintf(stderr, "TREE_COMM_IF_ELSE");
+																			break;
+			case TREE_COMM_WHILE :					fprintf(stderr, "TREE_COMM_WHILE");
+																			break;
+			case TREE_EXPR_BOOL_LT :				fprintf(stderr, "TREE_EXPR_BOOL_LT");
+																			break;
+		  case TREE_EXPR_BOOL_GT :				fprintf(stderr, "TREE_EXPR_BOOL_GT");
+																			break;
+			case TREE_EXPR_BOOL_LE :				fprintf(stderr, "TREE_EXPR_BOOL_LE");
+																			break;
+			case TREE_EXPR_BOOL_GE :				fprintf(stderr, "TREE_EXPR_BOOL_GE");
+																			break;
+			case TREE_EXPR_BOOL_EQ :				fprintf(stderr, "TREE_EXPR_BOOL_EQ");
+																			break;
+			case TREE_EXPR_BOOL_NE :				fprintf(stderr, "TREE_EXPR_BOOL_NE");
+																			break;
+			case TREE_EXPR_BOOL_AND :				fprintf(stderr, "TREE_EXPR_BOOL_AND");
+																			break;
+			case TREE_EXPR_BOOL_OR :				fprintf(stderr, "TREE_EXPR_BOOL_OR");
+																			break;
+			case TREE_PROGRAM : 						fprintf(stderr, "TREE_PROGRAM");
+																			break;
+			default : 											fprintf(stderr,"UNDEFINED");
+							  											break;
 		}
 		if(root->symbol)
 			fprintf(stderr, "%s", root->symbol->text);
-		for(;i<MAX_CHILDREN; i++)
-			print_tree(root->children[i]);
+		for(i=0;i<MAX_CHILDREN; i++)
+			print_tree(root->children[i], spaces + 1);
 	}
 }
 
-TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
+TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
 {
 	TREE* tree;
 	tree = (TREE*) calloc(1,sizeof(TREE*));
 	tree->type = type;
+	tree->symbol = hash_symbol;
 	tree->children[0] = child0;
 	tree->children[1] = child1;
 	tree->children[2] = child2;
@@ -59,7 +129,7 @@ void decompile(TREE *node, int(*output)(const char*))
 		switch (node->type) {
 			case TREE_SYMBOL:
 				if (node->symbol)
-					printf(node->symbol->text);
+					printf("%s", node->symbol->text);
 				else
 					printf(TREE_TOKEN_ERROR);
 			break;
