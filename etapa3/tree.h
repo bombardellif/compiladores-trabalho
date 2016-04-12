@@ -27,9 +27,9 @@
 // Lists (15-19)                     #CHILD-1#    #CHILD-2#           #CHILD-3#
 #define TREE_LIST_SYM 15              //SYMBOL      LIST_SYM(ou NULL)
 #define TREE_LIST_ARG 16              //TYPE        SYMBOL            LIST_ARG(ou NULL)
-#define TREE_LIST_COMM 16             //COMMAND     LIST_COMM(ou NULL)
-#define TREE_LIST_EXPR 17             //EXPR        LIST_EXPR(ou NULL)
-#define TREE_LIST_OUT 18      //EXPR_ARIT(ou)SYMBOL LIST_OUT(ou NULL)
+#define TREE_LIST_COMM 17             //COMMAND     LIST_COMM(ou NULL)
+#define TREE_LIST_EXPR 18             //EXPR        LIST_EXPR(ou NULL)
+#define TREE_LIST_OUT 19      //EXPR_ARIT(ou)SYMBOL LIST_OUT(ou NULL)
 
 // Commands (20-29)                  #CHILD-1#    #CHILD-2#    #CHILD-3#
 #define TREE_COMM_NOP 20
@@ -58,6 +58,9 @@
 #define TREE_EXPR_BOOL_AND 46         //EXPR_BOOL   EXPR_BOOL
 #define TREE_EXPR_BOOL_OR 47          //EXPR_BOOL   EXPR_BOOL
 
+//The Program                        #CHILD-1#      #CHILD-2#
+#define TREE_PROGRAM 50             //DECLARATION    PROGRAM(ou NULL)
+
 typedef struct tree_node
 {
 	int type;
@@ -67,5 +70,6 @@ typedef struct tree_node
 
 void print_tree(TREE* root);
 TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
+void decompile(TREE* node);
 
 #endif
