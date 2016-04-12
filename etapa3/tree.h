@@ -70,6 +70,6 @@ typedef struct tree_node
 
 void print_tree(TREE* root);
 TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
-void decompile(TREE* node);
+void decompile(TREE* node, int(*output)(const char*));
 
 #endif

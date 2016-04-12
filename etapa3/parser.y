@@ -11,6 +11,8 @@
 #include "scanner.h"
 
 extern FILE *yyin;
+FILE *outfile;
+TREE *ast_program = NULL;
 %}
 
 
@@ -60,7 +62,7 @@ extern FILE *yyin;
 	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
 			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
-			/*|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'*/
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'
 			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
@@ -68,7 +70,7 @@ extern FILE *yyin;
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
 			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'		/*int main () */
 			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'
@@ -82,6 +84,12 @@ extern FILE *yyin;
 
 	listInt:	LIT_INTEGER
 			|	listInt LIT_INTEGER
+			;
+
+	listCharInt:	LIT_INTEGER
+			| LIT_CHAR
+			| listCharInt LIT_CHAR
+			|	listCharInt LIT_INTEGER
 			;
 
 	arguments:  KW_INT TK_IDENTIFIER
@@ -159,18 +167,25 @@ extern FILE *yyin;
 
 
 %%
+	int write_to_file(const char* text)
+	{
+		return fprintf(outfile, text);
+	}
+
 	int main(int argc, char* argv[])
 	{
-		if (argc > 1 && (yyin = fopen(argv[1], "r")))
+		if (argc > 2 && (yyin = fopen(argv[1], "r")) && (outfile = fopen(argv[2], "w")))
     {
       initMe();
   		if(yyparse() == 0)
   		{
   			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
   			print_hash();
+				// Descompila
+				decompile(ast_program, write_to_file);
   		}
     } else {
-      printf("Usage: ./etapa3 input_filepath\n");
+      printf("Usage: ./etapa3 input_filepath output_filepath\n");
     }
     exit(0);
 	}

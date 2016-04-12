@@ -42,18 +42,18 @@ TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* chil
 }
 
 #define TREE_TOKEN_ERROR "__"
-void print_commands(TREE *node) {
+void print_commands(TREE *node, int(*output)(const char*)) {
 	// Se for bloco (look forward)
 	if (node->children[1]) {
 		printf("{\n");
-		decompile(node);
+		decompile(node, output);
 		printf("\n}");
 	} else {
-		decompile(node);
+		decompile(node, output);
 	}
 }
 
-void decompile(TREE *node)
+void decompile(TREE *node, int(*output)(const char*))
 {
 	if (node) {
 		switch (node->type) {
@@ -82,62 +82,62 @@ void decompile(TREE *node)
 				printf("FALSE");
 			break;
 			case TREE_DECL_SINGLE:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				// Se tem inicialização de valores
 				if (node->children[2]) {
 					printf(": ");
-					decompile(node->children[2]);
+					decompile(node->children[2], output);
 					printf(";");
 				}
 			break;
 			case TREE_DECL_VECT:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf("[");
-				decompile(node->children[2]);
+				decompile(node->children[2], output);
 				printf("]");
 				// Se tem inicialização de valores
 				if (node->children[3]) {
 					printf(": ");
-					decompile(node->children[3]);
+					decompile(node->children[3], output);
 					printf(";");
 				}
 			break;
 			case TREE_DECL_FUNC:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf("(");
-				decompile(node->children[2]);
+				decompile(node->children[2], output);
 				printf(") ");
 
-				print_commands(node->children[3]);
+				print_commands(node->children[3], output);
 				printf(";");
 			break;
 			case TREE_LIST_SYM:case TREE_LIST_EXPR:case TREE_LIST_OUT:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				if (node->children[1]) {
 					printf(", ");
-					decompile(node->children[1]);
+					decompile(node->children[1], output);
 				}
 			break;
 			case TREE_LIST_ARG:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				if (node->children[2]) {
 					printf(", ");
-					decompile(node->children[2]);
+					decompile(node->children[2], output);
 				}
 			break;
 			case TREE_PROGRAM: case TREE_LIST_COMM:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				if (node->children[1]) {
 					printf("\n");
-					decompile(node->children[1]);
+					decompile(node->children[1], output);
 				}
 			break;
 			case TREE_COMM_NOP:
@@ -145,123 +145,123 @@ void decompile(TREE *node)
 			break;
 			case TREE_COMM_IN:
 				printf("input ");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 			break;
 			case TREE_COMM_OUT:
 				printf("output ");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 			break;
 			case TREE_COMM_ASSIG:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" = ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_COMM_ASSIG_VEC:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf("[");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf("] = ");
-				decompile(node->children[2]);
+				decompile(node->children[2], output);
 			break;
 			case TREE_COMM_IF_ELSE:
 				printf("if (");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(") ");
 
-				print_commands(node->children[1]);
+				print_commands(node->children[1], output);
 
 				// Se tem ELSE
 				if (node->children[2]) {
 					printf(" else ");
-					print_commands(node->children[2]);
+					print_commands(node->children[2], output);
 				}
 			break;
 			case TREE_COMM_WHILE:
 				printf("while (");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(") ");
 
-				print_commands(node->children[1]);
+				print_commands(node->children[1], output);
 			break;
 			case TREE_EXPR_ARIT_FUNCALL:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf("(");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf(")");
 			break;
 			case TREE_EXPR_ARIT_VEC_READ:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf("[");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf("]");
 			break;
 			case TREE_EXPR_ARIT_ADD:
 				printf("(");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" + ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf(")");
 			break;
 			case TREE_EXPR_ARIT_SUB:
 				printf("(");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" - ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf(")");
 			break;
 			case TREE_EXPR_ARIT_MUL:
 				printf("(");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" * ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf(")");
 			break;
 			case TREE_EXPR_ARIT_DIV:
 				printf("(");
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" / ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 				printf(")");
 			break;
 			case TREE_EXPR_BOOL_LT:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" < ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_GT:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" > ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_LE:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" <= ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_GE:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" >= ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_EQ:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" == ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_NE:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" != ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_AND:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" && ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			case TREE_EXPR_BOOL_OR:
-				decompile(node->children[0]);
+				decompile(node->children[0], output);
 				printf(" || ");
-				decompile(node->children[1]);
+				decompile(node->children[1], output);
 			break;
 			default:
 				printf(TREE_TOKEN_ERROR);
