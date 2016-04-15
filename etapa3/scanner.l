@@ -12,7 +12,7 @@ alphanum  [_0-9A-Za-z]
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
-#include "hash.h"
+#include "tree.h"
 #include "scanner.h"
 #include "y.tab.h"
 

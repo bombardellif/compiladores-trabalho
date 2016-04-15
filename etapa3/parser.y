@@ -50,26 +50,28 @@ FILE *outfile;
 %union
 {
   HASH *symbol;
-  struct tree_node *ast_program;
+  TREE *ast_program;
 }
 
-%type <ast_program> beginnig declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression
+%type <ast_program> beginnig program declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_WHILE KW_INPUT KW_RETURN KW_OUTPUT OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_EQ OPERATOR_AND OPERATOR_OR TOKEN_ERROR
+
+%type <symbol> TK_IDENTIFIER LIT_INTEGER LIT_FALSE LIT_TRUE LIT_CHAR LIT_STRING
 
 
 %%
 
-  beginnig: program                                                                  {ast_program = $1;}
+  beginnig: program                                                                  {ast_program = $1; }
       ;
 
 	program: declaration program
 			|
 			;
 
-	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'                          {$$ = 0;}
+	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'                          		 {$$ = 0;}
 			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
 			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'                                  {$$ = 0;}
-			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
+			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
 			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                            {$$ = 0;}
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
@@ -177,6 +179,7 @@ FILE *outfile;
 	{
 		return fprintf(outfile, text);
 	}
+	
 
 	int main(int argc, char* argv[])
 	{
