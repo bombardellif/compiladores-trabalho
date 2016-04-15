@@ -47,23 +47,22 @@ FILE *outfile;
 %left '+' '-'
 %left '*' '/'
 
+%start beginning
+
 %union
 {
   HASH *symbol;
   TREE *ast_program;
 }
 
-%type <ast_program> beginnig program declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_EQ OPERATOR_AND OPERATOR_OR TOKEN_ERROR
-
-%type <symbol> TK_IDENTIFIER LIT_INTEGER LIT_FALSE LIT_TRUE LIT_CHAR LIT_STRING
+%type <ast_program> beginning program declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression 
 
 
 %%
+	beginning: program			{ast_program = $1;}
+		;
 
-  beginnig: program    																{ast_program = $1;} 
-      ;
-
-	program: declaration program
+	program: declaration program								
 			|
 			;
 
