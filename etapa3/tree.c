@@ -7,7 +7,6 @@ void print_tree(TREE* root, int spaces)
 	int i;
 	if(root != NULL)
 	{
-
 		for(i=0; i < spaces; i++)
 			fprintf(stderr, " ");
 		fprintf(stderr, "Tree ");
@@ -111,7 +110,6 @@ TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE*
 	return tree;
 }
 
-#define TREE_TOKEN_ERROR "__"
 void print_commands(TREE *node, int(*output)(const char*)) {
 	// Se for bloco (look forward)
 	if (node->children[1]) {

@@ -13,8 +13,8 @@ alphanum  [_0-9A-Za-z]
 #include <stdlib.h>
 #include "utils.h"
 #include "hash.h"
-#include "y.tab.h"
 #include "scanner.h"
+#include "y.tab.h"
 
 int scanner_running;
 int scanner_linenumber;

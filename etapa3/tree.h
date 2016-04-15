@@ -10,6 +10,8 @@
 #include "hash.h"
 #define MAX_CHILDREN 4
 
+#define TREE_TOKEN_ERROR "__"
+
 // Leaf nodes (0-9)
 #define TREE_SYMBOL 0               //Has the Pointer to Sym table
 #define TREE_TYPE_INT 1
@@ -69,7 +71,7 @@ typedef struct tree_node
 } TREE;
 
 void print_tree(TREE* root, int spaces);
-TREE* create_tree(int type, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
+TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
 void decompile(TREE* node, int(*output)(const char*));
 
 #endif

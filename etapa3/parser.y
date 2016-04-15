@@ -12,7 +12,6 @@
 
 extern FILE *yyin;
 FILE *outfile;
-TREE *ast_program = NULL;
 %}
 
 
@@ -50,119 +49,126 @@ TREE *ast_program = NULL;
 
 %union
 {
-	HASH *symbol;
+  HASH *symbol;
+  struct tree_node *ast_program;
 }
+
+%type <ast_program> beginnig declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression
 
 
 %%
+
+  beginnig: program                                                                  {ast_program = $1;}
+      ;
+
 	program: declaration program
 			|
 			;
 
-	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'	/*int a : 5 */
-			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'
-			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'
-			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'		/*int main () */
-			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'
-			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'
-			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' command ';'
-			|	 KW_INT	TK_IDENTIFIER 	'('  ')' command ';'
-			|	 KW_REAL TK_IDENTIFIER 	'('  ')' command ';'
-			|	 KW_CHAR TK_IDENTIFIER 	'('  ')' command ';'
-			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' command ';'
+	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'                          {$$ = 0;}
+			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'                                  {$$ = 0;}
+			|  KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                            {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = 0;}
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'               {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'           {$$ = 0;}
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = 0;}
+			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
+			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
+			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
+			|	 KW_INT	TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
+			|	 KW_REAL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
+			|	 KW_CHAR TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
+			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
 			;
 
-	listInt:	LIT_INTEGER
-			|	listInt LIT_INTEGER
+	listInt:	LIT_INTEGER                                                          {$$ = 0;}
+			|	listInt LIT_INTEGER                                                      {$$ = 0;}
 			;
 
-	listCharInt:	LIT_INTEGER
-			| LIT_CHAR
-			| listCharInt LIT_CHAR
-			|	listCharInt LIT_INTEGER
+	listCharInt:	LIT_INTEGER                                                      {$$ = 0;}
+			| LIT_CHAR                                                                 {$$ = 0;}
+			| listCharInt LIT_CHAR                                                     {$$ = 0;}
+			|	listCharInt LIT_INTEGER                                                  {$$ = 0;}
 			;
 
-	arguments:  KW_INT TK_IDENTIFIER
-			|	KW_CHAR TK_IDENTIFIER
-			|	KW_REAL	TK_IDENTIFIER
-			|	KW_BOOL TK_IDENTIFIER
-			|	arguments ',' KW_CHAR TK_IDENTIFIER
-			|	arguments ',' KW_REAL TK_IDENTIFIER
-			|	arguments ',' KW_INT TK_IDENTIFIER
-			|	arguments ',' KW_BOOL TK_IDENTIFIER
+	arguments:  KW_INT TK_IDENTIFIER                                               {$$ = 0;}
+			|	KW_CHAR TK_IDENTIFIER                                                    {$$ = 0;}
+			|	KW_REAL	TK_IDENTIFIER                                                    {$$ = 0;}
+			|	KW_BOOL TK_IDENTIFIER                                                    {$$ = 0;}
+			|	arguments ',' KW_CHAR TK_IDENTIFIER                                      {$$ = 0;}
+			|	arguments ',' KW_REAL TK_IDENTIFIER                                      {$$ = 0;}
+			|	arguments ',' KW_INT TK_IDENTIFIER                                       {$$ = 0;}
+			|	arguments ',' KW_BOOL TK_IDENTIFIER                                      {$$ = 0;}
 			;
 
-	command: simpleCommand
-  		|    '{' listCommand '}'
+	command: simpleCommand                                                         {$$ = 0;}
+  		|    '{' listCommand '}'                                                   {$$ = 0;}
   		;
 
- 	listCommand: command
-   		| 	command listCommand
+ 	listCommand: command                                                           {$$ = 0;}
+   		| 	command listCommand                                                    {$$ = 0;}
   		;
 
-	simpleCommand: ';' /*Comando vazio*/
-	    | 	KW_INPUT listIdentifier
-	    | 	KW_OUTPUT listOutput
-	    | 	KW_RETURN expression
-	    | 	TK_IDENTIFIER '=' expression
- 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression
+	simpleCommand: ';' /*Comando vazio*/                                           {$$ = 0;}
+	    | 	KW_INPUT listIdentifier                                                {$$ = 0;}
+	    | 	KW_OUTPUT listOutput                                                   {$$ = 0;}
+	    | 	KW_RETURN expression                                                   {$$ = 0;}
+	    | 	TK_IDENTIFIER '=' expression                                           {$$ = 0;}
+ 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression                        {$$ = 0;}
 			/*|   expression === Não se pode chamar uma função fora de atribuições */
-	    | 	KW_IF '(' expression ')' command
- 	    | 	KW_IF '(' expression ')' command KW_ELSE command
-	    | 	KW_WHILE '(' expression ')' command
+	    | 	KW_IF '(' expression ')' command                                       {$$ = 0;}
+ 	    | 	KW_IF '(' expression ')' command KW_ELSE command                       {$$ = 0;}
+	    | 	KW_WHILE '(' expression ')' command                                    {$$ = 0;}
 	    ;
 
-  expression: aritmeticExpression
-			| 	booleanExpression
+  expression: aritmeticExpression                                                {$$ = 0;}
+			| 	booleanExpression                                                      {$$ = 0;}
 			;
 
-	listExpression: expression
-  		| 	listExpression ',' expression
+	listExpression: expression                                                     {$$ = 0;}
+  		| 	listExpression ',' expression                                          {$$ = 0;}
   		;
 
-	listIdentifier: TK_IDENTIFIER
-   		| 	listIdentifier  ',' TK_IDENTIFIER
+	listIdentifier: TK_IDENTIFIER                                                  {$$ = 0;}
+   		| 	listIdentifier  ',' TK_IDENTIFIER                                      {$$ = 0;}
    		;
 
-	listOutput: aritmeticExpression
-			| 	LIT_STRING
-			| 	listOutput ',' aritmeticExpression
-			| 	listOutput ',' LIT_STRING
+	listOutput: aritmeticExpression                                                {$$ = 0;}
+			| 	LIT_STRING                                                             {$$ = 0;}
+			| 	listOutput ',' aritmeticExpression                                     {$$ = 0;}
+			| 	listOutput ',' LIT_STRING                                              {$$ = 0;}
 			;
 
-	aritmeticExpression: TK_IDENTIFIER
-			| 	TK_IDENTIFIER '[' aritmeticExpression ']'
-			| 	LIT_INTEGER
-			|		LIT_CHAR
-			| 	'(' aritmeticExpression ')'
-			|		TK_IDENTIFIER '(' listExpression ')'
+	aritmeticExpression: TK_IDENTIFIER                                             {$$ = 0;}
+			| 	TK_IDENTIFIER '[' aritmeticExpression ']'                              {$$ = 0;}
+			| 	LIT_INTEGER                                                            {$$ = 0;}
+			|		LIT_CHAR                                                               {$$ = 0;}
+			| 	'(' aritmeticExpression ')'                                            {$$ = 0;}
+			|		TK_IDENTIFIER '(' listExpression ')'                                   {$$ = 0;}
 			/*| 	'-' aritmeticExpression*/
-			| 	aritmeticExpression '+' aritmeticExpression
-			| 	aritmeticExpression '-' aritmeticExpression
-			| 	aritmeticExpression '*' aritmeticExpression
-			| 	aritmeticExpression '/' aritmeticExpression
+			| 	aritmeticExpression '+' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression '-' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression '*' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression '/' aritmeticExpression                            {$$ = 0;}
 			;
 
-	booleanExpression: LIT_TRUE
-			| 	LIT_FALSE
-			| 	aritmeticExpression '<' aritmeticExpression
-			| 	aritmeticExpression '>' aritmeticExpression
-			| 	aritmeticExpression OPERATOR_LE aritmeticExpression
-			| 	aritmeticExpression OPERATOR_GE aritmeticExpression
-			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression
-			| 	aritmeticExpression OPERATOR_NE aritmeticExpression
-			| 	booleanExpression OPERATOR_AND booleanExpression
-			| 	booleanExpression OPERATOR_OR booleanExpression
+	booleanExpression: LIT_TRUE                                                    {$$ = 0;}
+			| 	LIT_FALSE                                                              {$$ = 0;}
+			| 	aritmeticExpression '<' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression '>' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression OPERATOR_LE aritmeticExpression                    {$$ = 0;}
+			| 	aritmeticExpression OPERATOR_GE aritmeticExpression                    {$$ = 0;}
+			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression                    {$$ = 0;}
+			| 	aritmeticExpression OPERATOR_NE aritmeticExpression                    {$$ = 0;}
+			| 	booleanExpression OPERATOR_AND booleanExpression                       {$$ = 0;}
+			| 	booleanExpression OPERATOR_OR booleanExpression                        {$$ = 0;}
 			;
 
 
@@ -180,9 +186,12 @@ TREE *ast_program = NULL;
   		if(yyparse() == 0)
   		{
   			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
-  			print_hash();
+        printf("##### HASH #####\n");
+        print_hash();
+        printf("###############\n");
 				// Descompila
 				decompile(ast_program, write_to_file);
+        print_tree(ast_program,0);
   		}
     } else {
       printf("Usage: ./etapa3 input_filepath output_filepath\n");
