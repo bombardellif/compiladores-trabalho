@@ -53,14 +53,14 @@ FILE *outfile;
   TREE *ast_program;
 }
 
-%type <ast_program> beginnig program declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_WHILE KW_INPUT KW_RETURN KW_OUTPUT OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_EQ OPERATOR_AND OPERATOR_OR TOKEN_ERROR
+%type <ast_program> beginnig program declaration listInt listCharInt arguments command listCommand simpleCommand expression listExpression listIdentifier listOutput aritmeticExpression booleanExpression OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_EQ OPERATOR_AND OPERATOR_OR TOKEN_ERROR
 
 %type <symbol> TK_IDENTIFIER LIT_INTEGER LIT_FALSE LIT_TRUE LIT_CHAR LIT_STRING
 
 
 %%
 
-  beginnig: program                                                                  {ast_program = $1; }
+  beginnig: program    																{ast_program = $1;} 
       ;
 
 	program: declaration program
@@ -97,7 +97,7 @@ FILE *outfile;
 	listCharInt:	LIT_INTEGER                                                      {$$ = 0;}
 			| LIT_CHAR                                                                 {$$ = 0;}
 			| listCharInt LIT_CHAR                                                     {$$ = 0;}
-			|	listCharInt LIT_INTEGER                                                  {$$ = 0;}
+			| listCharInt LIT_INTEGER                                                  {$$ = 0;}
 			;
 
 	arguments:  KW_INT TK_IDENTIFIER                                               {$$ = 0;}
@@ -192,9 +192,8 @@ FILE *outfile;
         printf("##### HASH #####\n");
         print_hash();
         printf("###############\n");
-				// Descompila
-				decompile(ast_program, write_to_file);
-        print_tree(ast_program,0);
+		// Descompila
+		decompile(ast_program, write_to_file);
   		}
     } else {
       printf("Usage: ./etapa3 input_filepath output_filepath\n");

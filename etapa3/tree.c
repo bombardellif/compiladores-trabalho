@@ -95,6 +95,7 @@ void print_tree(TREE* root, int spaces)
 		for(i=0;i<MAX_CHILDREN; i++)
 			print_tree(root->children[i], spaces + 1);
 	}
+	else printf("Null Tree!\n");
 }
 
 TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
