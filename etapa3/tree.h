@@ -20,6 +20,7 @@
 #define TREE_TYPE_CHAR 4
 #define TREE_VAL_TRUE 5
 #define TREE_VAL_FALSE 6
+#define TREE_TYPE_STRING 7																					/*NOVO*/
 
 // Declarations (10-14)              #CHILD-1#    #CHILD-2#   #CHILD-3#       #CHILD-4#
 #define TREE_DECL_SINGLE 10           //TYPE        SYMBOL      SYMBOL(ou NULL)
@@ -31,7 +32,7 @@
 #define TREE_LIST_ARG 16              //TYPE        SYMBOL            LIST_ARG(ou NULL)
 #define TREE_LIST_COMM 17             //COMMAND     LIST_COMM(ou NULL)
 #define TREE_LIST_EXPR 18             //EXPR        LIST_EXPR(ou NULL)
-#define TREE_LIST_OUT 19      //EXPR_ARIT(ou)SYMBOL LIST_OUT(ou NULL)
+#define TREE_LIST_OUT 19      		  //EXPR_ARIT(ou)SYMBOL LIST_OUT(ou NULL)
 
 // Commands (20-29)                  #CHILD-1#    #CHILD-2#    #CHILD-3#
 #define TREE_COMM_NOP 20
@@ -41,6 +42,7 @@
 #define TREE_COMM_ASSIG_VEC 24        //SYMBOL      EXPR        EXPR
 #define TREE_COMM_IF_ELSE 25          //EXPR        LIST_COMM   LIST_COMM(ou NULL)
 #define TREE_COMM_WHILE 26            //EXPR        LIST_COMM
+#define TREE_COMM_RETURN 27			  //EXPR																/*NOVO*/
 
 // Aritmetics (30-39)                #CHILD-1#      #CHILD-2#
 #define TREE_EXPR_ARIT_FUNCALL 30     //SYMBOL      LIST_EXPR

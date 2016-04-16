@@ -66,110 +66,110 @@ FILE *outfile;
 			|
 			;
 
-	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'                          		 {$$ = 0;}
-			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'                                  {$$ = 0;}
-			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = 0;}
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                            {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = 0;}
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = 0;}
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'               {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'           {$$ = 0;}
-			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = 0;}
-			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
-			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
-			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = 0;}
-			|	 KW_INT	TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
-			|	 KW_REAL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
-			|	 KW_CHAR TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
-			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = 0;}
+	declaration: KW_INT TK_IDENTIFIER ':' LIT_INTEGER ';'                          		 {$$ = create_tree(TREE_DECL_SINGLE, 0, $1, $2, $4, 0);}
+			|	 KW_BOOL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = create_tree(TREE_DECL_SINGLE, 0, $1, $2, $4, 0);}
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = create_tree(TREE_DECL_SINGLE, 0, $1, $2, $4, 0);}
+			|	 KW_CHAR TK_IDENTIFIER ':' LIT_CHAR ';'                                  {$$ = create_tree(TREE_DECL_SINGLE, 0, $1, $2, $4, 0);}
+			|  	 KW_REAL TK_IDENTIFIER ':' LIT_INTEGER ';'                               {$$ = create_tree(TREE_DECL_SINGLE, 0, $1, $2, $4, 0);}
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, NULL);}
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                            {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, NULL);}
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, NULL);}
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, NULL);}
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, $7);}
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, $7);}
+			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'           {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, $7);}
+			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, $1, $2, $4, $7);}
+			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, $4, $6);}
+			|	 KW_REAL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, $4, $6);}
+			|	 KW_CHAR TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, $4, $6);}
+			|	 KW_BOOL TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, $4, $6);}
+			|	 KW_INT	TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, NULL, $6);}
+			|	 KW_REAL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, NULL, $6);}
+			|	 KW_CHAR TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, NULL, $6);}
+			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, NULL, $6);}
 			;
 
-	listInt:	LIT_INTEGER                                                          {$$ = 0;}
-			|	listInt LIT_INTEGER                                                      {$$ = 0;}
+	listInt:	LIT_INTEGER                                                          {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
+			|	listInt LIT_INTEGER                                                      {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			;
 
-	listCharInt:	LIT_INTEGER                                                      {$$ = 0;}
-			| LIT_CHAR                                                                 {$$ = 0;}
-			| listCharInt LIT_CHAR                                                     {$$ = 0;}
-			| listCharInt LIT_INTEGER                                                  {$$ = 0;}
+	listCharInt:	LIT_INTEGER                                                      {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
+			| LIT_CHAR                                                                 {$$ = create_tree(TREE_TYPE_CHAR, $1, 0, 0, 0, 0);}   
+			| listCharInt LIT_CHAR                                                     	 {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
+			| listCharInt LIT_INTEGER                                                  	 {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			;
 
-	arguments:  KW_INT TK_IDENTIFIER                                               {$$ = 0;}
-			|	KW_CHAR TK_IDENTIFIER                                                    {$$ = 0;}
-			|	KW_REAL	TK_IDENTIFIER                                                    {$$ = 0;}
-			|	KW_BOOL TK_IDENTIFIER                                                    {$$ = 0;}
-			|	arguments ',' KW_CHAR TK_IDENTIFIER                                      {$$ = 0;}
-			|	arguments ',' KW_REAL TK_IDENTIFIER                                      {$$ = 0;}
-			|	arguments ',' KW_INT TK_IDENTIFIER                                       {$$ = 0;}
-			|	arguments ',' KW_BOOL TK_IDENTIFIER                                      {$$ = 0;}
+	arguments:  KW_INT TK_IDENTIFIER                                               		 {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
+			|	KW_CHAR TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
+			|	KW_REAL	TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
+			|	KW_BOOL TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
+			|	arguments ',' KW_CHAR TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
+			|	arguments ',' KW_REAL TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
+			|	arguments ',' KW_INT TK_IDENTIFIER                                       {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
+			|	arguments ',' KW_BOOL TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
 			;
 
-	command: simpleCommand                                                         {$$ = 0;}
-  		|    '{' listCommand '}'                                                   {$$ = 0;}
+	command: simpleCommand                                                         {$$ = $1;}
+  		|    '{' listCommand '}'                                                   {$$ = $2;}
   		;
 
- 	listCommand: command                                                           {$$ = 0;}
-   		| 	command listCommand                                                    {$$ = 0;}
+ 	listCommand: command                                                           {$$ = $1;}
+   		| 	listCommand command                                                    {$$ = create_tree(TREE_LIST_COMM, 0, $3, $1, 0, 0);}
   		;
 
-	simpleCommand: ';' /*Comando vazio*/                                           {$$ = 0;}
-	    | 	KW_INPUT listIdentifier                                                {$$ = 0;}
-	    | 	KW_OUTPUT listOutput                                                   {$$ = 0;}
-	    | 	KW_RETURN expression                                                   {$$ = 0;}
-	    | 	TK_IDENTIFIER '=' expression                                           {$$ = 0;}
- 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression                        {$$ = 0;}
+	simpleCommand: ';' /*Comando vazio*/                                           {$$ = create_tree(TREE_COMM_NOP, 0, $1, 0, 0, 0);}
+	    | 	KW_INPUT listIdentifier                                                {$$ = create_tree(TREE_COMM_IN, 0, $1, 0, 0, 0);}
+	    | 	KW_OUTPUT listOutput                                                   {$$ = create_tree(TREE_COMM_OU, 0, $1, 0, 0, 0);}
+	    | 	KW_RETURN expression                                                   {$$ = create_tree(TREE_COMM_RETURN, 0, $1, 0, 0, 0);} /*TREE_COMM_RETURN não havia no tree.h, pus depois*/
+	    | 	TK_IDENTIFIER '=' expression                                           {$$ = create_tree(TREE_COMM_ASSIG, 0, $1, $3, 0, 0);}
+ 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression                        {$$ = create_tree(TREE_COMM_ASSIG_VEC, $1, $3, $6, 0, 0);}
 			/*|   expression === Não se pode chamar uma função fora de atribuições */
-	    | 	KW_IF '(' expression ')' command                                       {$$ = 0;}
- 	    | 	KW_IF '(' expression ')' command KW_ELSE command                       {$$ = 0;}
-	    | 	KW_WHILE '(' expression ')' command                                    {$$ = 0;}
+	    | 	KW_IF '(' expression ')' command                                       {$$ = create_tree(TREE_COMM_IF_ELSE, 0, $1, $3, $5, NULL);}
+ 	    | 	KW_IF '(' expression ')' command KW_ELSE command                       {$$ = create_tree(TREE_COMM_IF_ELSE, 0, $1, $3, $5, $6);}
+	    | 	KW_WHILE '(' expression ')' command                                    {$$ = create_tree(TREE_COMM_WHILE, 0, $1, $3, $5, 0);}
 	    ;
 
-  expression: aritmeticExpression                                                {$$ = 0;}
-			| 	booleanExpression                                                      {$$ = 0;}
+  expression: aritmeticExpression                                                {$$ = $1;}
+			| 	booleanExpression                                                {$$ = $1;}
 			;
 
-	listExpression: expression                                                     {$$ = 0;}
-  		| 	listExpression ',' expression                                          {$$ = 0;}
+	listExpression: expression                                                     {$$ = $1;}
+  		| 	listExpression ',' expression                                          {$$ = create_tree(TREE_LIST_EXPR, 0, $3, $1, 0, 0);}
   		;
 
-	listIdentifier: TK_IDENTIFIER                                                  {$$ = 0;}
-   		| 	listIdentifier  ',' TK_IDENTIFIER                                      {$$ = 0;}
+	listIdentifier: TK_IDENTIFIER                                                  {$$ = create_tree(TREE_SYMBOL, $1, 0, 0, 0, 0);}
+   		| 	listIdentifier  ',' TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_SYM, 0, $3, $1, 0, 0);}
    		;
 
-	listOutput: aritmeticExpression                                                {$$ = 0;}
-			| 	LIT_STRING                                                             {$$ = 0;}
-			| 	listOutput ',' aritmeticExpression                                     {$$ = 0;}
-			| 	listOutput ',' LIT_STRING                                              {$$ = 0;}
+	listOutput: aritmeticExpression                                                {$$ = $1;}
+			| 	LIT_STRING                                                             {$$ = create_tree(TREE_TYPE_STRING, $1, 0, 0, 0, 0);}
+			| 	listOutput ',' aritmeticExpression                                     {$$ = create_tree(TREE_LIST_OUT, 0, $3, $1, 0, 0);}
+			| 	listOutput ',' LIT_STRING                                              {$$ = create_tree(TREE_LIST_OUT, 0, $3, $1, 0, 0, 0);}
 			;
 
-	aritmeticExpression: TK_IDENTIFIER                                             {$$ = 0;}
-			| 	TK_IDENTIFIER '[' aritmeticExpression ']'                              {$$ = 0;}
-			| 	LIT_INTEGER                                                            {$$ = 0;}
-			|		LIT_CHAR                                                               {$$ = 0;}
-			| 	'(' aritmeticExpression ')'                                            {$$ = 0;}
-			|		TK_IDENTIFIER '(' listExpression ')'                                   {$$ = 0;}
+	aritmeticExpression: TK_IDENTIFIER                                             {$$ = create_tree(TREE_SYMBOL, $1, 0, 0, 0, 0);}
+			| 	TK_IDENTIFIER '[' aritmeticExpression ']'                              {$$ = create_tree(TREE_DECL_VECT, 0, $1, $3, 0, 0);}
+			| 	LIT_INTEGER                                                            {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
+			|		LIT_CHAR                                                       {$$ = create_tree(TREE_TYPE_CHAR, $1, 0, 0, 0, 0);}
+			| 	'(' aritmeticExpression ')'                                            {$$ = $2;}
+			|		TK_IDENTIFIER '(' listExpression ')'                               {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $3, 0, 0);}
 			/*| 	'-' aritmeticExpression*/
-			| 	aritmeticExpression '+' aritmeticExpression                            {$$ = 0;}
-			| 	aritmeticExpression '-' aritmeticExpression                            {$$ = 0;}
-			| 	aritmeticExpression '*' aritmeticExpression                            {$$ = 0;}
-			| 	aritmeticExpression '/' aritmeticExpression                            {$$ = 0;}
+			| 	aritmeticExpression '+' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_ADD, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression '-' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_SUB, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression '*' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_MUL, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression '/' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_DIV, 0, $1, 0, $3, 0);}
 			;
 
-	booleanExpression: LIT_TRUE                                                    {$$ = 0;}
-			| 	LIT_FALSE                                                              {$$ = 0;}
-			| 	aritmeticExpression '<' aritmeticExpression                            {$$ = 0;}
-			| 	aritmeticExpression '>' aritmeticExpression                            {$$ = 0;}
-			| 	aritmeticExpression OPERATOR_LE aritmeticExpression                    {$$ = 0;}
-			| 	aritmeticExpression OPERATOR_GE aritmeticExpression                    {$$ = 0;}
-			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression                    {$$ = 0;}
-			| 	aritmeticExpression OPERATOR_NE aritmeticExpression                    {$$ = 0;}
-			| 	booleanExpression OPERATOR_AND booleanExpression                       {$$ = 0;}
-			| 	booleanExpression OPERATOR_OR booleanExpression                        {$$ = 0;}
+	booleanExpression: LIT_TRUE                                                    	   {$$ = create_tree(TREE_VAL_TRUE, $1, 0, 0, 0, 0);}
+			| 	LIT_FALSE                                                          	   {$$ = create_tree(TREE_VAL_FALSE, $1, 0, 0, 0, 0);}
+			| 	aritmeticExpression '<' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_LT, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression '>' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_GT, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression OPERATOR_LE aritmeticExpression                    {$$ = create_tree(TREE_EXPR_ARIT_LE, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression OPERATOR_GE aritmeticExpression                    {$$ = create_tree(TREE_EXPR_ARIT_GE, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression OPERATOR_EQ aritmeticExpression                    {$$ = create_tree(TREE_EXPR_ARIT_EQ, 0, $1, 0, $3, 0);}
+			| 	aritmeticExpression OPERATOR_NE aritmeticExpression                    {$$ = create_tree(TREE_EXPR_ARIT_NE, 0, $1, 0, $3, 0);}
+			| 	booleanExpression OPERATOR_AND booleanExpression                       {$$ = create_tree(TREE_EXPR_BOOL_AND, 0, $1, 0, $3, 0);}
+			| 	booleanExpression OPERATOR_OR booleanExpression                        {$$ = create_tree(TREE_EXPR_BOOL_OR, 0, $1, 0, $3, 0);}
 			;
 
 
