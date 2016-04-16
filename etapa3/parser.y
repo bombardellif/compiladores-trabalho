@@ -99,10 +99,10 @@ FILE *outfile;
 			| listCharInt LIT_INTEGER                                                  	 {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			;
 
-	arguments:  KW_INT TK_IDENTIFIER                                               		 {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
-			|	KW_CHAR TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
-			|	KW_REAL	TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
-			|	KW_BOOL TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, NULL, 0);}
+	arguments:  KW_INT TK_IDENTIFIER                                               		 {$$ = create_tree(TREE_LIST_ARG, 0, $1, $2, NULL, 0);}
+			|	KW_CHAR TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $1, $2, NULL, 0);}
+			|	KW_REAL	TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $1, $2, NULL, 0);}
+			|	KW_BOOL TK_IDENTIFIER                                                    {$$ = create_tree(TREE_LIST_ARG, 0, $1, $2, NULL, 0);}
 			|	arguments ',' KW_CHAR TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
 			|	arguments ',' KW_REAL TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
 			|	arguments ',' KW_INT TK_IDENTIFIER                                       {$$ = create_tree(TREE_LIST_ARG, 0, $3, $4, $1, 0);}
