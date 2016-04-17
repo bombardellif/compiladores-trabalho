@@ -101,7 +101,7 @@ void print_tree(TREE* root, int spaces)
 TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
 {
 	TREE* tree;
-	tree = (TREE*) calloc(1,sizeof(TREE*));
+	tree = (TREE*) calloc(8,sizeof(TREE*)); // Valgrind acusava 'Invalid write of size 8' na função create_tree (estava 1 no calloc antes)
 	tree->type = type;
 	tree->symbol = hash_symbol;
 	tree->children[0] = child0;

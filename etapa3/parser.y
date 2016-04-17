@@ -194,8 +194,9 @@ TREE *ast_program = NULL;
         printf("##### HASH #####\n");
         print_hash();
         printf("###############\n");
-    		// Descompila
-    		decompile(ast_program, write_to_file);
+        print_tree(ast_program,0);
+    	// Descompila
+    	decompile(ast_program, write_to_file);
   		}
     } else {
       printf("Usage: ./etapa3 input_filepath output_filepath\n");
