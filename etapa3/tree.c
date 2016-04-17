@@ -98,7 +98,7 @@ void print_tree(TREE* root, int spaces)
 	else printf("Null Tree!\n");
 }
 
-TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
+TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
 {
 	TREE* tree;
 	tree = (TREE*) calloc(1,sizeof(TREE*));
@@ -109,6 +109,16 @@ TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE*
 	tree->children[2] = child2;
 	tree->children[3] = child3;
 	return tree;
+}
+
+TREE* create_leaf(TREE_TYPE type)
+{
+	return create_tree(type, NULL, NULL, NULL, NULL, NULL);
+}
+
+TREE* create_leaf_symbol(HASH* hash_symbol)
+{
+	return create_tree(TREE_SYMBOL, hash_symbol, NULL, NULL, NULL, NULL);
 }
 
 void print_commands(TREE *node, int(*output)(const char*)) {

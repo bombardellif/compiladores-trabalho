@@ -12,6 +12,7 @@
 
 #define TREE_TOKEN_ERROR "__"
 
+typedef int TREE_TYPE;
 // Leaf nodes (0-9)
 #define TREE_SYMBOL 0               //Has the Pointer to Sym table
 #define TREE_TYPE_INT 1
@@ -20,7 +21,7 @@
 #define TREE_TYPE_CHAR 4
 #define TREE_VAL_TRUE 5
 #define TREE_VAL_FALSE 6
-#define TREE_TYPE_STRING 7																					/*NOVO*/
+#define TREE_TYPE_STRING 7
 
 // Declarations (10-14)              #CHILD-1#    #CHILD-2#   #CHILD-3#       #CHILD-4#
 #define TREE_DECL_SINGLE 10           //TYPE        SYMBOL      SYMBOL(ou NULL)
@@ -42,7 +43,7 @@
 #define TREE_COMM_ASSIG_VEC 24        //SYMBOL      EXPR        EXPR
 #define TREE_COMM_IF_ELSE 25          //EXPR        LIST_COMM   LIST_COMM(ou NULL)
 #define TREE_COMM_WHILE 26            //EXPR        LIST_COMM
-#define TREE_COMM_RETURN 27			  //EXPR																/*NOVO*/
+#define TREE_COMM_RETURN 27			  		//EXPR
 
 // Aritmetics (30-39)                #CHILD-1#      #CHILD-2#
 #define TREE_EXPR_ARIT_FUNCALL 30     //SYMBOL      LIST_EXPR
@@ -73,7 +74,9 @@ typedef struct tree_node
 } TREE;
 
 void print_tree(TREE* root, int spaces);
-TREE* create_tree(int type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
+TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
+TREE* create_leaf(TREE_TYPE type);
+TREE* create_leaf_symbol(HASH* hash_symbol);
 void decompile(TREE* node, int(*output)(const char*));
 
 #endif
