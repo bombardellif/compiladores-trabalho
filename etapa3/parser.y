@@ -191,10 +191,11 @@ TREE *ast_program = NULL;
   		if(yyparse() == 0)
   		{
   			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
-        printf("##### HASH #####\n");
+        printf("############### HASH ###############\n");
         print_hash();
-        printf("###############\n");
+        printf("############### TREE ###############\n");
         print_tree(ast_program,0);
+        printf("###########################################################################\n");
     	// Descompila
     	decompile(ast_program, write_to_file);
   		}
