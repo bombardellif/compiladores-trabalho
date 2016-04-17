@@ -26,13 +26,13 @@ FILE *outfile;
 %token <ast_program> KW_INPUT
 %token <ast_program> KW_RETURN
 %token <ast_program> KW_OUTPUT
-%token <ast_program> OPERATOR_LE
-%token <ast_program> OPERATOR_GE
-%token <ast_program> OPERATOR_EQ
-%token <ast_program> OPERATOR_NE
-%token <ast_program> OPERATOR_AND
-%token <ast_program> OPERATOR_OR
-%token <ast_program> TK_IDENTIFIER
+%token OPERATOR_LE
+%token OPERATOR_GE
+%token OPERATOR_EQ
+%token OPERATOR_NE
+%token OPERATOR_AND
+%token OPERATOR_OR
+%token <ast_program> TK_IDENTIFIER 
 %token <ast_program> LIT_INTEGER
 %token <ast_program> LIT_FALSE
 %token <ast_program> LIT_TRUE
@@ -90,12 +90,12 @@ FILE *outfile;
 			|	 KW_BOOL TK_IDENTIFIER 	'('  ')' command ';'                             {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $2, NULL, $5);}
 			;
 
-	listInt:	LIT_INTEGER                                                          {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
+	listInt:	LIT_INTEGER                                                          {$$ = create_tree(TREE_TYPE_INT, $1->symbol, 0, 0, 0, 0);}
 			|	listInt LIT_INTEGER                                                      {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			;
 
-	listCharInt:	LIT_INTEGER                                                      {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
-			| LIT_CHAR                                                                 {$$ = create_tree(TREE_TYPE_CHAR, $1, 0, 0, 0, 0);}   
+	listCharInt:	LIT_INTEGER                                                      {$$ = create_tree(TREE_TYPE_INT, $1->symbol, 0, 0, 0, 0);}
+			| LIT_CHAR                                                                 {$$ = create_tree(TREE_TYPE_CHAR, $1->symbol, 0, 0, 0, 0);}   
 			| listCharInt LIT_CHAR                                                     	 {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			| listCharInt LIT_INTEGER                                                  	 {$$ = create_tree(TREE_LIST_SYM, 0, $2, $1, 0, 0);}
 			;
@@ -123,7 +123,7 @@ FILE *outfile;
 	    | 	KW_OUTPUT listOutput                                                   {$$ = create_tree(TREE_COMM_OUT, 0, $1, 0, 0, 0);}
 	    | 	KW_RETURN expression                                                   {$$ = create_tree(TREE_COMM_RETURN, 0, $1, 0, 0, 0);} /*TREE_COMM_RETURN não havia no tree.h, pus depois*/
 	    | 	TK_IDENTIFIER '=' expression                                           {$$ = create_tree(TREE_COMM_ASSIG, 0, $1, $3, 0, 0);}
- 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression                        {$$ = create_tree(TREE_COMM_ASSIG_VEC, $1, $3, $6, 0, 0);}
+ 	   	| 	TK_IDENTIFIER '[' expression ']' '=' expression                        {$$ = create_tree(TREE_COMM_ASSIG_VEC, 0, $1, $3, $6, 0);}
 			/*|   expression === Não se pode chamar uma função fora de atribuições */
 	    | 	KW_IF '(' expression ')' command                                       {$$ = create_tree(TREE_COMM_IF_ELSE, 0, $1, $3, $5, NULL);}
  	    | 	KW_IF '(' expression ')' command KW_ELSE command                       {$$ = create_tree(TREE_COMM_IF_ELSE, 0, $1, $3, $5, $6);}
@@ -138,20 +138,20 @@ FILE *outfile;
   		| 	listExpression ',' expression                                          {$$ = create_tree(TREE_LIST_EXPR, 0, $3, $1, 0, 0);}
   		;
 
-	listIdentifier: TK_IDENTIFIER                                                  {$$ = create_tree(TREE_SYMBOL, $1, 0, 0, 0, 0);}
+	listIdentifier: TK_IDENTIFIER                                                  {$$ = create_tree(TREE_SYMBOL, $1->symbol, 0, 0, 0, 0);}
    		| 	listIdentifier  ',' TK_IDENTIFIER                                      {$$ = create_tree(TREE_LIST_SYM, 0, $3, $1, 0, 0);}
    		;
 
 	listOutput: aritmeticExpression                                                {$$ = $1;}
-			| 	LIT_STRING                                                             {$$ = create_tree(TREE_TYPE_STRING, $1, 0, 0, 0, 0);}
+			| 	LIT_STRING                                                             {$$ = create_tree(TREE_TYPE_STRING, $1->symbol, 0, 0, 0, 0);}
 			| 	listOutput ',' aritmeticExpression                                     {$$ = create_tree(TREE_LIST_OUT, 0, $3, $1, 0, 0);}
-			| 	listOutput ',' LIT_STRING                                              {$$ = create_tree(TREE_LIST_OUT, 0, $3, $1, 0, 0, 0);}
+			| 	listOutput ',' LIT_STRING                                              {$$ = create_tree(TREE_LIST_OUT, 0, $3, $1, 0, 0);}
 			;
 
-	aritmeticExpression: TK_IDENTIFIER                                             {$$ = create_tree(TREE_SYMBOL, $1, 0, 0, 0, 0);}
+	aritmeticExpression: TK_IDENTIFIER                                             {$$ = create_tree(TREE_SYMBOL, $1->symbol, 0, 0, 0, 0);}
 			| 	TK_IDENTIFIER '[' aritmeticExpression ']'                              {$$ = create_tree(TREE_DECL_VECT, 0, $1, $3, 0, 0);}
-			| 	LIT_INTEGER                                                            {$$ = create_tree(TREE_TYPE_INT, $1, 0, 0, 0, 0);}
-			|		LIT_CHAR                                                       {$$ = create_tree(TREE_TYPE_CHAR, $1, 0, 0, 0, 0);}
+			| 	LIT_INTEGER                                                            {$$ = create_tree(TREE_TYPE_INT, $1->symbol, 0, 0, 0, 0);}
+			|		LIT_CHAR                                                       {$$ = create_tree(TREE_TYPE_CHAR, $1->symbol, 0, 0, 0, 0);}
 			| 	'(' aritmeticExpression ')'                                            {$$ = $2;}
 			|		TK_IDENTIFIER '(' listExpression ')'                               {$$ = create_tree(TREE_DECL_FUNC, 0, $1, $3, 0, 0);}
 			/*| 	'-' aritmeticExpression*/
@@ -161,8 +161,8 @@ FILE *outfile;
 			| 	aritmeticExpression '/' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_DIV, 0, $1, 0, $3, 0);}
 			;
 
-	booleanExpression: LIT_TRUE                                                    	   {$$ = create_tree(TREE_VAL_TRUE, $1, 0, 0, 0, 0);}
-			| 	LIT_FALSE                                                          	   {$$ = create_tree(TREE_VAL_FALSE, $1, 0, 0, 0, 0);}
+	booleanExpression: LIT_TRUE                                                    	   {$$ = create_tree(TREE_VAL_TRUE, $1->symbol, 0, 0, 0, 0);}
+			| 	LIT_FALSE                                                          	   {$$ = create_tree(TREE_VAL_FALSE, $1->symbol, 0, 0, 0, 0);}
 			| 	aritmeticExpression '<' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_BOOL_LT, 0, $1, 0, $3, 0);}
 			| 	aritmeticExpression '>' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_BOOL_GT, 0, $1, 0, $3, 0);}
 			| 	aritmeticExpression OPERATOR_LE aritmeticExpression                    {$$ = create_tree(TREE_EXPR_BOOL_LE, 0, $1, 0, $3, 0);}
@@ -184,21 +184,21 @@ FILE *outfile;
 	int main(int argc, char* argv[])
 	{
 		if (argc > 2 && (yyin = fopen(argv[1], "r")) && (outfile = fopen(argv[2], "w")))
-    {
-      initMe();
-  		if(yyparse() == 0)
-  		{
-  			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
-        printf("##### HASH #####\n");
-        print_hash();
-        printf("###############\n");
-		// Descompila
-		decompile(ast_program, write_to_file);
-  		}
-    } else {
-      printf("Usage: ./etapa3 input_filepath output_filepath\n");
-    }
-    exit(0);
+    	{
+		  	initMe();
+	  		if(yyparse() == 0)
+	  		{
+	  			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
+				printf("##### HASH #####\n");
+				print_hash();
+				printf("###############\n");
+				// Descompila
+				decompile(ast_program, write_to_file);
+	  		}
+    	} else {
+      			printf("Usage: ./etapa3 input_filepath output_filepath\n");
+    		   }
+    	exit(0);
 	}
 
   int yyerror(char *s)
