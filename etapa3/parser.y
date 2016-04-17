@@ -12,6 +12,7 @@
 
 extern FILE *yyin;
 FILE *outfile;
+TREE* ast;
 %}
 
 
@@ -60,7 +61,7 @@ FILE *outfile;
 
 
 %%
-	beginning: program			{ast_program = $1;}
+	beginning: program			{ast = $1;}
 		;
 
 	program: declaration program								
@@ -192,8 +193,9 @@ FILE *outfile;
 				printf("##### HASH #####\n");
 				print_hash();
 				printf("###############\n");
+				print_tree(ast,0);
 				// Descompila
-				decompile(ast_program, write_to_file);
+				//decompile(ast, write_to_file);
 	  		}
     	} else {
       			printf("Usage: ./etapa3 input_filepath output_filepath\n");
