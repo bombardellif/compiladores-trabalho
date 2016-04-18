@@ -8,5 +8,6 @@
 #define __UTILS_H__
 
 void stripSlashes(char *destination, char *source);
+char* addSlashes(char *source);
 
 #endif

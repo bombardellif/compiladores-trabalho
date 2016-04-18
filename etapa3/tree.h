@@ -8,6 +8,8 @@
 #define __TREE__
 
 #include "hash.h"
+#include <stdlib.h>
+
 #define MAX_CHILDREN 4
 
 #define TREE_TOKEN_ERROR "__"
@@ -77,6 +79,6 @@ void print_tree(TREE* root, int spaces);
 TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
 TREE* create_leaf(TREE_TYPE type);
 TREE* create_leaf_symbol(HASH* hash_symbol);
-void decompile(TREE* node, int(*output)(const char*));
+void decompile(TREE *node, FILE* outfile);
 
 #endif
