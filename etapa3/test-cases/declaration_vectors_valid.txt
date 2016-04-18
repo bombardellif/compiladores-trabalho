@@ -1,6 +1,6 @@
 //This should be a valid program
 
 real v[10]: 0 0 0 0 0 0 0 0 0 0;
-bool j[3]: TRUE FALSE FALSE;
+bool j[3]: 1 0 0;
 int arr[4]: 0 0 2 5;
 char q[5]: '0' '0' '1' 'e';

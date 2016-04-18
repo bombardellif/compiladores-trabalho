@@ -2,13 +2,13 @@
 
 int a:0;
 int i:0;
-real v[10]: 0 0 0 0 0 0 0 0 0; 
+real v[10]: 0 0 0 0 0 0 0 0 0;
 bool mat[1000];
 char c:0;
 
 int main()
   {
-  if (a==5) incn(1,a) + 32
+  if (a==5) c = incn(1,a) + 32
   if(1+3 == 32) ; else input variavelNaoDeclarada
   };
 
@@ -18,6 +18,3 @@ int incn (int x, int n)
   };
 
 int voidfunc() ; ;
-  
-
-
