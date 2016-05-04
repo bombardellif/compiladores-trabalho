@@ -11,7 +11,7 @@
 #include <stdlib.h>
 extern int semanticFailure;
 void semanticsCheckDeclaration(TREE* node);
-void semanticsCheckUndeclared();
+void semanticsCheckUndeclared(TREE* node);
 void semanticsCheckUsage(TREE* node);
 
 #endif

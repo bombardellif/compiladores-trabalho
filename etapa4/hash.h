@@ -33,6 +33,6 @@ void print_hash();
 int hash_address(char *text);
 HASH* get_hash_node(char * text);
 HASH* hash_add(int type, char *text);
-int hash_update_type(char * text, int t); // Retorna 1 se dataType foi atualizado, 0 se contrário
+int hash_update_type(char * text, int dType, int nature); // Retorna 1 se dataType é atualizado, 0 se contrário
 
 #endif

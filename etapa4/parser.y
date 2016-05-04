@@ -193,7 +193,7 @@ TREE *ast_program = NULL;
                 print_tree(ast_program,0);
 		printf("############### SEMANTICS ###############\n");	
 		semanticsCheckDeclaration(ast_program);
-                //semanticsCheckUndeclared();
+                //semanticsCheckUndeclared(ast_program);
                 //semanticsCheckUsage(ast_program);
                 
                 if(semanticFailure)

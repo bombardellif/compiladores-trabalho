@@ -1,3 +1,0 @@
-input i;
-
-/*This should be a invalid program*/

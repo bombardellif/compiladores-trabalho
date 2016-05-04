@@ -61,21 +61,21 @@ HASH* get_hash_node(char * text)
     return NULL;
 }
 
-int hash_update_type(char * text, int t)
+int hash_update_type(char * text, int dType, int nature)
 {
     int i;
     HASH *node;
     for(i=0; i<HASH_SIZE; i++)
         for(node = symbol_table[i]; node; node=node->next)
-	    	if(!strcmp(node->text,text)){
-				if(node->dataType == -1)
-				{
-					node->dataType = t;
-					return 1;
-				}
-				else return 0;
-		}
-
+	    	if(!strcmp(node->text,text))
+			if(node->dataType == -1)
+			{
+				node->dataType = dType;
+				node->type = nature;
+				return 1;
+			}
+			else 
+				return 0;
     return 0;
 }
 

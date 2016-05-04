@@ -11,7 +11,7 @@ int semanticFailure = 0;
 
 void semanticsCheckDeclaration(TREE* node)
 {
-	int i;
+	int i, nature;
 	if(node != NULL)
 	{
 		/*Anota o tipo do indentificador na tabela hash e avisa em caso de redeclaração.*/
@@ -21,7 +21,7 @@ void semanticsCheckDeclaration(TREE* node)
 		{
 			if(node->children[0]->type == TREE_TYPE_INT)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_INT))
+				if(! hash_update_type( node->children[1]->symbol->text, TYPE_INT, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -29,7 +29,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_BOOL)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_BOOL))
+				if(! hash_update_type( node->children[1]->symbol->text, TYPE_BOOL, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -37,7 +37,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_CHAR)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_CHAR))
+				if(! hash_update_type( node->children[1]->symbol->text, TYPE_CHAR, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -45,7 +45,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_REAL)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_REAL))
+				if(! hash_update_type( node->children[1]->symbol->text, TYPE_REAL, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -59,7 +59,7 @@ void semanticsCheckDeclaration(TREE* node)
 	}
 }
  
-void semanticsCheckUndeclared()
+void semanticsCheckUndeclared(TREE * node)
 {
 
 }

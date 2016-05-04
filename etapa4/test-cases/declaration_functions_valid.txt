@@ -1,4 +1,0 @@
-//This should be a valid program
-
-int main() ; ;
-char teste(int d, bool ca, real dd); ;
