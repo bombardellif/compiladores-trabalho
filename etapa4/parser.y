@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "tree.h"
 #include "scanner.h"
+#include "semantics.h"
 
 extern FILE *yyin;
 TREE *ast_program = NULL;
@@ -60,8 +61,12 @@ TREE *ast_program = NULL;
 
 
 %%
-	beginning: program			{ast_program = $1;}
-      |                   {ast_program = NULL;}   /* Programa vazio*/
+	beginning: program			{ ast_program = $1;
+                            /*semanticsCheckDeclaration($1);
+                            semanticsCheckUndeclared();
+                            semanticsCheckUsage($1);*/
+                          }
+      |                   {ast_program = NULL;}   /* Programa vazio, sem necessidade de checar semântica*/
 		  ;
 
 	program: declaration                {$$ = create_tree(TREE_PROGRAM, 0, $1, 0, 0, 0);}
@@ -179,24 +184,43 @@ TREE *ast_program = NULL;
 
 	int main(int argc, char* argv[])
 	{
-    FILE* outfile;
-		if (argc > 2 && (yyin = fopen(argv[1], "r")) && (outfile = fopen(argv[2], "w")))
-    {
-      initMe();
-  		if(yyparse() == 0)
-  		{
-  			printf("Sucess, this is a program!\nLines: %d\n", getLineNumber());
-        printf("############### HASH ###############\n");
-        print_hash();
-        printf("############### TREE ###############\n");
-        print_tree(ast_program,0);
-        printf("###########################################################################\n");
-      	// Descompila
-      	decompile(ast_program, outfile);
-  		}
-    } else {
-      printf("Usage: ./etapa3 input_filepath output_filepath\n");
+		  if (argc > 1)
+      {
+          if(yyin = fopen(argv[1], "r"))
+          {
+              initMe();
+          		if(yyparse() == 0)
+          		{
+          			printf("Syntax is correct!\nLines: %d\n", getLineNumber());
+                printf("############### HASH ###############\n");
+                print_hash();
+                printf("############### TREE ###############\n");
+                print_tree(ast_program,0);
+
+                if(semanticFailure)
+                {
+                    printf("Semantic error!\n");
+                    exit(4);
+                }
+
+
+                /*
+                printf("###########################################################################\n");
+              	Descompila
+              	decompile(ast_program, outfile);
+                */
+          		}
+          }
+          else
+          {
+              printf("File does not exist!\n");
+              exit(2);
+          }
     }
+    else {
+        printf("File not informed!\nUsage: ./etapa4 input_filepath\n");
+        exit(1);
+        }
     exit(0);
 	}
 

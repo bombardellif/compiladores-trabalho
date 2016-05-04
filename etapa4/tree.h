@@ -9,6 +9,7 @@
 
 #include "hash.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 #define MAX_CHILDREN 4
 
