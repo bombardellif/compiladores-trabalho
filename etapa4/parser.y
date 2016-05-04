@@ -60,12 +60,8 @@ TREE *ast_program = NULL;
 
 
 %%
-	beginning: program			{ ast_program = $1;
-                            semanticsCheckDeclaration($1);
-                            semanticsCheckUndeclared();
-                            semanticsCheckUsage($1);
-                          }
-      |                   {ast_program = NULL;}   /* Programa vazio, sem necessidade de checar semântica*/
+	beginning: program			{ ast_program = $1;}
+      |                   {ast_program = NULL;}   /* Programa vazio*/      
 		  ;
 
 	program: declaration                {$$ = create_tree(TREE_PROGRAM, 0, $1, 0, 0, 0);}
@@ -195,7 +191,12 @@ TREE *ast_program = NULL;
                 print_hash();
                 printf("############### TREE ###############\n");
                 print_tree(ast_program,0);
-
+				printf("####################################\n");
+				
+				semanticsCheckDeclaration(ast_program);
+                //semanticsCheckUndeclared();
+                //semanticsCheckUsage(ast_program);
+                
                 if(semanticFailure)
                 {
                     printf("Semantic error!\n");

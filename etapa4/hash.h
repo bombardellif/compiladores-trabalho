@@ -14,11 +14,11 @@
 #define SYMBOL_LITERAL_STRING 4
 #define SYMBOL_IDENTIFIER 7
 
-#define TYPE_INT 21
-#define TYPE_BOOL 22
-#define TYPE_REAL 23
-#define TYPE_STRING 24
-#define TYPE_CHAR 25
+#define TYPE_INT 11
+#define TYPE_REAL 12
+#define TYPE_STRING 14
+#define TYPE_CHAR 13
+#define TYPE_BOOL 15
 
 typedef struct hash_node
 {

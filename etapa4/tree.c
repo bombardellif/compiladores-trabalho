@@ -9,7 +9,7 @@ void print_tree(TREE* root, int spaces)
 	{
 		for(i=0; i < spaces; i++)
 			fprintf(stderr, " ");
-		fprintf(stderr, "Tree %d", root->type);
+		fprintf(stderr, "Tree %d: ", root->type);
 
 		switch (root->type)
 		{
