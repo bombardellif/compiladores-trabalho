@@ -14,18 +14,14 @@
 #define SYMBOL_LITERAL_STRING 4
 #define SYMBOL_IDENTIFIER 7
 
-#define TYPE_INT 11
-#define TYPE_REAL 12
-#define TYPE_STRING 14
-#define TYPE_CHAR 13
-#define TYPE_BOOL 15
+#include "semantics.h"
 
 typedef struct hash_node
 {
   char *text;
   int type;
   struct hash_node *next;
-  int dataType;
+  DATA_TYPE dataType;
 }HASH;
 
 void init_hash();
