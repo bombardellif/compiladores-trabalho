@@ -1,0 +1,11 @@
+//This should be a valid program
+
+real realV[11];
+bool bv[98];
+int main() ; ;
+int var :100;
+bool bv[98];
+bool f:0;
+int var : 3
+int foo : 'l'
+char teste(int d, bool ca, real dd); ;

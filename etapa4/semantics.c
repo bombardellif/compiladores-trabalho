@@ -9,6 +9,17 @@
  #include <stdio.h>
  int semanticFailure = 0;
 
- void semanticsCheckDeclaration(TREE* node);
- void semanticsCheckUndeclared();
- void semanticsCheckUsage(TREE* node);
+ void semanticsCheckDeclaration(TREE* node)
+ {
+
+ }
+ 
+ void semanticsCheckUndeclared()
+ {
+
+ }
+
+ void semanticsCheckUsage(TREE* node)
+ {
+
+ }

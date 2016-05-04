@@ -1,0 +1,13 @@
+//This should be a valid program
+
+real r : 1;
+char charVet[1];
+real realV[11];
+bool bv[98];
+bool t:1;
+int main() ; ;
+int var :100;
+char character:1;
+int v[11224332];
+bool f:0;
+char teste(int d, bool ca, real dd); ;

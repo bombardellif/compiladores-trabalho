@@ -4,14 +4,14 @@
  *          Pedro Henrique Arruda Faustini (217432)
  */
 
-#ifndef __SEMANTICS_H__
-#define __SEMANTICS_H__
+#ifndef __SEMANTICS__
+#define __SEMANTICS__
 
 #include "tree.h"
 #include <stdlib.h>
 extern int semanticFailure;
-void semanticsCheckDeclaration(TREE*);
+void semanticsCheckDeclaration(TREE* node);
 void semanticsCheckUndeclared();
-void semanticsCheckUsage(TREE*);
+void semanticsCheckUsage(TREE* node);
 
 #endif

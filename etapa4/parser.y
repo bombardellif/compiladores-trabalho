@@ -1,5 +1,5 @@
 /* INF01147 -­‐ Compiladores -­‐ 2016/1
- * Trabalho Prático - Etapa 3
+ * Trabalho Prático - Etapa 4
  * Autores: Fernando Bombardelli da Silva (218324)
  *          Pedro Henrique Arruda Faustini (217432)
  */
@@ -7,7 +7,6 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "tree.h"
 #include "scanner.h"
 #include "semantics.h"
 
@@ -62,9 +61,9 @@ TREE *ast_program = NULL;
 
 %%
 	beginning: program			{ ast_program = $1;
-                            /*semanticsCheckDeclaration($1);
+                            semanticsCheckDeclaration($1);
                             semanticsCheckUndeclared();
-                            semanticsCheckUsage($1);*/
+                            semanticsCheckUsage($1);
                           }
       |                   {ast_program = NULL;}   /* Programa vazio, sem necessidade de checar semântica*/
 		  ;
