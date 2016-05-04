@@ -191,17 +191,17 @@ TREE *ast_program = NULL;
                 print_hash();
                 printf("############### TREE ###############\n");
                 print_tree(ast_program,0);
-				printf("####################################\n");
-				
-				semanticsCheckDeclaration(ast_program);
+		printf("############### SEMANTICS ###############\n");	
+		semanticsCheckDeclaration(ast_program);
                 //semanticsCheckUndeclared();
                 //semanticsCheckUsage(ast_program);
                 
                 if(semanticFailure)
                 {
-                    printf("Semantic error!\n");
                     exit(4);
                 }
+		else
+			printf("No semantic errors.\n");
 
 
                 /*

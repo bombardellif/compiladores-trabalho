@@ -33,6 +33,7 @@ HASH* hash_add(int type, char *text)
     node = (HASH*)calloc(1, sizeof(HASH));
     node->type = type;
     node->text = text; // text já deve ter sido alocado fora da função
+    node->dataType = -1;
 
     address = hash_address(text);
     insertNode = symbol_table[address];
@@ -58,6 +59,24 @@ HASH* get_hash_node(char * text)
 				return node;
 
     return NULL;
+}
+
+int hash_update_type(char * text, int t)
+{
+    int i;
+    HASH *node;
+    for(i=0; i<HASH_SIZE; i++)
+        for(node = symbol_table[i]; node; node=node->next)
+	    	if(!strcmp(node->text,text)){
+				if(node->dataType == -1)
+				{
+					node->dataType = t;
+					return 1;
+				}
+				else return 0;
+		}
+
+    return 0;
 }
 
 void print_hash()
