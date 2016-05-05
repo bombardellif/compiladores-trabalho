@@ -71,7 +71,7 @@ typedef int TREE_TYPE;
 
 typedef struct tree_node
 {
-	int type;
+	TREE_TYPE type;
 	HASH*  symbol;
 	struct tree_node* children[MAX_CHILDREN];
 } TREE;

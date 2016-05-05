@@ -7,14 +7,14 @@
 #ifndef __HASH__
 #define __HASH__
 
+#include "semantics_types.h"
+
 #define HASH_SIZE 997
 #define SYMBOL_LITERAL_INT 1
 #define SYMBOL_LITERAL_REAL 2
 #define SYMBOL_LITERAL_CHAR 3
 #define SYMBOL_LITERAL_STRING 4
 #define SYMBOL_IDENTIFIER 7
-
-#include "semantics.h"
 
 typedef struct hash_node
 {

@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "hash.h"
+#include "tree.h"
 #include "semantics.h"
 
 extern FILE *yyin;
@@ -61,7 +63,7 @@ TREE *ast_program = NULL;
 
 %%
 	beginning: program			{ ast_program = $1;}
-      |                   {ast_program = NULL;}   /* Programa vazio*/      
+      |                   {ast_program = NULL;}   /* Programa vazio*/
 		  ;
 
 	program: declaration                {$$ = create_tree(TREE_PROGRAM, 0, $1, 0, 0, 0);}
@@ -191,17 +193,17 @@ TREE *ast_program = NULL;
                 print_hash();
                 printf("############### TREE ###############\n");
                 print_tree(ast_program,0);
-		printf("############### SEMANTICS ###############\n");	
-		semanticsCheckDeclaration(ast_program);
-                //semanticsCheckUndeclared(ast_program);
-                //semanticsCheckUsage(ast_program);
-                
+                printf("############### SEMANTICS ###############\n");
+                semanticsCheckDeclaration(ast_program);
+                semanticsCheckUndeclared(ast_program);
+                semanticsCheckUsage(ast_program);
+
                 if(semanticFailure)
                 {
                     exit(4);
                 }
-		else
-			printf("No semantic errors.\n");
+                else
+                	printf("No semantic errors.\n");
 
 
                 /*

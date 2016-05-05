@@ -15,13 +15,13 @@ void semanticsCheckDeclaration(TREE* node)
 	if(node != NULL)
 	{
 		/*Anota o tipo do indentificador na tabela hash e avisa em caso de redeclaração.*/
-		if( (node->type == TREE_DECL_SINGLE) || 
+		if( (node->type == TREE_DECL_SINGLE) ||
 			(node->type == TREE_DECL_VECT)   ||
 			(node->type == TREE_DECL_FUNC)    )
 		{
 			if(node->children[0]->type == TREE_TYPE_INT)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_INT, node->type))
+				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_INT, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -29,7 +29,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_BOOL)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_BOOL, node->type))
+				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_BOOL, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -37,7 +37,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_CHAR)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_CHAR, node->type))
+				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_CHAR, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -45,7 +45,7 @@ void semanticsCheckDeclaration(TREE* node)
 			}
 			if(node->children[0]->type == TREE_TYPE_REAL)
 			{
-				if(! hash_update_type( node->children[1]->symbol->text, TYPE_REAL, node->type))
+				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_REAL, node->type))
 				{
 					printf("%s already declared!\n", node->children[1]->symbol->text);
 					semanticFailure = 1;
@@ -58,7 +58,7 @@ void semanticsCheckDeclaration(TREE* node)
 		}
 	}
 }
- 
+
 void semanticsCheckUndeclared(TREE * node)
 {
 
@@ -68,4 +68,14 @@ void semanticsCheckUsage(TREE* node)
 {
 
 
+}
+
+VAL_TYPE semanticsCheckType(TREE* node)
+{
+	DATA_TYPE result;
+	if (!node) {
+		return VAL_TYPE_UNIT;
+	}
+
+	//TODO
 }
