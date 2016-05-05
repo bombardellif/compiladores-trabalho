@@ -33,7 +33,9 @@ HASH* hash_add(int type, char *text)
     node = (HASH*)calloc(1, sizeof(HASH));
     node->type = type;
     node->text = text; // text já deve ter sido alocado fora da função
-    //node->dataType = -1;
+    node->dataType.identifierType = -1;
+    node->dataType.valueType = -1;
+    node->dataType.params = NULL;
 
     address = hash_address(text);
     insertNode = symbol_table[address];

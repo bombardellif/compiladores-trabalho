@@ -22,14 +22,14 @@ typedef int VAL_TYPE;
 
 typedef struct param_list_node
 {
-  ID_TYPE identifier_type;
+  VAL_TYPE valueType;
   struct param_list_node *next;
 } PARAM_LIST;
 
 typedef struct data_type
 {
-  ID_TYPE identifier_type;    /* used for identifier, can be either VECTOR, SCALAR or FUNCTION */
-  VAL_TYPE value_type;        /* value of the expression containing the symbol,
+  ID_TYPE identifierType;    /* used for identifier, can be either VECTOR, SCALAR or FUNCTION */
+  VAL_TYPE valueType;        /* value of the expression containing the symbol,
                               * e.g. INT if it's a vector of int, or CHAR if it's a function returning char, etc. */
   PARAM_LIST *params;         /* used for functions, stores the types of the params of the function*/
 } DATA_TYPE;
