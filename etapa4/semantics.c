@@ -9,67 +9,6 @@
 #include <stdio.h>
 int semanticFailure = 0;
 
-void semanticsCheckDeclaration(TREE* node)
-{
-	int i, nature;
-	if(node != NULL)
-	{
-		/*Anota o tipo do indentificador na tabela hash e avisa em caso de redeclaração.*/
-		if( (node->type == TREE_DECL_SINGLE) ||
-			(node->type == TREE_DECL_VECT)   ||
-			(node->type == TREE_DECL_FUNC)    )
-		{
-			if(node->children[0]->type == TREE_TYPE_INT)
-			{
-				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_INT, node->type))
-				{
-					printf("%s already declared!\n", node->children[1]->symbol->text);
-					semanticFailure = 1;
-				}
-			}
-			if(node->children[0]->type == TREE_TYPE_BOOL)
-			{
-				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_BOOL, node->type))
-				{
-					printf("%s already declared!\n", node->children[1]->symbol->text);
-					semanticFailure = 1;
-				}
-			}
-			if(node->children[0]->type == TREE_TYPE_CHAR)
-			{
-				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_CHAR, node->type))
-				{
-					printf("%s already declared!\n", node->children[1]->symbol->text);
-					semanticFailure = 1;
-				}
-			}
-			if(node->children[0]->type == TREE_TYPE_REAL)
-			{
-				if(! hash_update_type( node->children[1]->symbol->text, VAL_TYPE_REAL, node->type))
-				{
-					printf("%s already declared!\n", node->children[1]->symbol->text);
-					semanticFailure = 1;
-				}
-			}
-		}
-		for(i=0; i<MAX_CHILDREN; i++)
-		{
-			semanticsCheckDeclaration(node->children[i]);
-		}
-	}
-}
-
-void semanticsCheckUndeclared(TREE * node)
-{
-
-}
-
-void semanticsCheckUsage(TREE* node)
-{
-
-
-}
-
 int semanticsIsCompatible(VAL_TYPE valueType1, VAL_TYPE valueType2)
 {
 	return 1;
@@ -93,6 +32,23 @@ int semanticsGreaterNumericType(VAL_TYPE type1, VAL_TYPE type2)
 	return 1;
 }
 
+PARAM_LIST* semanticsGetParamsTypes(TREE *node)
+{
+	PARAM_LIST *params=NULL, *prior=NULL;
+
+	if (node && node->type == TREE_LIST_ARG) {
+		for ( ; node; node=node->children[2], prior=params) {
+			if (prior)
+				prior->next = params;
+			params = (PARAM_LIST*) malloc(sizeof(PARAM_LIST));
+			params->valueType = (VAL_TYPE) node->children[0]->type - 10;
+			params->next = NULL;
+		}
+	}
+
+	return params;
+}
+
 VAL_TYPE semanticsCheckType(TREE* node)
 {
 	DATA_TYPE symbolDataType;
@@ -101,6 +57,9 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	VAL_TYPE indexValueType;
 	VAL_TYPE leftExprType;
 	VAL_TYPE rightExprType;
+	ID_TYPE idType;
+	VAL_TYPE valueType;
+	PARAM_LIST *params;
 
 	if (!node) {
 		return VAL_TYPE_UNIT;
@@ -141,19 +100,34 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			return VAL_TYPE_BOOL;
 		case TREE_VAL_FALSE:
 			return VAL_TYPE_BOOL;
+		case TREE_DECL_SINGLE:
+		case TREE_DECL_VECT:
 		case TREE_DECL_FUNC:
-			// Check the type of the function body, the function returns the type of
-			// the "return" commands in the body, now we must check it
-			symbolDataType = node->children[1]->symbol->dataType;
-			VAL_TYPE returnType = semanticsCheckType(node->children[3]);
-			if (returnType == symbolDataType.valueType)
-				return VAL_TYPE_UNIT;
-			else {
+
+			idType = node->type - 9;
+			valueType = node->children[0]->type - 10;
+			params = semanticsGetParamsTypes(node->children[2]);
+
+			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
+			{
+				printf("%s already declared!\n", node->children[1]->symbol->text);
 				semanticFailure = 1;
 				return -1;
 			}
-		case TREE_DECL_SINGLE:
-		case TREE_DECL_VECT:
+
+			// If function declaration, then check body
+			if (node->type == TREE_DECL_FUNC) {
+				// Check the type of the function body, the function returns the type of
+				// the "return" commands in the body, now we must check it
+				symbolDataType = node->children[1]->symbol->dataType;
+				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
+				if (returnType == symbolDataType.valueType)
+					return VAL_TYPE_UNIT;
+				else {
+					semanticFailure = 1;
+					return -1;
+				}
+			}
 		case TREE_LIST_SYM:
 		case TREE_LIST_ARG:
 			// This case should not happen

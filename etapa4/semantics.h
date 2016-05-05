@@ -12,12 +12,10 @@
 
 extern int semanticFailure;
 
-void semanticsCheckDeclaration(TREE* node);
-void semanticsCheckUndeclared(TREE* node);
-void semanticsCheckUsage(TREE* node);
 int semanticsIsCompatible(VAL_TYPE valueType1, VAL_TYPE valueType2);
 int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall);
 int semanticsGreaterNumericType(VAL_TYPE type1, VAL_TYPE type2);
+PARAM_LIST* semanticsGetParamsTypes(TREE *node);
 VAL_TYPE semanticsCheckType(TREE* node);
 
 #endif

@@ -15,9 +15,9 @@ typedef int ID_TYPE;
 typedef int VAL_TYPE;
 #define VAL_TYPE_INT 11
 #define VAL_TYPE_REAL 12
-#define VAL_TYPE_STRING 14
-#define VAL_TYPE_CHAR 13
-#define VAL_TYPE_BOOL 15
+#define VAL_TYPE_BOOL 13
+#define VAL_TYPE_CHAR 14
+#define VAL_TYPE_STRING 15
 #define VAL_TYPE_UNIT 16
 
 typedef struct param_list_node

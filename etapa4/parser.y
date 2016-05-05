@@ -194,12 +194,11 @@ TREE *ast_program = NULL;
                 printf("############### TREE ###############\n");
                 print_tree(ast_program,0);
                 printf("############### SEMANTICS ###############\n");
-                semanticsCheckDeclaration(ast_program);
-                semanticsCheckUndeclared(ast_program);
-                semanticsCheckUsage(ast_program);
+                semanticsCheckType(ast_program);
 
                 if(semanticFailure)
                 {
+                    printf("Compilação falhou por erro semantico.\n");
                     exit(4);
                 }
                 else
