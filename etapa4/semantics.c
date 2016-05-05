@@ -9,9 +9,16 @@
 #include <stdio.h>
 int semanticFailure = 0;
 
+int semanticsIsNumericType(VAL_TYPE valueType)
+{
+	return valueType == VAL_TYPE_INT
+		|| valueType == VAL_TYPE_CHAR
+		|| valueType == VAL_TYPE_REAL;
+}
 int semanticsIsCompatible(VAL_TYPE valueType1, VAL_TYPE valueType2)
 {
-	return 1;
+	return valueType1 == valueType2
+		|| (semanticsIsNumericType(valueType1) && semanticsIsNumericType(valueType2));
 }
 
 int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall)
@@ -29,7 +36,12 @@ int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall)
 
 int semanticsGreaterNumericType(VAL_TYPE type1, VAL_TYPE type2)
 {
-	return 1;
+	if (type1 == VAL_TYPE_REAL || type2 == VAL_TYPE_REAL)
+		return VAL_TYPE_REAL;
+	else if (type1 == VAL_TYPE_INT || type2 == VAL_TYPE_INT)
+		return VAL_TYPE_INT;
+	else
+		return VAL_TYPE_CHAR;
 }
 
 PARAM_LIST* semanticsGetParamsTypes(TREE *node)
@@ -82,11 +94,19 @@ VAL_TYPE semanticsCheckType(TREE* node)
 						return node->symbol->dataType.valueType;
 					else {
 						semanticFailure = 1;
+printf("%d",node->type);
+
+printf("%d",node->type);
+
 						return -1;
 					}
 				default:
 					// This case should not happen
 					semanticFailure = 1;
+printf("%d",node->type);
+
+printf("%d",node->type);
+
 					return -1;
 			}
 		case TREE_TYPE_INT:
@@ -105,13 +125,15 @@ VAL_TYPE semanticsCheckType(TREE* node)
 		case TREE_DECL_FUNC:
 
 			idType = node->type - 9;
-			valueType = node->children[0]->type - 10;
+			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
 
 			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
 			{
 				printf("%s already declared!\n", node->children[1]->symbol->text);
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 
@@ -121,10 +143,13 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				// the "return" commands in the body, now we must check it
 				symbolDataType = node->children[1]->symbol->dataType;
 				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
-				if (returnType == symbolDataType.valueType)
+				printf("%d=%d\n", returnType, symbolDataType.valueType);
+				if (semanticsIsCompatible(returnType, symbolDataType.valueType))
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
+printf("%d",node->type);
+
 					return -1;
 				}
 			}
@@ -134,10 +159,28 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			return;
 		case TREE_LIST_COMM:
 			// Check the type of the command (first), note: single command doesn't have a type
-			if (semanticsCheckType(node->children[0]) != -1)
+			leftExprType = semanticsCheckType(node->children[0]);
+			if (leftExprType != -1) {
 				// Then call recursively for the next command (rest)
-				return semanticsCheckType(node->children[1]);
-			else
+				rightExprType = semanticsCheckType(node->children[1]);
+				if (leftExprType == rightExprType) {
+					printf("case 1");
+					return leftExprType;
+				}
+				else if (leftExprType == VAL_TYPE_UNIT) {
+					printf("case 2");
+					return rightExprType;
+				}
+				else if (rightExprType == VAL_TYPE_UNIT) {
+					printf("case 3 (%d)\n",leftExprType);
+					return leftExprType;
+				}
+				else {
+					semanticFailure = 1;
+printf("%d",node->type);
+					return -1;
+				}
+			} else
 				return -1;
 		case TREE_LIST_EXPR:
 			// Check the type of the expression (first), note: the type of an expression in a
@@ -179,6 +222,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_COMM_ASSIG_VEC:
@@ -190,11 +235,13 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			// type must be compatible with the right side
 			if (rightValueType != -1
 			&& symbolDataType.identifierType == ID_TYPE_VECTOR
-			&& indexValueType == VAL_TYPE_INT
+			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
 			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType)) {
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_COMM_IF_ELSE:
@@ -219,6 +266,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 							return thenCommandType;
 					} else {
 						semanticFailure = 1;
+printf("%d",node->type);
+
 						return -1;
 					}
 				} else
@@ -263,6 +312,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_EXPR_ARIT_ADD:
@@ -284,6 +335,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				}
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_EXPR_BOOL_LT:
@@ -301,6 +354,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_EXPR_BOOL_AND:
@@ -314,6 +369,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
+printf("%d",node->type);
+
 				return -1;
 			}
 		case TREE_PROGRAM:
@@ -325,6 +382,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 		default:
 			// This node should not exist
 			semanticFailure = 1;
+printf("%d",node->type);
+
 			return -1;
 	}
 }
