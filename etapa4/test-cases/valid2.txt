@@ -1,0 +1,7 @@
+real v[10]: 0 0 0 0 0 0 0 0 0;
+
+int incn (real x)
+  {
+  if (x <= 10) v[x] = 9
+  return v[x]
+  };

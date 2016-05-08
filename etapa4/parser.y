@@ -79,8 +79,8 @@ TREE *ast_program = NULL;
 			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                            {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_INT), create_leaf_symbol($2), create_leaf_symbol($4), NULL);}
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_CHAR), create_leaf_symbol($2), create_leaf_symbol($4), NULL);}
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ';'                           {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_BOOL), create_leaf_symbol($2), create_leaf_symbol($4), NULL);}
-			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_REAL), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
-			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_INT), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
+			|	 KW_REAL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_REAL), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
+			|	 KW_INT TK_IDENTIFIER '[' LIT_INTEGER ']' ':'  listCharInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_INT), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
 			|	 KW_CHAR TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listCharInt ';'           {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_CHAR), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
 			|	 KW_BOOL TK_IDENTIFIER '[' LIT_INTEGER ']' ':' listInt ';'               {$$ = create_tree(TREE_DECL_VECT, 0, create_leaf(TREE_TYPE_BOOL), create_leaf_symbol($2), create_leaf_symbol($4), $7);}
 			|	 KW_INT	TK_IDENTIFIER 	'(' arguments ')' command ';'                    {$$ = create_tree(TREE_DECL_FUNC, 0, create_leaf(TREE_TYPE_INT), create_leaf_symbol($2), $4, $6);}
@@ -198,7 +198,7 @@ TREE *ast_program = NULL;
 
                 if(semanticFailure)
                 {
-                    printf("Compilação falhou por erro semantico.\n");
+                    printf("Compilation failed due to semantic errors.\n");
                     exit(4);
                 }
                 else

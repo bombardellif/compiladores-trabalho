@@ -1,0 +1,8 @@
+int var : 0;
+int b : 1;
+
+int incn (int x)
+  {
+  if (x <= 10) v[x] = x+b
+  return 'f'
+  };

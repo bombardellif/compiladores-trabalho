@@ -94,18 +94,15 @@ VAL_TYPE semanticsCheckType(TREE* node)
 						return node->symbol->dataType.valueType;
 					else {
 						semanticFailure = 1;
-printf("%d",node->type);
 
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 						return -1;
 					}
 				default:
 					// This case should not happen
 					semanticFailure = 1;
-printf("%d",node->type);
-
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 					return -1;
 			}
@@ -132,7 +129,7 @@ printf("%d",node->type);
 			{
 				printf("%s already declared!\n", node->children[1]->symbol->text);
 				semanticFailure = 1;
-printf("%d",node->type);
+				//printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -143,13 +140,12 @@ printf("%d",node->type);
 				// the "return" commands in the body, now we must check it
 				symbolDataType = node->children[1]->symbol->dataType;
 				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
-				printf("%d=%d\n", returnType, symbolDataType.valueType);
+				printf(" %d=%d\n", returnType, symbolDataType.valueType);
 				if (semanticsIsCompatible(returnType, symbolDataType.valueType))
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
-printf("%d",node->type);
-
+					printf("%d\n",node->type);
 					return -1;
 				}
 			}
@@ -164,20 +160,20 @@ printf("%d",node->type);
 				// Then call recursively for the next command (rest)
 				rightExprType = semanticsCheckType(node->children[1]);
 				if (leftExprType == rightExprType) {
-					printf("case 1");
+					printf("case 1: ");
 					return leftExprType;
 				}
 				else if (leftExprType == VAL_TYPE_UNIT) {
-					printf("case 2");
+					printf("case 2: ");
 					return rightExprType;
 				}
 				else if (rightExprType == VAL_TYPE_UNIT) {
-					printf("case 3 (%d)\n",leftExprType);
+					printf("case 3: (%d)\n",leftExprType);
 					return leftExprType;
 				}
 				else {
 					semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 					return -1;
 				}
 			} else
@@ -222,7 +218,7 @@ printf("%d",node->type);
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -240,7 +236,7 @@ printf("%d",node->type);
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+				printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -266,7 +262,7 @@ printf("%d",node->type);
 							return thenCommandType;
 					} else {
 						semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 						return -1;
 					}
@@ -312,7 +308,7 @@ printf("%d",node->type);
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -335,7 +331,7 @@ printf("%d",node->type);
 				}
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -354,7 +350,7 @@ printf("%d",node->type);
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -369,7 +365,7 @@ printf("%d",node->type);
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 				return -1;
 			}
@@ -382,7 +378,7 @@ printf("%d",node->type);
 		default:
 			// This node should not exist
 			semanticFailure = 1;
-printf("%d",node->type);
+printf("%d\n",node->type);
 
 			return -1;
 	}
