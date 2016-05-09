@@ -10,5 +10,4 @@ int var :100;
 char character:1;
 int v[11224332];
 bool f:0;
-char teste(int d, bool ca, real dd) return 9 ;
 char teste2(int d, bool ca, real dd) return '9' ;

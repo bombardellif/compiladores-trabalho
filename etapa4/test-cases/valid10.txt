@@ -3,6 +3,6 @@ int x : 2;
 
 int incn ()
   {
-  v[15] = x // Assignment out of range
+  v[15] = x // Runtime error, not compilation error.
   return v[9]
   };

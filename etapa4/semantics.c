@@ -15,6 +15,17 @@ void update_hash_function_variables(TREE* node)
 	// Children[0] - type
 	// Children[1] - text
 	// Children[2] - rest list
+	if(node == NULL)
+		return;
+	//printf("..%s\n", node->children[1]->symbol->text);
+	//printf("..%d\n", node->children[0]->type);
+	//hash_update_type(node->children[1]->symbol->text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int length);
+	if(! hash_update_type( node->children[1]->symbol->text, ID_TYPE_SCALAR, node->children[0]->type + 10, NULL, 0))
+	{
+		printf("%s already declared!\n", node->children[1]->symbol->text);
+		semanticFailure = 1;
+	}
+	update_hash_function_variables(node->children[2]);
 }
 DATA_TYPE semanticsIsDeclared(char* text)
 {
@@ -164,6 +175,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			if(node->type == TREE_DECL_FUNC)
 			{
 				/*Update hash funcion variables*/
+				update_hash_function_variables(node->children[2]);
 			}
 			
 			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, length))
@@ -182,12 +194,12 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				symbolDataType = semanticsIsDeclared(node->children[1]->symbol->text); //node->children[1]->symbol->dataType;
 				//printf("%d\n", node->children[3]->type);
 				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
-				printf(" %d=%d\n", returnType, symbolDataType.valueType);
+				//printf(" %d=%d\n", returnType, symbolDataType.valueType);
 				if (semanticsIsCompatible(returnType, symbolDataType.valueType))
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
-					printf(".%d\n",node->type);
+					printf("%d\n",node->type);
 					return -1;
 				}
 			}
@@ -262,8 +274,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			} else {
 				semanticFailure = 1;
 				}
-printf("%d\n",node->type);
-
+				printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_ASSIG_VEC:
@@ -299,7 +310,7 @@ printf("%d\n",node->type);
 				// Check the type of the Then-Command and the Else-Command
 				VAL_TYPE thenCommandType = semanticsCheckType(node->children[1]);
 				VAL_TYPE elseCommandType = semanticsCheckType(node->children[2]);
-				printf("%d %d\n", thenCommandType, elseCommandType);
+				//printf("%d %d\n", thenCommandType, elseCommandType);
 				if (thenCommandType != -1 && elseCommandType != -1) {
 					// If the Then-Command has no type (no "return" command), then the type
 					// of the If-Command will be the type of the Else-command, and vice-versa
@@ -336,7 +347,7 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_RETURN:
-			printf("%d\n", node->children[0]->type);
+			//printf("%d\n", node->children[0]->type);
 			return semanticsCheckType(node->children[0]);
 		case TREE_EXPR_ARIT_FUNCALL:
 			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
@@ -381,8 +392,7 @@ printf("%d\n",node->type);
 				}
 			} else {
 				semanticFailure = 1;
-printf("%d\n",node->type);
-
+				printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_EXPR_BOOL_LT:
@@ -401,7 +411,6 @@ printf("%d\n",node->type);
 			} else {
 				semanticFailure = 1;
 				printf("%d\n",node->type);
-
 				return -1;
 			}
 		case TREE_EXPR_BOOL_AND:
@@ -415,8 +424,7 @@ printf("%d\n",node->type);
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
-printf("%d\n",node->type);
-
+				printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_PROGRAM:
@@ -428,8 +436,7 @@ printf("%d\n",node->type);
 		default:
 			// This node should not exist
 			semanticFailure = 1;
-printf("%d\n",node->type);
-
+			printf("%d\n",node->type);
 			return -1;
 	}
 }
