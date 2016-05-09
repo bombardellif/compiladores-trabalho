@@ -63,7 +63,7 @@ HASH* get_hash_node(char * text)
     return NULL;
 }
 
-int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params)
+int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int length)
 {
     int i;
     HASH *node;
@@ -74,7 +74,8 @@ int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *
     			{
     				node->dataType.identifierType = idType;
     				node->dataType.valueType = valType;
-            node->dataType.params = params;
+            		node->dataType.params = params;
+            		node->dataType.paramsLength = length;
     				return 1;
     			}
     			else

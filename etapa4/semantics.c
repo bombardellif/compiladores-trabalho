@@ -90,6 +90,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	ID_TYPE idType;
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
+	int length = 0;
 	
 	if (!node) {
 		return VAL_TYPE_UNIT;
@@ -145,14 +146,15 @@ printf("%d\n",node->type);
 			return VAL_TYPE_BOOL;
 		case TREE_VAL_FALSE:
 			return VAL_TYPE_BOOL;
-		case TREE_DECL_SINGLE:
 		case TREE_DECL_VECT:
+			length = atoi(node->children[2]->symbol->text);
+		case TREE_DECL_SINGLE:
 		case TREE_DECL_FUNC:
-
+		
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
-			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
+			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, length))
 			{
 				printf("%s already declared!\n", node->children[1]->symbol->text);
 				semanticFailure = 1;
@@ -179,7 +181,7 @@ printf("%d\n",node->type);
 			}
 		case TREE_LIST_SYM:
 		case TREE_LIST_ARG:
-			// This case should not happen
+			// This case should not happen /**********************************************/
 			return;
 		case TREE_LIST_COMM:
 		//printf(".%d\n",node->children[0]->type);
@@ -253,33 +255,41 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_ASSIG_VEC:
+			
+			//printf(".%d\n", semanticsListOutOfRange(get_hash_node(node->children[0]->symbol->text)->dataType.params, atoi(node->children[1]->symbol->text)));
+			//get_hash_node(node->children[0]->symbol->text)->dataType.params;
+			
+			
 			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
-			printf("%d\n",node->children[0]->symbol->dataType.identifierType);
 			indexValueType = semanticsCheckType(node->children[1]);
 			rightValueType = semanticsCheckType(node->children[2]);
 			
+			
+			
 			// Left side must be a vector, the index expression an integer, and the vector
-			// type must be compatible with the right side
+			// type must be compatible with the right side AND THE INDEX MUST FIT VECTOR LENGTH
 			if (rightValueType != -1
 			&& symbolDataType.identifierType == ID_TYPE_VECTOR
 			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
+			&& (get_hash_node(node->children[0]->symbol->text)->dataType.paramsLength >= atoi(node->children[1]->symbol->text)) // INDEX MUST FIT VECTOR LENGTH
 			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType)) {
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
-				printf("%d\n",symbolDataType.identifierType);
-
+				//printf("Assign vector error: %d\n",symbolDataType.identifierType);
+				printf("Vector \'%s\' assign error!\n", node->children[0]->symbol->text);
 				return -1;
 			}
 		case TREE_COMM_IF_ELSE:
 			conditionValueType = semanticsCheckType(node->children[0]);
-
+			printf("condition is %d\n",conditionValueType);
 			// The condition expression should be compatible with int, because it'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
+			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {//(semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the Then-Command and the Else-Command
 				VAL_TYPE thenCommandType = semanticsCheckType(node->children[1]);
 				VAL_TYPE elseCommandType = semanticsCheckType(node->children[2]);
+				printf("%d %d\n", thenCommandType, elseCommandType);
 				if (thenCommandType != -1 && elseCommandType != -1) {
 					// If the Then-Command has no type (no "return" command), then the type
 					// of the If-Command will be the type of the Else-command, and vice-versa
@@ -287,18 +297,18 @@ printf("%d\n",node->type);
 						return elseCommandType;
 					} else if (elseCommandType == VAL_TYPE_UNIT) {
 						return thenCommandType;
-					} else if (thenCommandType == elseCommandType) {
+					} else if (semanticsIsCompatible(thenCommandType,elseCommandType)) {//else if (thenCommandType == elseCommandType) {
 					// If both command have any type (they have "return" commands), then
-					// both types must be equal and this will be the type of the If-Command
+					// both types must be equal and this will be the type of the If-Command		// Equal or compatible?
 							return thenCommandType;
 					} else {
 						semanticFailure = 1;
-printf("%d\n",node->type);
-
+						printf("%d\n",node->type);
 						return -1;
 					}
-				} else
+				} else{
 					return -1;
+					}
 			} else {
 				semanticFailure = -1;
 				return -1;
@@ -333,14 +343,14 @@ printf("%d\n",node->type);
 			indexValueType = semanticsCheckType(node->children[1]);
 
 			// Left side must be a vector, the index expression an integer, and the vector
-			// type must be compatible with the right side
+			// type must be compatible with the right side AND INDEX MUST FIT VECTOR LENGTH 
 			if (symbolDataType.identifierType == ID_TYPE_VECTOR
-			&& indexValueType == VAL_TYPE_INT) {
+			&& indexValueType == VAL_TYPE_INT
+			&& (get_hash_node(node->children[0]->symbol->text)->dataType.paramsLength >= atoi(node->children[1]->symbol->text))){ // INDEX MUST FIT VECTOR LENGTH {
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;
-printf("%d\n",node->type);
-
+				printf("Vector \'%s\' assign error!\n", node->children[0]->symbol->text);
 				return -1;
 			}
 		case TREE_EXPR_ARIT_ADD:
@@ -378,10 +388,10 @@ printf("%d\n",node->type);
 			// Only numeric type can be operands
 			if ((leftExprType == VAL_TYPE_INT || leftExprType == VAL_TYPE_CHAR || leftExprType == VAL_TYPE_REAL)
 			&&  (rightExprType == VAL_TYPE_INT || rightExprType == VAL_TYPE_CHAR || rightExprType == VAL_TYPE_REAL)) {
-				return VAL_TYPE_BOOL;
+				return VAL_TYPE_BOOL;				
 			} else {
 				semanticFailure = 1;
-printf("%d\n",node->type);
+				printf("%d\n",node->type);
 
 				return -1;
 			}

@@ -1,7 +1,11 @@
 
+int incn (int x, int n)
+  {
+  return x + n
+  };
+
 int main ()
   {
-  if (3 <= 10) return 5 else return 'f'
+  if (3 <= 10) return 1 else  return 'f'
   return 2
   };
-  
