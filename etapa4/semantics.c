@@ -9,6 +9,13 @@
 #include <stdio.h>
 int semanticFailure = 0;
 
+
+void update_hash_function_variables(TREE* node)
+{
+	// Children[0] - type
+	// Children[1] - text
+	// Children[2] - rest list
+}
 DATA_TYPE semanticsIsDeclared(char* text)
 {
 	HASH* node = get_hash_node(text);
@@ -153,6 +160,12 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
+			
+			if(node->type == TREE_DECL_FUNC)
+			{
+				/*Update hash funcion variables*/
+			}
+			
 			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, length))
 			{
 				printf("%s already declared!\n", node->children[1]->symbol->text);
@@ -266,11 +279,10 @@ printf("%d\n",node->type);
 
 
 			// Left side must be a vector, the index expression an integer, and the vector
-			// type must be compatible with the right side AND THE INDEX MUST FIT VECTOR LENGTH
+			// type must be compatible with the right side
 			if (rightValueType != -1
 			&& symbolDataType.identifierType == ID_TYPE_VECTOR
 			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
-			&& (get_hash_node(node->children[0]->symbol->text)->dataType.paramsLength >= atoi(node->children[1]->symbol->text)) // INDEX MUST FIT VECTOR LENGTH
 			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType)) {
 				return VAL_TYPE_UNIT;
 			} else {
@@ -341,10 +353,9 @@ printf("%d\n",node->type);
 			indexValueType = semanticsCheckType(node->children[1]);
 
 			// Left side must be a vector, the index expression an integer, and the vector
-			// type must be compatible with the right side AND INDEX MUST FIT VECTOR LENGTH
+			// type must be compatible with the right side
 			if (symbolDataType.identifierType == ID_TYPE_VECTOR
-			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
-			&& (get_hash_node(node->children[0]->symbol->text)->dataType.paramsLength >= atoi(node->children[1]->symbol->text))){ // INDEX MUST FIT VECTOR LENGTH {
+			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)){
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;

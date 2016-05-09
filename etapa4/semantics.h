@@ -18,4 +18,5 @@ int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall);
 int semanticsGreaterNumericType(VAL_TYPE type1, VAL_TYPE type2);
 PARAM_LIST* semanticsGetParamsTypes(TREE *node);
 VAL_TYPE semanticsCheckType(TREE* node);
+void update_hash_function_variables(TREE* node);
 #endif
