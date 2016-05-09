@@ -98,7 +98,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	//printf("%d\n",node->type);
 	switch (node->type) {
 		case TREE_SYMBOL:
-			printf("Symbol %s is %d\n",node->symbol->text, node->symbol->type);
+			//printf("Symbol %s is %d\n",node->symbol->text, node->symbol->type);
 			switch (node->symbol->type) {
 				case SYMBOL_LITERAL_INT:
 					return VAL_TYPE_INT;
@@ -131,8 +131,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				default:
 					// This case should not happen
 					semanticFailure = 1;
-printf("%d\n",node->type);
-
+					printf("%d\n",node->type);
 					return -1;
 			}
 		case TREE_TYPE_INT:
@@ -175,7 +174,7 @@ printf("%d\n",node->type);
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
-					printf("%d\n",node->type);
+					printf(".%d\n",node->type);
 					return -1;
 				}
 			}
@@ -191,20 +190,20 @@ printf("%d\n",node->type);
 				// Then call recursively for the next command (rest)
 				rightExprType = semanticsCheckType(node->children[1]);
 				if (leftExprType == rightExprType) {
-					printf("case 1: ");
+					//printf("case 1: ");
 					return leftExprType;
 				}
 				else if (leftExprType == VAL_TYPE_UNIT) {
-					printf("case 2: ");
+					//printf("case 2: ");
 					return rightExprType;
 				}
 				else if (rightExprType == VAL_TYPE_UNIT) {
-					printf("case 3: (%d)\n",leftExprType);
+					//printf("case 3: (%d)\n",leftExprType);
 					return leftExprType;
 				}
 				else {
 					semanticFailure = 1;
-printf("%d\n",node->type);
+					printf("%d\n",node->type);
 					return -1;
 				}
 			} else{
@@ -282,7 +281,6 @@ printf("%d\n",node->type);
 			}
 		case TREE_COMM_IF_ELSE:
 			conditionValueType = semanticsCheckType(node->children[0]);
-			printf("condition is %d\n",conditionValueType);
 			// The condition expression should be compatible with int, because it'll be tested for zero
 			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {//(semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
@@ -317,7 +315,7 @@ printf("%d\n",node->type);
 			conditionValueType = semanticsCheckType(node->children[0]);
 
 			// The condition expression should be compatible with int, because it'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
+			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the loop body
 				return semanticsCheckType(node->children[1]);
