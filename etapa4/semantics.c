@@ -9,12 +9,23 @@
 #include <stdio.h>
 int semanticFailure = 0;
 
-int semanticsIsDeclared(char* text)
+DATA_TYPE semanticsIsDeclared(char* text)
 {
 	HASH* node = get_hash_node(text);
+	DATA_TYPE r;
 	if(node->dataType.identifierType != -1)
-		return node->dataType.identifierType;
-	else return -1;
+		return node->dataType;
+	else if(node->type == SYMBOL_LITERAL_INT || node->type == SYMBOL_LITERAL_REAL || node->type == SYMBOL_LITERAL_CHAR)
+	{
+		r.identifierType = node->type + 10;
+		r.valueType = ID_TYPE_SCALAR;
+		return r;
+	}
+	else {
+		r.identifierType = -1;
+		r.valueType = -1;
+		return r; 
+	}
 }
 int semanticsIsNumericType(VAL_TYPE valueType)
 {
@@ -79,14 +90,14 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	ID_TYPE idType;
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
-
+	
 	if (!node) {
 		return VAL_TYPE_UNIT;
 	}
-
+	//printf("%d\n",node->type);
 	switch (node->type) {
 		case TREE_SYMBOL:
-			printf("%d\n",node->symbol->type );
+			printf("Symbol %s is %d\n",node->symbol->text, node->symbol->type);
 			switch (node->symbol->type) {
 				case SYMBOL_LITERAL_INT:
 					return VAL_TYPE_INT;
@@ -100,17 +111,21 @@ VAL_TYPE semanticsCheckType(TREE* node)
 					// Identifier alone in an expression can only appear if it's a scalar OR a variable scalar
 					if (node->symbol->dataType.identifierType == ID_TYPE_SCALAR)
 						return node->symbol->dataType.valueType;
-					else if(semanticsIsDeclared(node->symbol->text) == ID_TYPE_SCALAR)
-					{
-						HASH* n = get_hash_node(node->symbol->text);
-						return n->dataType.valueType;
-					}
-					else {
-						semanticFailure = 1;
-						printf("%s undeclared!\n",node->symbol->text);
-						//printf("%d\n",node->type);
+					else
+					{ 
+						DATA_TYPE d = semanticsIsDeclared(node->symbol->text);
+						if(d.identifierType == ID_TYPE_SCALAR)
+						{
+							HASH* n = get_hash_node(node->symbol->text);
+							return n->dataType.valueType;
+						}
+						else {
+							semanticFailure = 1;
+							printf("%s undeclared!\n",node->symbol->text);
+							//printf("%d\n",node->type);
 
-						return -1;
+							return -1;
+						}
 					}
 				default:
 					// This case should not happen
@@ -137,7 +152,6 @@ printf("%d\n",node->type);
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
-
 			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
 			{
 				printf("%s already declared!\n", node->children[1]->symbol->text);
@@ -151,7 +165,8 @@ printf("%d\n",node->type);
 			if (node->type == TREE_DECL_FUNC) {
 				// Check the type of the function body, the function returns the type of
 				// the "return" commands in the body, now we must check it
-				symbolDataType = node->children[1]->symbol->dataType;
+				symbolDataType = semanticsIsDeclared(node->children[1]->symbol->text); //node->children[1]->symbol->dataType;
+				//printf("%d\n", node->children[3]->type);
 				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
 				printf(" %d=%d\n", returnType, symbolDataType.valueType);
 				if (semanticsIsCompatible(returnType, symbolDataType.valueType))
@@ -167,6 +182,7 @@ printf("%d\n",node->type);
 			// This case should not happen
 			return;
 		case TREE_LIST_COMM:
+		//printf(".%d\n",node->children[0]->type);
 			// Check the type of the command (first), note: single command doesn't have a type
 			leftExprType = semanticsCheckType(node->children[0]);
 			if (leftExprType != -1) {
@@ -189,7 +205,7 @@ printf("%d\n",node->type);
 printf("%d\n",node->type);
 					return -1;
 				}
-			} else
+			} else{
 				return -1;
 		case TREE_LIST_EXPR:
 			// Check the type of the expression (first), note: the type of an expression in a
@@ -221,7 +237,7 @@ printf("%d\n",node->type);
 			else
 				return -1;
 		case TREE_COMM_ASSIG:
-			symbolDataType = node->children[0]->symbol->dataType;
+			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
 			rightValueType = semanticsCheckType(node->children[1]);
 
 			// Left side must be scalar and of a type compatible with the right side
@@ -231,15 +247,17 @@ printf("%d\n",node->type);
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
+				}
 printf("%d\n",node->type);
 
 				return -1;
 			}
 		case TREE_COMM_ASSIG_VEC:
-			symbolDataType = node->children[0]->symbol->dataType;
+			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
+			printf("%d\n",node->children[0]->symbol->dataType.identifierType);
 			indexValueType = semanticsCheckType(node->children[1]);
 			rightValueType = semanticsCheckType(node->children[2]);
-
+			
 			// Left side must be a vector, the index expression an integer, and the vector
 			// type must be compatible with the right side
 			if (rightValueType != -1
@@ -249,7 +267,7 @@ printf("%d\n",node->type);
 				return VAL_TYPE_UNIT;
 			} else {
 				semanticFailure = 1;
-				printf("%d\n",node->type);
+				printf("%d\n",symbolDataType.identifierType);
 
 				return -1;
 			}
@@ -298,11 +316,10 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_RETURN:
-			printf("%d\n", node->children[0]->type);/********************************************************************************************************/
+			printf("%d\n", node->children[0]->type);
 			return semanticsCheckType(node->children[0]);
 		case TREE_EXPR_ARIT_FUNCALL:
-			symbolDataType = node->children[0]->symbol->dataType;
-
+			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
 			// Identifier must be function and the call must match the declaration
 			if (symbolDataType.identifierType == ID_TYPE_FUNCTION
 			&& semanticsMatchParameters(symbolDataType.params, node->children[1])) {
@@ -312,7 +329,7 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_EXPR_ARIT_VEC_READ:
-			symbolDataType = node->children[0]->symbol->dataType;
+			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
 			indexValueType = semanticsCheckType(node->children[1]);
 
 			// Left side must be a vector, the index expression an integer, and the vector

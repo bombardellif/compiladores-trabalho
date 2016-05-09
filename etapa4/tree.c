@@ -8,7 +8,7 @@ void print_tree(TREE* root, int spaces)
 	if(root != NULL)
 	{
 		for(i=0; i < spaces; i++)
-			fprintf(stderr, " ");
+			fprintf(stderr, "  ");
 		fprintf(stderr, "Tree %d: ", root->type);
 
 		switch (root->type)

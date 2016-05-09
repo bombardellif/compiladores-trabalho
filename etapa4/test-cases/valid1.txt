@@ -1,6 +1,7 @@
 real v[10]: 0 0 0 0 0 0 0 0 0;
 
-int incn (int x, int n)
+int incn (int x)
   {
-  return x
+  v[9] = x
+  return v[9]
   };

@@ -1,0 +1,5 @@
+int x : 0;
+int incn (int n)
+  {
+  return x
+  };
