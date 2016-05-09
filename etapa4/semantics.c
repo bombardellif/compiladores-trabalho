@@ -24,7 +24,7 @@ DATA_TYPE semanticsIsDeclared(char* text)
 	else {
 		r.identifierType = -1;
 		r.valueType = -1;
-		return r; 
+		return r;
 	}
 }
 int semanticsIsNumericType(VAL_TYPE valueType)
@@ -91,7 +91,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
 	int length = 0;
-	
+
 	if (!node) {
 		return VAL_TYPE_UNIT;
 	}
@@ -113,7 +113,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 					if (node->symbol->dataType.identifierType == ID_TYPE_SCALAR)
 						return node->symbol->dataType.valueType;
 					else
-					{ 
+					{
 						DATA_TYPE d = semanticsIsDeclared(node->symbol->text);
 						if(d.identifierType == ID_TYPE_SCALAR)
 						{
@@ -149,7 +149,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			length = atoi(node->children[2]->symbol->text);
 		case TREE_DECL_SINGLE:
 		case TREE_DECL_FUNC:
-		
+
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
@@ -189,7 +189,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			if (leftExprType != -1) {
 				// Then call recursively for the next command (rest)
 				rightExprType = semanticsCheckType(node->children[1]);
-				if (leftExprType == rightExprType) {
+				if (semanticsIsCompatible(leftExprType, rightExprType)) {
 					//printf("case 1: ");
 					return leftExprType;
 				}
@@ -254,17 +254,17 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_ASSIG_VEC:
-			
+
 			//printf(".%d\n", semanticsListOutOfRange(get_hash_node(node->children[0]->symbol->text)->dataType.params, atoi(node->children[1]->symbol->text)));
 			//get_hash_node(node->children[0]->symbol->text)->dataType.params;
-			
-			
+
+
 			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
 			indexValueType = semanticsCheckType(node->children[1]);
 			rightValueType = semanticsCheckType(node->children[2]);
-			
-			
-			
+
+
+
 			// Left side must be a vector, the index expression an integer, and the vector
 			// type must be compatible with the right side AND THE INDEX MUST FIT VECTOR LENGTH
 			if (rightValueType != -1
@@ -341,14 +341,14 @@ printf("%d\n",node->type);
 			indexValueType = semanticsCheckType(node->children[1]);
 
 			// Left side must be a vector, the index expression an integer, and the vector
-			// type must be compatible with the right side AND INDEX MUST FIT VECTOR LENGTH 
+			// type must be compatible with the right side AND INDEX MUST FIT VECTOR LENGTH
 			if (symbolDataType.identifierType == ID_TYPE_VECTOR
-			&& indexValueType == VAL_TYPE_INT
+			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
 			&& (get_hash_node(node->children[0]->symbol->text)->dataType.paramsLength >= atoi(node->children[1]->symbol->text))){ // INDEX MUST FIT VECTOR LENGTH {
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;
-				printf("Vector \'%s\' assign error!\n", node->children[0]->symbol->text);
+				printf("Vector \'%s\' read error!\n", node->children[0]->symbol->text);
 				return -1;
 			}
 		case TREE_EXPR_ARIT_ADD:
@@ -386,7 +386,7 @@ printf("%d\n",node->type);
 			// Only numeric type can be operands
 			if ((leftExprType == VAL_TYPE_INT || leftExprType == VAL_TYPE_CHAR || leftExprType == VAL_TYPE_REAL)
 			&&  (rightExprType == VAL_TYPE_INT || rightExprType == VAL_TYPE_CHAR || rightExprType == VAL_TYPE_REAL)) {
-				return VAL_TYPE_BOOL;				
+				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
 				printf("%d\n",node->type);
