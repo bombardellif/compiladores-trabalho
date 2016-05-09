@@ -1,9 +1,7 @@
 1)
-Há programas válidos sendo reconhecidos como inválidos. É o caso dos arquivos valid[1-3].txt
+valid2.txt acusa erro. 
 
-3)
-Não achei programas inválidos reconhecidos como válidos.
+Não sei se deve acusar erro ou não. Se a variável X fosse um int, e na execução fosse passado um real, rodaria sem problemas, conforme o Johann falou. Mas a variável já está declarada como real... nesse caso pode ou não a indexação? Se não pode, acho que já está pronto.
 
-4)
-Aparentemente, maior problema está no reconhecimento dos tipos de números e variáveis dentro de IFs e variáveis declaradas na chamada da função.
-
+2)
+Acho que depois disso só falta limpar mais o código, colocando mais mensagens de erro semântico (embora não esteja na especificação).

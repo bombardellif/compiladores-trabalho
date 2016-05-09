@@ -292,7 +292,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			// Left side must be a vector, the index expression an integer, and the vector
 			// type must be compatible with the right side
 			if (rightValueType != -1
-			&& symbolDataType.identifierType == ID_TYPE_VECTOR
+			&& symbolDataType.identifierType == ID_TYPE_VECTOR // Se é vector, deve aceitar real também como índice
 			&& (indexValueType == VAL_TYPE_INT || indexValueType == VAL_TYPE_CHAR)
 			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType)) {
 				return VAL_TYPE_UNIT;
