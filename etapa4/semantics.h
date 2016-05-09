@@ -13,6 +13,7 @@
 extern int semanticFailure;
 
 int semanticsIsCompatible(VAL_TYPE valueType1, VAL_TYPE valueType2);
+int semanticsIsDeclared(char* text);
 int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall);
 int semanticsGreaterNumericType(VAL_TYPE type1, VAL_TYPE type2);
 PARAM_LIST* semanticsGetParamsTypes(TREE *node);

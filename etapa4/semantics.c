@@ -9,6 +9,13 @@
 #include <stdio.h>
 int semanticFailure = 0;
 
+int semanticsIsDeclared(char* text)
+{
+	HASH* node = get_hash_node(text);
+	if(node->dataType.identifierType != -1)
+		return node->dataType.identifierType;
+	else return -1;
+}
 int semanticsIsNumericType(VAL_TYPE valueType)
 {
 	return valueType == VAL_TYPE_INT
@@ -79,6 +86,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 
 	switch (node->type) {
 		case TREE_SYMBOL:
+			printf("%d\n",node->symbol->type );
 			switch (node->symbol->type) {
 				case SYMBOL_LITERAL_INT:
 					return VAL_TYPE_INT;
@@ -89,13 +97,18 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				case SYMBOL_LITERAL_STRING:
 					return VAL_TYPE_STRING;
 				case SYMBOL_IDENTIFIER:
-					// Identifier alone in an expression can only appear if it's a scalar
+					// Identifier alone in an expression can only appear if it's a scalar OR a variable scalar
 					if (node->symbol->dataType.identifierType == ID_TYPE_SCALAR)
 						return node->symbol->dataType.valueType;
+					else if(semanticsIsDeclared(node->symbol->text) == ID_TYPE_SCALAR)
+					{
+						HASH* n = get_hash_node(node->symbol->text);
+						return n->dataType.valueType;
+					}
 					else {
 						semanticFailure = 1;
-
-printf("%d\n",node->type);
+						printf("%s undeclared!\n",node->symbol->text);
+						//printf("%d\n",node->type);
 
 						return -1;
 					}
@@ -285,6 +298,7 @@ printf("%d\n",node->type);
 				return -1;
 			}
 		case TREE_COMM_RETURN:
+			printf("%d\n", node->children[0]->type);/********************************************************************************************************/
 			return semanticsCheckType(node->children[0]);
 		case TREE_EXPR_ARIT_FUNCALL:
 			symbolDataType = node->children[0]->symbol->dataType;
