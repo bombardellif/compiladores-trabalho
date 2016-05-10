@@ -166,6 +166,7 @@ TREE *ast_program = NULL;
 
 	booleanExpression: LIT_TRUE                                                    {$$ = create_leaf(TREE_VAL_TRUE);}
 			| 	LIT_FALSE                                                          	   {$$ = create_leaf(TREE_VAL_FALSE);}
+      |   '(' booleanExpression ')'                                              {$$ = $2;}
 			| 	aritmeticExpression '<' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_BOOL_LT, 0, $1, $3, 0, 0);}
 			| 	aritmeticExpression '>' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_BOOL_GT, 0, $1, $3, 0, 0);}
 			| 	aritmeticExpression OPERATOR_LE aritmeticExpression                    {$$ = create_tree(TREE_EXPR_BOOL_LE, 0, $1, $3, 0, 0);}
@@ -194,6 +195,7 @@ TREE *ast_program = NULL;
                 printf("############### TREE ###############\n");
                 print_tree(ast_program,0);
                 printf("############### SEMANTICS ###############\n");
+                semanticsCheckVariables(ast_program);
                 semanticsCheckType(ast_program);
 
                 if(semanticFailure)
