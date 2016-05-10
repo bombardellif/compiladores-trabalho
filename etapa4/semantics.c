@@ -59,9 +59,10 @@ int semanticsIsCompatible(VAL_TYPE valueType1, VAL_TYPE valueType2)
 
 int semanticsMatchParameters(PARAM_LIST *paramsDecl, TREE *paramsCall)
 {
-	for (; paramsDecl && paramsCall; paramsDecl=paramsDecl->next, paramsCall=paramsCall->children[1]) {
-		if (! semanticsIsCompatible(paramsDecl->valueType,
-															semanticsCheckType(paramsCall->children[0])) ) {
+	for (; paramsDecl && paramsCall; paramsDecl=paramsDecl->next, paramsCall=paramsCall->children[1])
+	{
+		if (! semanticsIsCompatible(paramsDecl->valueType, semanticsCheckType(paramsCall->children[0])) )
+		{
 			return 0;
 		}
 	}
@@ -89,7 +90,7 @@ PARAM_LIST* semanticsGetParamsTypes(TREE *node)
 			if (prior)
 				prior->next = params;
 			params = (PARAM_LIST*) malloc(sizeof(PARAM_LIST));
-			params->valueType = (VAL_TYPE) node->children[0]->type - 10;
+			params->valueType = (VAL_TYPE) node->children[0]->type + 10;
 			params->next = NULL;
 		}
 	}
@@ -165,7 +166,6 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			length = atoi(node->children[2]->symbol->text);
 		case TREE_DECL_SINGLE:
 		case TREE_DECL_FUNC:
-
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
@@ -349,6 +349,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			return semanticsCheckType(node->children[0]);
 		case TREE_EXPR_ARIT_FUNCALL:
 			symbolDataType = semanticsIsDeclared(node->children[0]->symbol->text); //node->children[0]->symbol->dataType;
+
 			// Identifier must be function and the call must match the declaration
 			if (symbolDataType.identifierType == ID_TYPE_FUNCTION
 			&& semanticsMatchParameters(symbolDataType.params, node->children[1])) {
@@ -377,7 +378,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 		case TREE_EXPR_ARIT_DIV:
 			leftExprType = semanticsCheckType(node->children[0]);
 			rightExprType = semanticsCheckType(node->children[1]);
-
+			//printf("%s\n", node->children[0]->children[0]->symbol->text);
 			// Only numeric type can be operands
 			if ((leftExprType == VAL_TYPE_INT || leftExprType == VAL_TYPE_CHAR || leftExprType == VAL_TYPE_REAL)
 			&&  (rightExprType == VAL_TYPE_INT || rightExprType == VAL_TYPE_CHAR || rightExprType == VAL_TYPE_REAL)) {
