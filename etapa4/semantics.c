@@ -140,9 +140,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 						}
 						else {
 							semanticFailure = 1;
-							printf("%s undeclared!\n",node->symbol->text);
-							//printf("%d\n",node->type);
-
+							printf("Error in node %d : %s undeclared!\n",node->type, node->symbol->text);
 							return -1;
 						}
 					}
@@ -171,19 +169,17 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			idType = node->type - 9;
 			valueType = node->children[0]->type + 10;
 			params = semanticsGetParamsTypes(node->children[2]);
-			
+
 			if(node->type == TREE_DECL_FUNC)
 			{
 				/*Update hash funcion variables*/
 				update_hash_function_variables(node->children[2]);
 			}
-			
+
 			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, length))
 			{
-				printf("%s already declared!\n", node->children[1]->symbol->text);
+				printf("Error in node %d : %s already declared!\n",node->type, node->children[1]->symbol->text);
 				semanticFailure = 1;
-				//printf("%d\n",node->type);
-
 				return -1;
 			}
 
@@ -199,13 +195,13 @@ VAL_TYPE semanticsCheckType(TREE* node)
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
-					printf("%d\n",node->type);
+					printf("Error in node %d : Function error\n", node->type);
 					return -1;
 				}
 			}
 		case TREE_LIST_SYM:
 		case TREE_LIST_ARG:
-			// This case should not happen /**********************************************/
+			// This case should not happen
 			return;
 		case TREE_LIST_COMM:
 		//printf(".%d\n",node->children[0]->type);
@@ -228,7 +224,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				}
 				else {
 					semanticFailure = 1;
-					printf("%d\n",node->type);
+					printf("Error in node %d : check list of commands\n",node->type);
 					return -1;
 				}
 			} else{
@@ -269,13 +265,15 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			// Left side must be scalar and of a type compatible with the right side
 			if (rightValueType != -1
 			&& symbolDataType.identifierType == ID_TYPE_SCALAR
-			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType)) {
+			&& semanticsIsCompatible(symbolDataType.valueType, rightValueType))
+			{
 				return VAL_TYPE_UNIT;
-			} else {
+			}
+			else {
 				semanticFailure = 1;
-				}
-				printf("%d\n",node->type);
+				printf("Error in node %d : maybe check value assignment\n",node->type);
 				return -1;
+				}
 			}
 		case TREE_COMM_ASSIG_VEC:
 
@@ -299,13 +297,13 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			} else {
 				semanticFailure = 1;
 				//printf("Assign vector error: %d\n",symbolDataType.identifierType);
-				printf("Vector \'%s\' assign error!\n", node->children[0]->symbol->text);
+				printf("Error in node %d : Vector \'%s\' assign error!\n", node->type, node->children[0]->symbol->text);
 				return -1;
 			}
 		case TREE_COMM_IF_ELSE:
 			conditionValueType = semanticsCheckType(node->children[0]);
 			// The condition expression should be compatible with int, because it'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {//(semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
+			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {//(semanticsIsCompatible(VAL_TYPE_INT, conditionValueType))
 
 				// Check the type of the Then-Command and the Else-Command
 				VAL_TYPE thenCommandType = semanticsCheckType(node->children[1]);
@@ -318,7 +316,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 						return elseCommandType;
 					} else if (elseCommandType == VAL_TYPE_UNIT) {
 						return thenCommandType;
-					} else if (semanticsIsCompatible(thenCommandType,elseCommandType)) {//else if (thenCommandType == elseCommandType) {
+					} else if (semanticsIsCompatible(thenCommandType,elseCommandType)) { //else if (thenCommandType == elseCommandType)
 					// If both command have any type (they have "return" commands), then
 					// both types must be equal and this will be the type of the If-Command		// Equal or compatible?
 							return thenCommandType;
@@ -370,7 +368,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return symbolDataType.valueType;
 			} else {
 				semanticFailure = 1;
-				printf("Vector \'%s\' read error!\n", node->children[0]->symbol->text);
+				printf("Error in node %d: Vector \'%s\' read error!\n", node->type, node->children[0]->symbol->text);
 				return -1;
 			}
 		case TREE_EXPR_ARIT_ADD:
@@ -392,7 +390,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				}
 			} else {
 				semanticFailure = 1;
-				printf("%d\n",node->type);
+				printf("Error in node %d\n",node->type);
 				return -1;
 			}
 		case TREE_EXPR_BOOL_LT:
@@ -410,7 +408,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
-				printf("%d\n",node->type);
+				printf("Error in node %d\n",node->type);
 				return -1;
 			}
 		case TREE_EXPR_BOOL_AND:
@@ -424,7 +422,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;
-				printf("%d\n",node->type);
+				printf("Error in node %d\n",node->type);
 				return -1;
 			}
 		case TREE_PROGRAM:
