@@ -1,0 +1,8 @@
+real v[10]: 0 0 0 0 0 0 0 0 0;
+int var : 0;
+
+int incn (int x)
+  {
+  if (x <= 10) v[11] = 9 // Assignment out of range, runtime error, not compilation error.
+  return 8
+  };

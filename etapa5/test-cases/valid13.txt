@@ -1,0 +1,17 @@
+// UFRGS - Compiladores - Marcelo Johann - 2016/1
+
+
+int main()
+  {
+  i = foo(2,'9',FALSE) + 4
+  i = foo(9,'0',TRUE)
+  return 1
+  };
+
+int foo (int x, char c, bool r)
+  {
+  x = (i);
+  return x
+  };
+
+int i:0;
