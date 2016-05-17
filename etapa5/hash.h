@@ -12,9 +12,10 @@
 #define HASH_SIZE 997
 #define SYMBOL_LITERAL_INT 1
 #define SYMBOL_LITERAL_REAL 2
-#define SYMBOL_LITERAL_CHAR 4
 #define SYMBOL_LITERAL_STRING 3
+#define SYMBOL_LITERAL_CHAR 4
 #define SYMBOL_IDENTIFIER 7
+#define SYMBOL_LABEL 8
 
 typedef struct hash_node
 {
@@ -30,6 +31,7 @@ int hash_address(char *text);
 HASH* get_hash_node(char * text);
 HASH* hash_add(int type, char *text);
 int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int length); // Retorna 1 se dataType é atualizado, 0 se contrário
-HASH* makeTemp(void);
+HASH* hash_make_temp(void);
+HASH* hash_make_label(void);
 
 #endif

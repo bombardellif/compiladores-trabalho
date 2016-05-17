@@ -12,6 +12,7 @@
 #include "tree.h"
 #include "semantics.h"
 #include "tac.h"
+#include "code-gen.h"
 
 extern FILE *yyin;
 TREE *ast_program = NULL;
@@ -207,6 +208,7 @@ TREE *ast_program = NULL;
 
                 printf("#### GERAÇÃO DE CÓDIGO INTERMEDIÁRIO ####\n");
                 TAC* tac_program = generateCode(ast_program);
+                tacPrintListNext(tacReverse(tac_program));
 
                 /*
                 printf("###########################################################################\n");

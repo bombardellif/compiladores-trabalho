@@ -110,10 +110,20 @@ void print_hash()
             }
 }
 
-HASH* makeTemp(void)
+HASH* hash_make_temp(void)
 {
   static int nextTemp = 0;
   static char buffer[256];
 
-  return hash_add(SYMBOL_LITERAL_INT, "Compiler_Variable");
+  sprintf(buffer, "Compiler_Variable_%d", nextTemp++);
+  return hash_add(SYMBOL_IDENTIFIER, buffer);
+}
+
+HASH* hash_make_label(void)
+{
+  static int nextTemp = 0;
+  static char buffer[256];
+
+  sprintf(buffer, "Compiler_Label_%d", nextTemp++);
+  return hash_add(SYMBOL_LABEL, buffer);
 }
