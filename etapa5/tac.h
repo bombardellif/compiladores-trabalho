@@ -12,7 +12,7 @@
 #define TAC_SYMBOL 1        // symbol
 #define TAC_MOVE 2          // to         from
 #define TAC_STRIDX 25       // to         index       from
-#define TAC_LOADIDX 25      // temp_symbol from       index
+#define TAC_LOADIDX 26      // temp_symbol from       index
 #define TAC_ADD 3           // result     left_op     right_op
 #define TAC_SUB 4           // result     left_op     right_op
 #define TAC_MUL 5           // result     left_op     right_op
@@ -50,7 +50,8 @@ void tacPrintSingle(TAC* tac);
 void tacPrintListPrev(TAC* tac);
 void tacPrintListNext(TAC* tac);
 TAC* tacReverse(TAC* tac);
-TAC* tacJoin(TAC *l1, TAC *l2);
-TAC* tacJoin4(TAC *l1, TAC *l2, TAC *l3, TAC *l4);
+TAC* tacJoin(TAC* l1, TAC* l2);
+TAC* tacJoin3(TAC* l1, TAC* l2, TAC* l3);
+TAC* tacJoin4(TAC* l1, TAC* l2, TAC* l3, TAC* l4);
 
 #endif

@@ -31,6 +31,8 @@ void tacPrintSingle(TAC* tac)
   switch (tac->type) {
     case TAC_SYMBOL: fprintf(stderr, "TAC_SYMBOL");
     break;
+    case TAC_MOVE: fprintf(stderr, "TAC_MOVE");
+    break;
     case TAC_ADD: fprintf(stderr, "TAC_ADD");
     break;
     case TAC_SUB: fprintf(stderr, "TAC_SUB");
@@ -39,11 +41,21 @@ void tacPrintSingle(TAC* tac)
     break;
     case TAC_DIV: fprintf(stderr, "TAC_DIV");
     break;
+    case TAC_LABEL: fprintf(stderr, "TAC_LABEL");
+    break;
+    case TAC_IFZ: fprintf(stderr, "TAC_IFZ");
+    break;
+    case TAC_JUMP: fprintf(stderr, "TAC_JUMP");
+    break;
+    case TAC_RET: fprintf(stderr, "TAC_RET");
+    break;
+    case TAC_NOP: fprintf(stderr, "TAC_NOP");
+    break;
     default: fprintf(stderr, "TAC_DEFAULT");
   }
-  fprintf(stderr, ",%s", tac->res->text);
-  fprintf(stderr, ",%s", tac->op1->text);
-  fprintf(stderr, ",%s)\n", tac->op2->text);
+  fprintf(stderr, ",%s", tac->res ? tac->res->text : "_");
+  fprintf(stderr, ",%s", tac->op1 ? tac->op1->text : "_");
+  fprintf(stderr, ",%s)\n", tac->op2 ? tac->op2->text : "_");
 }
 
 void tacPrintListPrev(TAC* tac)
@@ -74,7 +86,7 @@ TAC* tacReverse(TAC* tac)
   return t;
 }
 
-TAC* tacJoin(TAC *l1, TAC *l2)
+TAC* tacJoin(TAC* l1, TAC* l2)
 {
   TAC *temp;
 
@@ -90,7 +102,12 @@ TAC* tacJoin(TAC *l1, TAC *l2)
   return l2;
 }
 
-TAC* tacJoin4(TAC *l1, TAC *l2, TAC *l3, TAC *l4)
+TAC* tacJoin3(TAC* l1, TAC* l2, TAC* l3)
+{
+  return tacJoin(tacJoin(l1, l2), l3);
+}
+
+TAC* tacJoin4(TAC* l1, TAC* l2, TAC* l3, TAC* l4)
 {
   return tacJoin(tacJoin(tacJoin(l1, l2), l3), l4);
 }

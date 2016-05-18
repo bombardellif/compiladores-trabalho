@@ -1,7 +1,13 @@
-real v[10]: 0 0 0 0 0 0 0 0 0;
+//real v[10]: 0 0 0 0 0 0 0 0 0;
+real v[10];
 
 int incn (char x, int y)
   {
   v[9] = x
-  return v[9]
+  y = x
+  if (0)
+    x = 0
+  else
+    x = '1'
+  return 9;
   };

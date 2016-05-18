@@ -113,17 +113,19 @@ void print_hash()
 HASH* hash_make_temp(void)
 {
   static int nextTemp = 0;
-  static char buffer[256];
+  char *buffer;
 
-  sprintf(buffer, "Compiler_Variable_%d", nextTemp++);
+  buffer = (char*)malloc(sizeof(char)*10);
+  sprintf(buffer, "_Temp_%d", nextTemp++);
   return hash_add(SYMBOL_IDENTIFIER, buffer);
 }
 
 HASH* hash_make_label(void)
 {
   static int nextTemp = 0;
-  static char buffer[256];
+  char *buffer;
 
-  sprintf(buffer, "Compiler_Label_%d", nextTemp++);
+  buffer = (char*)malloc(sizeof(char)*11);
+  sprintf(buffer, "_Label_%d", nextTemp++);
   return hash_add(SYMBOL_LABEL, buffer);
 }

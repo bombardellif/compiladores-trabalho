@@ -10,6 +10,6 @@
 #include "tac.h"
 #include "tree.h"
 
-TAC* generateCode(TREE *node);
+TAC* generateCode(TREE* node);
 
 #endif
