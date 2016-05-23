@@ -224,7 +224,7 @@ TREE *ast_program = NULL;
           }
     }
     else {
-        printf("File not informed!\nUsage: ./etapa4 input_filepath\n");
+        printf("File not informed!\nUsage: ./etapa5 input_filepath\n");
         exit(1);
         }
     exit(0);

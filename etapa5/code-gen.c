@@ -52,7 +52,28 @@ TAC* makeIfThenElse(TAC* codeTest, TAC* codeThen, TAC* codeElse)
 
 TAC* makeWhile(TAC* codeTest, TAC* codeThen)
 {
+    TAC *newWhile, *targetEndWhile, *targetBeginWhile;
+    HASH *labelBeginWhile, *labelEndWhile;
 
+    // Create code and label fot the test (WHILE)
+    labelBeginWhile = hash_make_label();
+    labelEndWhile = hash_make_label();
+    targetBeginWhile = tacCreate(TAC_LABEL, labelBeginWhile, 0, 0);
+
+    newWhile = tacCreate(TAC_IFZ, labelEndWhile, codeTest?codeTest->res:0, 0);
+    newWhile->prev = codeTest;
+
+    // Add the jump at the end of the block back to the test
+    codeThen = tacJoin4(targetBeginWhile,
+                        newWhile,
+                        codeThen,
+                        tacCreate(TAC_JUMP, labelBeginWhile, 0, 0) );
+
+    // Add the label to jump from the conditional test WHILE
+    targetEndWhile = tacCreate(TAC_LABEL, labelEndWhile, 0, 0);
+    targetEndWhile->prev = codeThen;
+
+    return targetEndWhile;
 }
 
 TAC* generateCode(TREE* node)
