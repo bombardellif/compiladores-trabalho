@@ -237,7 +237,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 				//printf("%d\n", node->children[3]->type);
 				VAL_TYPE returnType = semanticsCheckType(node->children[3]);
 				//printf(" %d=%d\n", returnType, symbolDataType.valueType);
-				if (semanticsIsCompatible(returnType, symbolDataType.valueType))
+				if (returnType == VAL_TYPE_UNIT
+					|| semanticsIsCompatible(returnType, symbolDataType.valueType))
 					return VAL_TYPE_UNIT;
 				else {
 					semanticFailure = 1;
