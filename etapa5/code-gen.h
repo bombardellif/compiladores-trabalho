@@ -10,6 +10,7 @@
 #include "tac.h"
 #include "tree.h"
 
+void initSymbolTable();
 TAC* generateCode(TREE* node);
 
 #endif

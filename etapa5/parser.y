@@ -207,6 +207,7 @@ TREE *ast_program = NULL;
                 	printf("No semantic errors.\n");
 
                 printf("#### GERAÇÃO DE CÓDIGO INTERMEDIÁRIO ####\n");
+                initSymbolTable();
                 TAC* tac_program = generateCode(ast_program);
                 tacPrintListNext(tacReverse(tac_program));
 

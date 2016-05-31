@@ -22,7 +22,7 @@
 #define TAC_ENDFUN 9        // symbol ??
 #define TAC_IFZ 10          // label_symbol test_symbol
 #define TAC_JUMP 11         // label_symbol
-#define TAC_CALL 12         // symbol
+#define TAC_CALL 12         // return_sym  func_symbol
 #define TAC_ARG 13          // to         from
 #define TAC_RET 14          // temp_symbol symbol
 #define TAC_PRINT 15
