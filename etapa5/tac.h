@@ -35,6 +35,7 @@
 #define TAC_AND 22          // temp_symbol  left_op   right_op
 #define TAC_OR 23           // temp_symbol  left_op   right_op
 #define TAC_NOP 24
+#define TAC_EQZ 27			// temp_symbol  test_symbol
 
 typedef struct tac_node {
   int type;

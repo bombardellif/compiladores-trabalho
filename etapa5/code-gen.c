@@ -23,8 +23,10 @@ void initSymbolTable()
 
 TAC* makeBinOp(int type, TAC* code0, TAC* code1)
 {
-  return tacJoin(tacJoin(code0, code1),
-            tacCreate(type, hash_make_temp(), code0 ? code0->res : 0, code1 ? code1->res : 0));
+
+	
+  		return tacJoin(tacJoin(code0, code1),
+            			tacCreate(type, hash_make_temp(), code0 ? code0->res : 0, code1 ? code1->res : 0));
 }
 
 TAC* makeIfThenElse(TAC* codeTest, TAC* codeThen, TAC* codeElse)
@@ -73,8 +75,10 @@ TAC* makeWhile(TAC* codeTest, TAC* codeThen)
     labelEndWhile = hash_make_label();
     targetBeginWhile = tacCreate(TAC_LABEL, labelBeginWhile, 0, 0);
 
+    //                                                  temp (bool)
     newWhile = tacCreate(TAC_IFZ, labelEndWhile, codeTest?codeTest->res:0, 0);
     newWhile->prev = codeTest;
+    //printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA %d\n", codeTest->type); // type: LTZ, GEZ... op1 e op2 are the operands
 
     // Add the jump at the end of the block back to the test
     codeThen = tacJoin4(targetBeginWhile,
@@ -178,7 +182,22 @@ TAC* generateCode(TREE* node)
       return makeBinOp(TAC_MUL, code[0], code[1]);
     case TREE_EXPR_ARIT_DIV:
       return makeBinOp(TAC_DIV, code[0], code[1]);
-    // TODO Boolean operators
+    case TREE_EXPR_BOOL_LT:
+    	return makeBinOp(TAC_LTZ, code[0], code[1]);
+    case TREE_EXPR_BOOL_GT:
+    	return makeBinOp(TAC_GTZ, code[0], code[1]);
+    case TREE_EXPR_BOOL_LE:
+    	return makeBinOp(TAC_LEZ, code[0], code[1]);
+    case TREE_EXPR_BOOL_GE:
+    	return makeBinOp(TAC_GEZ, code[0], code[1]);
+    case TREE_EXPR_BOOL_EQ:
+    	return makeBinOp(TAC_DIV, code[0], code[1]);
+    case TREE_EXPR_BOOL_NE:
+    	return makeBinOp(TAC_ANEG, code[0],code[1]);
+    case TREE_EXPR_BOOL_AND:
+    	return makeBinOp(TAC_AND, code[0], code[1]);
+    case TREE_EXPR_BOOL_OR:
+    	return makeBinOp(TAC_OR, code[0], code[1]);
     default:
     break;
   }

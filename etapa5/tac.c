@@ -51,6 +51,22 @@ void tacPrintSingle(TAC* tac)
     break;
     case TAC_NOP: fprintf(stderr, "TAC_NOP");
     break;
+    case TAC_ANEG: fprintf(stderr, "TAC_ANEG");
+    break;
+    case TAC_LTZ: fprintf(stderr, "TAC_LTZ");
+    break;
+    case TAC_GTZ: fprintf(stderr, "TAC_GTZ");
+    break;
+    case TAC_LEZ: fprintf(stderr, "TAC_LEZ");
+    break;
+    case TAC_GEZ: fprintf(stderr, "TAC_GEZ");
+    break;
+    case TAC_AND: fprintf(stderr, "TAC_AND");
+    break;
+    case TAC_OR: fprintf(stderr, "TAC_OR");
+    break;
+    case TAC_EQZ: fprintf(stderr, "TAC_EQZ");
+    break;
     default: fprintf(stderr, "TAC_DEFAULT");
   }
   fprintf(stderr, ",%s", tac->res ? tac->res->text : "_");
