@@ -17,10 +17,8 @@ void update_hash_function_variables(TREE* node)
 	// Children[2] - rest list
 	if(node == NULL)
 		return;
-	//printf("..%s\n", node->children[1]->symbol->text);
-	//printf("..%d\n", node->children[0]->type);
-	//hash_update_type(node->children[1]->symbol->text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int length);
-	if(! hash_update_type( node->children[1]->symbol->text, ID_TYPE_SCALAR, node->children[0]->type + 10, NULL, 0))
+
+	if(! hash_update_type( node->children[1]->symbol->text, ID_TYPE_SCALAR, node->children[0]->type + 10, NULL))
 	{
 		printf("%s already declared!\n", node->children[1]->symbol->text);
 		semanticFailure = 1;
@@ -89,6 +87,7 @@ PARAM_LIST* semanticsGetParamsTypes(TREE *node)
 		for ( ; node; node=node->children[2], prior=params) {
 			params = (PARAM_LIST*) malloc(sizeof(PARAM_LIST));
 			params->valueType = (VAL_TYPE) node->children[0]->type + 10;
+			params->symbol = node->children[1] ? node->children[1]->symbol : NULL;
 			params->next = NULL;
 
 			if (prior) {
@@ -113,7 +112,6 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 	ID_TYPE idType;
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
-	int length = 0;
 
 	if (!node) {
 		return VAL_TYPE_UNIT;
@@ -128,7 +126,6 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 			// This case should not happen
 			return;
 		case TREE_DECL_VECT:
-			length = atoi(node->children[2]->symbol->text);
 		case TREE_DECL_SINGLE:
 		case TREE_DECL_FUNC:
 			idType = node->type - 9;
@@ -141,7 +138,7 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 				update_hash_function_variables(node->children[2]);
 			}
 
-			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, length))
+			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
 			{
 				printf("Error in node %d : %s already declared!\n",node->type, node->children[1]->symbol->text);
 				semanticFailure = 1;
@@ -173,7 +170,6 @@ VAL_TYPE semanticsCheckType(TREE* node)
 	ID_TYPE idType;
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
-	int length = 0;
 
 	if (!node) {
 		return VAL_TYPE_UNIT;
@@ -349,7 +345,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 		case TREE_COMM_IF_ELSE:
 			conditionValueType = semanticsCheckType(node->children[0]);
 			// The condition expression should be compatible with int, because it'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || 
+			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) ||
 				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the Then-Command and the Else-Command
@@ -383,7 +379,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			conditionValueType = semanticsCheckType(node->children[0]);
 
 			// The condition expression should be compatible with int, because it'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || 
+			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) ||
 				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the loop body

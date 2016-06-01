@@ -33,6 +33,10 @@ void tacPrintSingle(TAC* tac)
     break;
     case TAC_MOVE: fprintf(stderr, "TAC_MOVE");
     break;
+    case TAC_STRIDX: fprintf(stderr, "TAC_STRIDX");
+    break;
+    case TAC_LOADIDX: fprintf(stderr, "TAC_LOADIDX");
+    break;
     case TAC_ADD: fprintf(stderr, "TAC_ADD");
     break;
     case TAC_SUB: fprintf(stderr, "TAC_SUB");

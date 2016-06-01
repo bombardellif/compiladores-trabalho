@@ -159,6 +159,7 @@ TREE *ast_program = NULL;
 			|		LIT_CHAR                                                               {$$ = create_leaf_symbol($1);}
 			| 	'(' aritmeticExpression ')'                                            {$$ = $2;}
 			|		TK_IDENTIFIER '(' listExpression ')'                                   {$$ = create_tree(TREE_EXPR_ARIT_FUNCALL, 0, create_leaf_symbol($1), $3, 0, 0);}
+      |		TK_IDENTIFIER '('  ')'                                                 {$$ = create_tree(TREE_EXPR_ARIT_FUNCALL, 0, create_leaf_symbol($1), NULL, 0, 0);}
 			/*| 	'-' aritmeticExpression*/
 			| 	aritmeticExpression '+' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_ADD, 0, $1, $3, 0, 0);}
 			| 	aritmeticExpression '-' aritmeticExpression                            {$$ = create_tree(TREE_EXPR_ARIT_SUB, 0, $1, $3, 0, 0);}

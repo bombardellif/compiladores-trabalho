@@ -23,6 +23,7 @@ typedef int VAL_TYPE;
 typedef struct param_list_node
 {
   VAL_TYPE valueType;
+  struct hash_node *symbol;
   struct param_list_node *next;
 } PARAM_LIST;
 
@@ -32,7 +33,6 @@ typedef struct data_type
   VAL_TYPE valueType;        /* value of the expression containing the symbol,
                               * e.g. INT if it's a vector of int, or CHAR if it's a function returning char, etc. */
   PARAM_LIST *params;         /* used for functions, stores the types of the params of the function*/
-  int paramsLength;			/*Used to determine whether an assignment to a vector is out of range*/
 } DATA_TYPE;
 
 #endif

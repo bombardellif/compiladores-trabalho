@@ -5,6 +5,7 @@
  */
 
 #include "code-gen.h"
+#include "semantics_types.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -106,12 +107,19 @@ TAC* makeParameters(TREE* node, int *sizeParameters)
   int tacType, childNoParams;
   char *formatAlloc;
   char format[256];
+  PARAM_LIST *currentParameter;
 
   format[0] = '\0';
   *sizeParameters = 0;
 
-  tacType = node->type == TREE_EXPR_ARIT_FUNCALL ? TAC_ARG : TAC_PUSH;
-  childNoParams = node->type == TREE_EXPR_ARIT_FUNCALL ? 1 : 0;
+  if (node->type == TREE_EXPR_ARIT_FUNCALL) {
+    tacType = TAC_ARG;
+    childNoParams = 1;
+    currentParameter = node->children[0]->symbol ? node->children[0]->symbol->dataType.params : NULL;
+  } else {
+    tacType = TAC_PUSH;
+    childNoParams = 0;
+  }
 
   // Iterate over the expression list (the parameters)
   for (exprList = node->children[childNoParams]; exprList; exprList = exprList->children[1]) {
@@ -120,8 +128,11 @@ TAC* makeParameters(TREE* node, int *sizeParameters)
 
     switch(node->type) {
       case TREE_EXPR_ARIT_FUNCALL:
-        // TODO
-        parameterSymbol = hash_make_temp();
+        if (currentParameter) {
+          parameterSymbol = currentParameter->symbol;
+          currentParameter = currentParameter->next;
+        } else
+          parameterSymbol = 0;
         break;
       case TREE_COMM_IN:
       case TREE_COMM_OUT:
@@ -210,6 +221,12 @@ TAC* generateCode(TREE* node)
       return tacCreate(TAC_SYMBOL, get_hash_node(CODEGEN_VAR_TRUE), 0, 0);
     case TREE_VAL_FALSE:
       return tacCreate(TAC_SYMBOL, get_hash_node(CODEGEN_VAR_FALSE), 0, 0);
+    case TREE_DECL_FUNC:
+      return tacJoin3(
+        tacCreate(TAC_BEGINFUN, 0, node->children[1]?node->children[1]->symbol:0, 0),
+        code[3],
+        tacCreate(TAC_ENDFUN, 0, node->children[1]?node->children[1]->symbol:0, 0)
+      );
     case TREE_COMM_NOP:
       return tacCreate(TAC_NOP, 0, 0, 0);
     case TREE_COMM_IN:
@@ -218,14 +235,14 @@ TAC* generateCode(TREE* node)
       return tacJoin3(generatedCode,
           tacCreate(TAC_READ, 0, 0, 0),
           tacCreate(TAC_CLNSTACK, 0, absoluteVal, 0)
-          );
+      );
     case TREE_COMM_OUT:
       generatedCode = makeParameters(node, &sizeParameters);
       absoluteVal = hash_add_absolute(sizeParameters);
       return tacJoin3(generatedCode, // The code of the expressions in the parameters
             tacCreate(TAC_PRINT, 0, 0, 0),
             tacCreate(TAC_CLNSTACK, 0, absoluteVal, 0)
-            );
+      );
     case TREE_COMM_ASSIG:
       return tacJoin(code[1],
             tacCreate(TAC_MOVE, code[0]?code[0]->res:0, code[1]?code[1]->res:0, 0)
@@ -246,7 +263,9 @@ TAC* generateCode(TREE* node)
       return tacJoin(makeParameters(node, &sizeParameters), // The code of the expressions in the parameters
             tacCreate(TAC_CALL, get_hash_node(CODEGEN_VAR_RETURN), code[0]?code[0]->res:0, 0));
     case TREE_EXPR_ARIT_VEC_READ:
-      // TODO
+      return tacJoin(code[1],
+            tacCreate(TAC_LOADIDX, hash_make_temp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)
+      );
       break;
     case TREE_EXPR_ARIT_ADD:
       return makeBinOp(TAC_ADD, code[0], code[1]);
