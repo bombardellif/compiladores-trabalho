@@ -349,8 +349,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			conditionValueType = semanticsCheckType(node->children[0]);
 			// The condition expression should be compatible with int, because it'll be tested for zero
 			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || 
-				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ||
-				conditionValueType == VAL_TYPE_UNIT) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
+				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the Then-Command and the Else-Command
 				VAL_TYPE thenCommandType = semanticsCheckType(node->children[1]);
@@ -384,8 +383,7 @@ VAL_TYPE semanticsCheckType(TREE* node)
 
 			// The condition expression should be compatible with int, because it'll be tested for zero
 			if (semanticsIsCompatible(VAL_TYPE_BOOL, conditionValueType) || 
-				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ||
-				conditionValueType == VAL_TYPE_UNIT) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
+				semanticsIsCompatible(VAL_TYPE_INT, conditionValueType) ) {//if (semanticsIsCompatible(VAL_TYPE_INT, conditionValueType)) {
 
 				// Check the type of the loop body
 				return semanticsCheckType(node->children[1]);
