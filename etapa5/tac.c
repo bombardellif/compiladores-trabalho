@@ -45,9 +45,21 @@ void tacPrintSingle(TAC* tac)
     break;
     case TAC_IFZ: fprintf(stderr, "TAC_IFZ");
     break;
+    case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN");
+    break;
+    case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN");
+    break;
     case TAC_JUMP: fprintf(stderr, "TAC_JUMP");
     break;
+    case TAC_CALL: fprintf(stderr, "TAC_CALL");
+    break;
+    case TAC_ARG: fprintf(stderr, "TAC_ARG");
+    break;
     case TAC_RET: fprintf(stderr, "TAC_RET");
+    break;
+    case TAC_PRINT: fprintf(stderr, "TAC_PRINT");
+    break;
+    case TAC_READ: fprintf(stderr, "TAC_READ");
     break;
     case TAC_NOP: fprintf(stderr, "TAC_NOP");
     break;
@@ -66,6 +78,10 @@ void tacPrintSingle(TAC* tac)
     case TAC_OR: fprintf(stderr, "TAC_OR");
     break;
     case TAC_EQZ: fprintf(stderr, "TAC_EQZ");
+    break;
+    case TAC_PUSH: fprintf(stderr, "TAC_PUSH");
+    break;
+    case TAC_CLNSTACK: fprintf(stderr, "TAC_CLNSTACK");
     break;
     default: fprintf(stderr, "TAC_DEFAULT");
   }

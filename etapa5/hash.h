@@ -34,5 +34,6 @@ HASH* hash_add(int type, char *text);
 int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int length); // Retorna 1 se dataType é atualizado, 0 se contrário
 HASH* hash_make_temp(void);
 HASH* hash_make_label(void);
+HASH* hash_add_absolute(int value);
 
 #endif
