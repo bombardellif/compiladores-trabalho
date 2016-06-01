@@ -137,6 +137,7 @@ TREE *ast_program = NULL;
 
   expression: aritmeticExpression                                                {$$ = $1;}
 			| 	booleanExpression                                                      {$$ = $1;}
+			| 	TK_IDENTIFIER '=' expression										{$$ = create_tree(TREE_COMM_ASSIG, 0, create_leaf_symbol($1), $3, 0, 0);}							
 			;
 
 	listExpression: expression                                                     {$$ = create_tree(TREE_LIST_EXPR, 0, $1, NULL, 0, 0);}
