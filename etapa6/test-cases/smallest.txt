@@ -1,0 +1,4 @@
+int var : 10;
+real d[10]: 0 'c' 0 0 0 0 0 0 0;
+int v : 0;
+int var : 1;

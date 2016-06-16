@@ -1,0 +1,7 @@
+real v[10]: 0 0 0 0 0 0 0 0 0;
+
+int incn (real x)
+  {
+  v[2] = 2
+  return v[2]
+  };

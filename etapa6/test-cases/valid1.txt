@@ -1,0 +1,27 @@
+real v[10]: 0 0 0 0 0 0 0 0 0;
+// int v : 0;
+
+int incn (char x, int y)
+  {
+  //v = incn('0', 2/0)
+  v[10] = 55;
+  x = vo()
+  // input v, x, x, y
+  // output y, x, "xa", 0+0
+  // input v
+  // v[9] = x
+  // y = x
+  // if (0)
+  //   x = 0
+  // else
+  //   x = '1'
+  // return 9;
+  };
+
+char vo() {
+  if (v[0])
+    return 'a'
+  else {
+    while (TRUE) v[0] = 1
+  }
+};

@@ -1,0 +1,28 @@
+// UFRGS - Compiladores - Marcelo Johann - 2016/1
+
+int a:0;
+int i:0;
+real v[10]: 0 0 0 0 0 0 0 0 0 0;
+bool mat[1000];
+char c:0;
+
+int main()
+  {
+  output "Digite um numero: "
+  input i
+  a = i < 10
+  while (i<10)
+    {
+    a = incn(a,1)
+    i = i + 1
+    }
+  output "Incrementado algumas vezes fica ",a,"\n"
+  if (a==5) output "Parou no meio\n"
+  };
+
+int incn (int x, int n)
+  {
+  return x+n
+  };
+
+int voidfunc() ; ;

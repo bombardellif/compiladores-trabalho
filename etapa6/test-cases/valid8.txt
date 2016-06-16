@@ -1,0 +1,14 @@
+// UFRGS - Compiladores - Marcelo Johann - 2016/1
+
+int a:4;
+int i:5;
+
+int main()
+  {
+  while (i + a -1 < 10 + i)
+    {
+    i = i + 1
+    }
+  return 1;
+  };
+

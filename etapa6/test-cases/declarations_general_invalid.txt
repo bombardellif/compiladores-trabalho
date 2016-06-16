@@ -1,0 +1,11 @@
+//This should be a valid program
+
+real realV[11];
+bool bv[98];
+int i() return 1 ;
+//int main() ; ; // Creio ser errado por retornar empty em vez de int... Mas quando pode-se usar empty?
+int var :100;
+bool bv[98];
+bool f:0;
+int var : 3;
+char main : 90;
