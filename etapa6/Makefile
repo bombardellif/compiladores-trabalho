@@ -1,5 +1,5 @@
-etapa6: lex.yy.c y.tab.c hash.o tree.o semantics.o tac.o code-gen.o
-	gcc -o etapa6 lex.yy.c y.tab.c hash.o tree.o semantics.o tac.o code-gen.o
+etapa6: lex.yy.c y.tab.c assembly.o hash.o tree.o semantics.o tac.o code-gen.o
+	gcc -o etapa6 lex.yy.c y.tab.c assembly.o  hash.o tree.o semantics.o tac.o code-gen.o
 
 lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l
@@ -21,6 +21,9 @@ tac.o: tac.c
 
 code-gen.o: code-gen.c
 	gcc -c code-gen.c
+
+assembly.o: assembly.c
+	gcc -c assembly.c
 
 clean:
 	rm -f lex.yy.* y.tab.* *.o etapa6

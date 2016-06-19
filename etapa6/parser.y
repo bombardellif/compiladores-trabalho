@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "hash.h"
+#include "assembly.h"
 #include "tree.h"
 #include "semantics.h"
 #include "tac.h"
@@ -185,8 +186,15 @@ TREE *ast_program = NULL;
 
 	int main(int argc, char* argv[])
 	{
+		FILE* outfile;
+		int len = strlen(argv[1]);
+    	char str[len+2];
 		  if (argc > 1)
       {
+	  	  strcpy(str,argv[1]);
+		  strcat(str, ".s" );
+	  	  outfile = fopen(str, "w");
+			
           if(yyin = fopen(argv[1], "r"))
           {
               initMe();
@@ -212,11 +220,9 @@ TREE *ast_program = NULL;
                 TAC* tac_program = generateCode(ast_program);
                 tacPrintListNext(tacReverse(tac_program));
 
-                /*
-                printf("###########################################################################\n");
-              	Descompila
-              	decompile(ast_program, outfile);
-                */
+				convert_assembly(tac_program,outfile, str);
+				fclose(outfile);
+                
           		}
           }
           else
