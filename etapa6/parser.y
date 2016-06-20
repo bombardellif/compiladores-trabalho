@@ -186,14 +186,8 @@ TREE *ast_program = NULL;
 
 	int main(int argc, char* argv[])
 	{
-		FILE* outfile;
-		int len = strlen(argv[1]);
-    	char str[len+2];
 		  if (argc > 1)
       {
-	  	  strcpy(str,argv[1]);
-		  strcat(str, ".s" );
-	  	  outfile = fopen(str, "w");
 			
           if(yyin = fopen(argv[1], "r"))
           {
@@ -220,8 +214,8 @@ TREE *ast_program = NULL;
                 TAC* tac_program = generateCode(ast_program);
                 tacPrintListNext(tacReverse(tac_program));
 
-				convert_assembly(tac_program,outfile, str);
-				fclose(outfile);
+				if(convert_assembly(tac_program, argv[1]) == 5)
+					exit(5); // File error
                 
           		}
           }

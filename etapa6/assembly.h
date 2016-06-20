@@ -11,6 +11,6 @@ char buffer[50];
 void convert_assembly_single(TAC* tac, FILE* output);
 void AssemblyPrintListNext(TAC* tac, FILE* output);
 TAC* output_assemblyReverse(TAC* tac);
-void convert_assembly(TAC* tac, FILE* output, char* filename);
+int convert_assembly(TAC* tac, char* filename);
 
 #endif

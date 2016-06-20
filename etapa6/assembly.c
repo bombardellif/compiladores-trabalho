@@ -1,14 +1,27 @@
 #include "assembly.h"
 
-void convert_assembly(TAC* tac, FILE* output, char* filename)
+int convert_assembly(TAC* tac, char* filename)
 {
+      FILE* outfile;
+		  int len = strlen(filename);
+    	char str[len+2];
+		  strcpy(str,filename);
+		  strcat(str, ".s" );
+	  	if(!(outfile = fopen(str, "w")))
+          return(5);
+        
       functionLabelCounter = 0;
-      fprintf(output, "	.file	\"");
-      fprintf(output, "%s", filename);
-      fprintf(output, "\"\n");
+      fprintf(outfile, "\t.file	\"");
+      fprintf(outfile, "%s", filename);
+      fprintf(outfile, "\"\n");
+      fprintf(outfile, "\t.data\n");
+      fprintf(outfile, "\t.align 2\n");
 
-      AssemblyPrintListNext(output_assemblyReverse(tac), output);
+      //TODO dataSegment (checar a hash e ver quais variaveis o programa possui)
 
+      AssemblyPrintListNext(output_assemblyReverse(tac), outfile);
+      fclose(outfile);
+      return 1;
 }
 void AssemblyPrintListNext(TAC* tac, FILE* output)
 {
@@ -58,7 +71,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
     case TAC_BEGINFUN: 
-                        fprintf(output, "	.text\n	.globl	");
+                        fprintf(output, "\t.text\n	.globl	");
                         fprintf(output, "%s", tac->op1->text);
                         fprintf(output, "\n	.type ");
                         fprintf(output, "%s", tac->op1->text);
@@ -67,15 +80,15 @@ void convert_assembly_single(TAC* tac, FILE* output)
                         fprintf(output, ":\n.LFB");
                         sprintf (buffer, "%d", functionLabelCounter++);
                         fprintf(output, "%s:\n", buffer);
-                        fprintf(output, "	.cfi_startproc\n");
+                        fprintf(output, "\t.cfi_startproc\n");
 
     break;
     case TAC_ENDFUN: 
-                        fprintf(output, "	ret\n");
-                        fprintf(output, "	.cfi_endproc\n");
+                        fprintf(output, "\tret\n");
+                        fprintf(output, "\t.cfi_endproc\n");
     break;
     case TAC_JUMP: 
-                        fprintf(output, "	jmp .");
+                        fprintf(output, "\tjmp .");
                         fprintf(output, "%s \n", tac->res->text);
     break;
     case TAC_CALL: fprintf(output, "TAC_CALL");
@@ -89,7 +102,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_READ: fprintf(output, "TAC_READ");
     break;
     case TAC_NOP: 
-                    fprintf(output, "	nop\n");
+                    fprintf(output, "\tnop\n");
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
