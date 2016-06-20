@@ -9,8 +9,6 @@ void convert_assembly(TAC* tac, FILE* output, char* filename)
 
       AssemblyPrintListNext(output_assemblyReverse(tac), output);
 
-      fprintf(output, "	.cfi_endproc");
-
 }
 void AssemblyPrintListNext(TAC* tac, FILE* output)
 {
@@ -37,7 +35,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     return;
 
   switch (tac->type) {
-    case TAC_SYMBOL: fprintf(output, "TAC_SYMBOL");
+    case TAC_SYMBOL: fprintf(output, "TAC_SYMBOL"); /*TODO: AQUELAS QUE AINDA TEM TAC*/
     break;
     case TAC_MOVE: fprintf(output, "TAC_MOVE");
     break;
@@ -53,7 +51,9 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_DIV: fprintf(output, "TAC_DIV");
     break;
-    case TAC_LABEL: fprintf(output, "TAC_LABEL");
+    case TAC_LABEL: 
+                        fprintf(output, ".");
+                        fprintf(output, "%s\n", tac->res->text);
     break;
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
@@ -70,9 +70,13 @@ void convert_assembly_single(TAC* tac, FILE* output)
                         fprintf(output, "	.cfi_startproc\n");
 
     break;
-    case TAC_ENDFUN: fprintf(output, "TAC_ENDFUN");
+    case TAC_ENDFUN: 
+                        fprintf(output, "	ret\n");
+                        fprintf(output, "	.cfi_endproc\n");
     break;
-    case TAC_JUMP: fprintf(output, "TAC_JUMP");
+    case TAC_JUMP: 
+                        fprintf(output, "	jmp .");
+                        fprintf(output, "%s \n", tac->res->text);
     break;
     case TAC_CALL: fprintf(output, "TAC_CALL");
     break;
@@ -84,7 +88,8 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_READ: fprintf(output, "TAC_READ");
     break;
-    case TAC_NOP: fprintf(output, "TAC_NOP");
+    case TAC_NOP: 
+                    fprintf(output, "	nop\n");
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
