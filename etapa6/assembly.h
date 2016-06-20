@@ -5,6 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 
+int functionLabelCounter;
+char buffer[50];
+
 void convert_assembly_single(TAC* tac, FILE* output);
 void AssemblyPrintListNext(TAC* tac, FILE* output);
 TAC* output_assemblyReverse(TAC* tac);

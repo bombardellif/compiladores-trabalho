@@ -2,8 +2,9 @@
 
 void convert_assembly(TAC* tac, FILE* output, char* filename)
 {
+      functionLabelCounter = 0;
       fprintf(output, "	.file	\"");
-      fprintf(output, filename);
+      fprintf(output, "%s", filename);
       fprintf(output, "\"\n");
 
       AssemblyPrintListNext(output_assemblyReverse(tac), output);
@@ -35,7 +36,6 @@ void convert_assembly_single(TAC* tac, FILE* output)
       if (!tac)
     return;
 
-  fprintf(output, "TAC(");
   switch (tac->type) {
     case TAC_SYMBOL: fprintf(output, "TAC_SYMBOL");
     break;
@@ -57,7 +57,18 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
-    case TAC_BEGINFUN: fprintf(output, "TAC_BEGINFUN");
+    case TAC_BEGINFUN: 
+                        fprintf(output, "	.text\n	.globl	");
+                        fprintf(output, "%s", tac->op1->text);
+                        fprintf(output, "\n	.type ");
+                        fprintf(output, "%s", tac->op1->text);
+                        fprintf(output, ", @function\n");
+                        fprintf(output, "%s", tac->op1->text);
+                        fprintf(output, ":\n.LFB");
+                        sprintf (buffer, "%d", functionLabelCounter++);
+                        fprintf(output, "%s:\n", buffer);
+                        fprintf(output, "	.cfi_startproc\n");
+
     break;
     case TAC_ENDFUN: fprintf(output, "TAC_ENDFUN");
     break;
