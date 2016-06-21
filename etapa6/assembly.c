@@ -15,9 +15,9 @@ int convert_assembly(TAC* tac, char* filename)
       fprintf(outfile, "%s", filename);
       fprintf(outfile, "\"\n");
       fprintf(outfile, "\t.data\n");
-      fprintf(outfile, "\t.align 2\n");
+      fprintf(outfile, "\t.align 4\n");
 
-      //TODO dataSegment (checar a hash e ver quais variaveis o programa possui)
+      hash_output_assembly(outfile);
 
       AssemblyPrintListNext(output_assemblyReverse(tac), outfile);
       fclose(outfile);
@@ -65,19 +65,12 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_DIV: fprintf(output, "TAC_DIV");
     break;
     case TAC_LABEL: 
-                        fprintf(output, ".");
-                        fprintf(output, "%s\n", tac->res->text);
+                        fprintf(output, ".%s\n", tac->res->text);
     break;
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
     case TAC_BEGINFUN: 
-                        fprintf(output, "\t.text\n	.globl	");
-                        fprintf(output, "%s", tac->op1->text);
-                        fprintf(output, "\n	.type ");
-                        fprintf(output, "%s", tac->op1->text);
-                        fprintf(output, ", @function\n");
-                        fprintf(output, "%s", tac->op1->text);
-                        fprintf(output, ":\n.LFB");
+                        fprintf(output, ".LFB");
                         sprintf (buffer, "%d", functionLabelCounter++);
                         fprintf(output, "%s:\n", buffer);
                         fprintf(output, "\t.cfi_startproc\n");

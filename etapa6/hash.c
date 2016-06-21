@@ -146,6 +146,29 @@ HASH* hash_make_temp(void)
   return hash_add(SYMBOL_IDENTIFIER, buffer);
 }
 
+/*Inicialmente, as variaveis (sao todas globais) sao
+declaradas no segmento .data com valor provisorio 1.ast
+Isso porque a hash nao contem a associacao variavel-valor,
+o que so e descoberto ao percorrer a arvore tac*/
+void hash_output_assembly(FILE* output)
+{
+    int i; 
+    HASH* node;
+    for(i=0; i<HASH_SIZE; i++)
+        for(node=symbol_table[i]; node; node=node->next)
+            if(node->dataType.identifierType == 1) // SCALAR
+            {
+                  fprintf(output, "\t.globl %s\n", node->text);
+                  fprintf(output, "\t.type %s, @object\n", node->text);
+                  if(node->type == SYMBOL_LITERAL_INT || node->type == SYMBOL_LITERAL_REAL){ fprintf(output, "\t.size %s, 4\n", node->text); }
+                  fprintf(output, "%s:\n\t.long 1\n", node->text);
+            }
+            else if(node->dataType.identifierType == 3) // FUNCTION
+            {   
+              fprintf(output, "\t.globl	%s\n\t.type %s, @function\n", node->text, node->text);
+            }
+}
+
 HASH* hash_make_label(void)
 {
   static int nextTemp = 0;

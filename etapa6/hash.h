@@ -9,6 +9,7 @@
 
 struct hash_node;
 
+#include <stdio.h>
 #include "semantics_types.h"
 
 #define HASH_SIZE 997
@@ -36,6 +37,7 @@ HASH* hash_add(int type, char *text);
 int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params); // Retorna 1 se dataType é atualizado, 0 se contrário
 HASH* hash_make_temp(void);
 HASH* hash_make_label(void);
+void hash_output_assembly(FILE* output);
 HASH* hash_add_absolute(int value);
 
 #endif
