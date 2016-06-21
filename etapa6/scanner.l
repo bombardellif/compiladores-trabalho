@@ -157,7 +157,11 @@ HASH* addStringToSymbolTable(char *text) {
 	// remove áspas
 	text[inputSize-2] = '\0';
 	text++;
+  // aloca nova string para o literal lido
+	stringValue = (char*) malloc((inputSize-2) * sizeof(char));
+  strcpy(stringValue, text);
+
 	// adiciona à tabela de símbolos
-  	node=hash_add(SYMBOL_LITERAL_STRING, text);
-  	return node;
+	node=hash_add(SYMBOL_LITERAL_STRING, stringValue);
+	return node;
 }

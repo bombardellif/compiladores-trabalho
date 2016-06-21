@@ -12,7 +12,6 @@
 
 #define CODEGEN_VAR_TRUE "_True"
 #define CODEGEN_VAR_FALSE "_False"
-#define CODEGEN_VAR_RETURN "_Return"
 #define CODEGEN_VAR_INPUT "_scanf"
 #define CODEGEN_VAR_OUTPUT "_printf"
 
@@ -20,7 +19,6 @@ void initSymbolTable()
 {
   hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAR_TRUE);
   hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAR_FALSE);
-  hash_add(SYMBOL_IDENTIFIER, CODEGEN_VAR_RETURN);
   hash_add(SYMBOL_IDENTIFIER, CODEGEN_VAR_INPUT);
   hash_add(SYMBOL_IDENTIFIER, CODEGEN_VAR_OUTPUT);
 
@@ -258,10 +256,10 @@ TAC* generateCode(TREE* node)
       return makeWhile(code[0], code[1]);
     case TREE_COMM_RETURN:
       return tacJoin(code[0],
-            tacCreate(TAC_RET, get_hash_node(CODEGEN_VAR_RETURN), code[0]?code[0]->res:0, 0));
+            tacCreate(TAC_RET, hash_make_temp(), code[0]?code[0]->res:0, 0));
     case TREE_EXPR_ARIT_FUNCALL:
       return tacJoin(makeParameters(node, &sizeParameters), // The code of the expressions in the parameters
-            tacCreate(TAC_CALL, get_hash_node(CODEGEN_VAR_RETURN), code[0]?code[0]->res:0, 0));
+            tacCreate(TAC_CALL, hash_make_temp(), code[0]?code[0]->res:0, 0));
     case TREE_EXPR_ARIT_VEC_READ:
       return tacJoin(code[1],
             tacCreate(TAC_LOADIDX, hash_make_temp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)

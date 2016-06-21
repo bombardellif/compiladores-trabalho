@@ -188,7 +188,7 @@ TREE *ast_program = NULL;
 	{
 		  if (argc > 1)
       {
-			
+
           if(yyin = fopen(argv[1], "r"))
           {
               initMe();
@@ -214,9 +214,9 @@ TREE *ast_program = NULL;
                 TAC* tac_program = generateCode(ast_program);
                 tacPrintListNext(tacReverse(tac_program));
 
-				if(convert_assembly(tac_program, argv[1]) == 5)
-					exit(5); // File error
-                
+				// if(convert_assembly(tac_program, argv[1]) == 5)
+				// 	exit(5); // File error
+
           		}
           }
           else
