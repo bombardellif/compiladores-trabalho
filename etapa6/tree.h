@@ -76,10 +76,12 @@ typedef struct tree_node
 	struct tree_node* children[MAX_CHILDREN];
 } TREE;
 
+TREE* ast_root;
 void print_tree(TREE* root, int spaces);
 TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3);
 TREE* create_leaf(TREE_TYPE type);
 TREE* create_leaf_symbol(HASH* hash_symbol);
 void decompile(TREE *node, FILE* outfile);
+char* find_declaration_value(char* varname);
 
 #endif

@@ -165,7 +165,8 @@ void hash_output_declaration(FILE* output, HASH* node, ID_TYPE identifierType, V
       case VAL_TYPE_INT:
       case VAL_TYPE_REAL:
         fprintf(output, "\t.size %s, 4\n", node->name);
-        fprintf(output, "%s:\n\t.long 1\n", node->name);
+        fprintf(output, "%s:\n\t.long ", node->name);
+        fprintf(output, "%s\n", find_declaration_value(node->name));
     }
   break;
   case ID_TYPE_FUNCTION:

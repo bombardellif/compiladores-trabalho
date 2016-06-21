@@ -7,6 +7,8 @@ void print_tree(TREE* root, int spaces)
 	int i;
 	if(root != NULL)
 	{
+		if(! spaces)
+			ast_root = root;
 		for(i=0; i < spaces; i++)
 			fprintf(stderr, "  ");
 		fprintf(stderr, "Tree %d: ", root->type);
@@ -98,6 +100,33 @@ void print_tree(TREE* root, int spaces)
 			print_tree(root->children[i], spaces + 1);
 	}
 }
+
+char* get_value(TREE* root, char* varname)
+{	
+	int i;
+	char* buffer;
+	if(root != NULL)
+	{
+		switch (root->type)
+		{
+			case TREE_DECL_SINGLE:
+				if(!strcmp(varname, root->children[1]->symbol->text))
+					return root->children[2]->symbol->text;
+			break;
+		}
+		for(i=0;i<MAX_CHILDREN; i++)
+			if(buffer = get_value(root->children[i], varname))
+				return buffer;
+    }
+	return NULL;
+    
+}
+
+char* find_declaration_value(char* varname)
+{
+	return get_value(ast_root,varname);
+}
+
 
 TREE* create_tree(TREE_TYPE type, HASH* hash_symbol, TREE* child0, TREE* child1, TREE* child2, TREE* child3)
 {
