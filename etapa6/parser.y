@@ -209,14 +209,17 @@ TREE *ast_program = NULL;
                 } else
                 	printf("No semantic errors.\n");
 
-                printf("#### GERAÇÃO DE CÓDIGO INTERMEDIÁRIO ####\n");
+                printf("#### INTERMEDIATE CODE ####\n");
                 initSymbolTable();
                 TAC* tac_program = generateCode(ast_program);
                 tacPrintListNext(tacReverse(tac_program));
 
-				// if(convert_assembly(tac_program, argv[1]) == 5)
-				// 	exit(5); // File error
-
+				printf("#### ASSEMBLY CODE ####\n");
+				if(convert_assembly(tac_program, argv[1]) == 5)
+					exit(5); // File error
+				else
+					printf("File %s.s created\n", argv[1]);
+                
           		}
           }
           else
