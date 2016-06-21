@@ -9,7 +9,7 @@ int convert_assembly(TAC* tac, char* filename)
 		  strcat(str, ".s" );
 	  	if(!(outfile = fopen(str, "w")))
           return(5);
-        
+
       functionLabelCounter = 0;
       fprintf(outfile, "\t.file	\"");
       fprintf(outfile, "%s", filename);
@@ -68,24 +68,26 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_DIV: fprintf(output, "TAC_DIV");
     break;
-    case TAC_LABEL: 
+    case TAC_LABEL:
                         fprintf(output, ".%s\n", tac->res->text);
     break;
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
-    case TAC_BEGINFUN: 
-                        fprintf(output, ".LFB");
-                        sprintf (buffer, "%d", functionLabelCounter++);
-                        fprintf(output, "%s:\n", buffer);
-                        fprintf(output, "\t.cfi_startproc\n");
-                        fprintf(output, "\tpushq	%%rbp\n");
-                        fprintf(output, "\tmovq	%%rsp, %%rbp\n");
+    case TAC_BEGINFUN:
+      fprintf(output, "%s", tac->op1?tac->op1->text:"");
+      fprintf(output, ".LFB");
+      sprintf (buffer, "%d", functionLabelCounter++);
+      fprintf(output, "%s:\n", buffer);
+      fprintf(output, "\t.cfi_startproc\n");
+      fprintf(output, "\tpushq	%%rbp\n");
+      fprintf(output, "\tmovq	%%rsp, %%rbp\n");
     break;
-    case TAC_ENDFUN: 
-                        fprintf(output, "\tret\n");
-                        fprintf(output, "\t.cfi_endproc\n");
+    case TAC_ENDFUN:
+      fprintf(output, "\tpopq	%%rbp\n");
+      fprintf(output, "\tret\n");
+      fprintf(output, "\t.cfi_endproc\n");
     break;
-    case TAC_JUMP: 
+    case TAC_JUMP:
                         fprintf(output, "\tjmp .");
                         fprintf(output, "%s \n", tac->res->text);
     break;
@@ -95,18 +97,16 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_RET: fprintf(output, "TAC_RET");
     break;
-    case TAC_PRINT: 
-    				//Segmentation fault em tac->res->text (é NULL), fazer TAC_PUSH antes
-    				fprintf(output, "\tmovl _%s(%%rip), %%eax\n", tac->res->text );
-    				fprintf(output, "\tmovl %%eax, %%esi\n");
-    				fprintf(output, "\tleaq LC0(%%rip), %%rdi\n");
-    				fprintf(output, "\tmovl $0, %%eax\n");
-    				fprintf(output, "\tcall _printf\n");
-    
+    case TAC_PRINT:
+			// fprintf(output, "\tmovl _%s(%%rip), %%eax\n", tac->res->text );
+			// fprintf(output, "\tmovl %%eax, %%esi\n");
+			// fprintf(output, "\tleaq LC0(%%rip), %%rdi\n");
+			// fprintf(output, "\tmovl $0, %%eax\n");
+			fprintf(output, "\tcall printf\n");
     break;
     case TAC_READ: fprintf(output, "TAC_READ");
     break;
-    case TAC_NOP: 
+    case TAC_NOP:
                     fprintf(output, "\tnop\n");
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
