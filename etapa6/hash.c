@@ -41,9 +41,10 @@ HASH* hash_add(int type, char *text)
       node = (HASH*)calloc(1, sizeof(HASH));
       node->type = type;
       node->text = text; // text já deve ter sido alocado fora da função
-      node->dataType.identifierType = -1;
+      node->dataType.identifierType = ID_TYPE_UNDEF;
       node->dataType.valueType = -1;
       node->dataType.params = NULL;
+      node->name = NULL;
 
       node->next = symbol_table[address];
       symbol_table[address] = node;
@@ -73,7 +74,7 @@ int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *
     for(i=0; i<HASH_SIZE; i++)
       for(node = symbol_table[i]; node; node=node->next)
         if(!strcmp(node->text,text))
-    			if(node->dataType.identifierType == -1)
+    			if(node->dataType.identifierType == ID_TYPE_UNDEF)
     			{
     				node->dataType.identifierType = idType;
     				node->dataType.valueType = valType;
@@ -146,27 +147,70 @@ HASH* hash_make_temp(void)
   return hash_add(SYMBOL_IDENTIFIER, buffer);
 }
 
+void hash_set_new_name(HASH* node)
+{
+  static int nextNameIdx = 0;
+
+  node->name = (char*)malloc(sizeof(char)*10);
+  sprintf(node->name, "_abs_%d", nextNameIdx++);
+}
+
+void hash_output_declaration(FILE* output, HASH* node, ID_TYPE identifierType, VAL_TYPE valueType)
+{
+  switch (identifierType) {
+  case ID_TYPE_SCALAR:
+    fprintf(output, "\t.globl %s\n", node->name);
+    fprintf(output, "\t.type %s, @object\n", node->name);
+    switch (valueType) {
+      case VAL_TYPE_INT:
+      case VAL_TYPE_REAL:
+        fprintf(output, "\t.size %s, 4\n", node->name);
+        fprintf(output, "%s:\n\t.long 1\n", node->name);
+    }
+  break;
+  case ID_TYPE_FUNCTION:
+    fprintf(output, "\t.globl	%s\n\t.type %s, @function\n", node->name, node->name);
+  }
+}
+
 /*Inicialmente, as variaveis (sao todas globais) sao
 declaradas no segmento .data com valor provisorio 1.ast
 Isso porque a hash nao contem a associacao variavel-valor,
 o que so e descoberto ao percorrer a arvore tac*/
 void hash_output_assembly(FILE* output)
 {
-    int i; 
-    HASH* node;
-    for(i=0; i<HASH_SIZE; i++)
-        for(node=symbol_table[i]; node; node=node->next)
-            if(node->dataType.identifierType == 1) // SCALAR
-            {
-                  fprintf(output, "\t.globl %s\n", node->text);
-                  fprintf(output, "\t.type %s, @object\n", node->text);
-                  if(node->type == SYMBOL_LITERAL_INT || node->type == SYMBOL_LITERAL_REAL){ fprintf(output, "\t.size %s, 4\n", node->text); }
-                  fprintf(output, "%s:\n\t.long 1\n", node->text);
-            }
-            else if(node->dataType.identifierType == 3) // FUNCTION
-            {   
-              fprintf(output, "\t.globl	%s\n\t.type %s, @function\n", node->text, node->text);
-            }
+  int i;
+  HASH* node;
+  for(i=0; i<HASH_SIZE; i++)
+    for(node=symbol_table[i]; node; node=node->next) {
+      switch (node->type) {
+        case SYMBOL_LITERAL_INT:
+          // Constantes no código C são declaradas como variáveis em códgo assembly
+          hash_set_new_name(node);
+          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_INT);
+        break;
+        case SYMBOL_LITERAL_REAL:
+          hash_set_new_name(node);
+          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_REAL);
+        break;
+        case SYMBOL_LITERAL_CHAR:
+          hash_set_new_name(node);
+          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_CHAR);
+        break;
+        case SYMBOL_LITERAL_BOOL:
+          hash_set_new_name(node);
+          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_BOOL);
+        break;
+        case SYMBOL_LITERAL_STRING:
+          hash_set_new_name(node);
+          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_STRING);
+        break;
+        case SYMBOL_IDENTIFIER:
+          // Nome da variável no código assembly é o msm nome da variável no código C
+          node->name = node->text;
+          hash_output_declaration(output, node, node->dataType.identifierType, node->dataType.valueType);
+        }
+    }
 }
 
 HASH* hash_make_label(void)

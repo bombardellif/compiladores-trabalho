@@ -74,9 +74,9 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_IFZ: fprintf(output, "TAC_IFZ");
     break;
     case TAC_BEGINFUN:
-      fprintf(output, "%s", tac->op1?tac->op1->text:"");
+      fprintf(output, "%s:\n", tac->op1?tac->op1->text:"");
       fprintf(output, ".LFB");
-      sprintf (buffer, "%d", functionLabelCounter++);
+      sprintf(buffer, "%d", functionLabelCounter++);
       fprintf(output, "%s:\n", buffer);
       fprintf(output, "\t.cfi_startproc\n");
       fprintf(output, "\tpushq	%%rbp\n");
@@ -98,13 +98,18 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_RET: fprintf(output, "TAC_RET");
     break;
     case TAC_PRINT:
-			// fprintf(output, "\tmovl _%s(%%rip), %%eax\n", tac->res->text );
-			// fprintf(output, "\tmovl %%eax, %%esi\n");
-			// fprintf(output, "\tleaq LC0(%%rip), %%rdi\n");
-			// fprintf(output, "\tmovl $0, %%eax\n");
+      // Store variable in register eax
+			fprintf(output, "\tmovl _%s(%%rip), %%eax\n", tac->op1?tac->op1->name:"");
+			fprintf(output, "\tmovl %%eax, %%esi\n"); // Send data parameter
+			fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+			fprintf(output, "\tmovl $0, %%eax\n");
 			fprintf(output, "\tcall printf\n");
     break;
-    case TAC_READ: fprintf(output, "TAC_READ");
+    case TAC_READ:
+      fprintf(output, "\tmovl $%s, %%esi\n", tac->op1?tac->op1->name:""); // Send address of data parameter
+      fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+      fprintf(output, "\tmovl $0, %%eax\n");
+      fprintf(output, "\tcall __isoc99_scanf\n");
     break;
     case TAC_NOP:
                     fprintf(output, "\tnop\n");

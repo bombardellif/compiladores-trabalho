@@ -27,6 +27,7 @@ typedef struct hash_node
   int type;
   struct hash_node *next;
   DATA_TYPE dataType;
+  char *name;
 }HASH;
 
 void init_hash();

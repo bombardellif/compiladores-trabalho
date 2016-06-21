@@ -8,6 +8,7 @@
 #define __SEMANTICS_TYPES__
 
 typedef int ID_TYPE;
+#define ID_TYPE_UNDEF -1
 #define ID_TYPE_SCALAR 1
 #define ID_TYPE_VECTOR 2
 #define ID_TYPE_FUNCTION 3
