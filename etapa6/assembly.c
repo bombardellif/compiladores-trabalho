@@ -56,7 +56,8 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_LOADIDX: fprintf(output, "TAC_LOADIDX");
     break;
-    case TAC_ADD: fprintf(output, "TAC_ADD");
+    case TAC_ADD:
+    				fprintf(output, "\tmovl\t_%s(%%rip), %%edx\n\tmovl\t_%s(%%rip), %%eax\n\taddl\t%%edx, %%eax\n\tmovl\t%%eax, +%s(%%rip)\n", tac->op1->text, tac->op2->text, tac->res->text);
     break;
     case TAC_SUB: fprintf(output, "TAC_SUB");
     break;
@@ -74,7 +75,8 @@ void convert_assembly_single(TAC* tac, FILE* output)
                         sprintf (buffer, "%d", functionLabelCounter++);
                         fprintf(output, "%s:\n", buffer);
                         fprintf(output, "\t.cfi_startproc\n");
-
+                        fprintf(output, "\tpushq	%%rbp\n");
+                        fprintf(output, "\tmovq	%%rsp, %%rbp\n");
     break;
     case TAC_ENDFUN: 
                         fprintf(output, "\tret\n");
@@ -90,7 +92,10 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_RET: fprintf(output, "TAC_RET");
     break;
-    case TAC_PRINT: fprintf(output, "TAC_PRINT");
+    case TAC_PRINT: 
+    				//Segmentation fault em tac->res->text (é NULL), fazer TAC_PUSH antes
+    				fprintf(output, "\tmovl _%s(%%rip), %%eax\n\tmovl %%eax, %%esi\n\tleaq LC0(%%rip), %%rdi\n\tmovl $0, %%eax\n\tcall _printf\n", tac->res->text );
+    
     break;
     case TAC_READ: fprintf(output, "TAC_READ");
     break;
