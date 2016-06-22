@@ -47,8 +47,8 @@ TAC* output_assemblyReverse(TAC* tac)
 
 void assembly_move(HASH *to, HASH* from, FILE* output)
 {
-  fprintf(output, "\tmovl %s(%%rip), %%eax\n", from?from->name:0);
-  fprintf(output, "\tmovl %%eax, %s(%%rip)\n", to?to->name:0);
+  fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", from?from->name:0);
+  fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
 }
 
 void convert_assembly_single(TAC* tac, FILE* output)
@@ -63,16 +63,22 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_ARG:
       assembly_move(tac->res, tac->op1, output);
     break;
-    case TAC_STRIDX: fprintf(output, "TAC_STRIDX");
+    case TAC_STRIDX:
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tmovl \t%s(%%rip), %%edx\n\tcltq\n", tac->op2?tac->op2->name:0);
+      fprintf(output, "\tmovl \t%%edx, %s(,%%rax,4)\n", tac->res?tac->res->name:0);
     break;
-    case TAC_LOADIDX: fprintf(output, "TAC_LOADIDX");
+    case TAC_LOADIDX:
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n\tcltq\n", tac->op2?tac->op2->name:0);
+      fprintf(output, "\tmovl \t%s(,%%rax,4), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
     				fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
     				fprintf(output, "\taddl \t%%edx, %%eax\n");
     break;
-    case TAC_SUB: 
+    case TAC_SUB:
             fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
     				fprintf(output, "\tsubl \t%%edx, %%eax\n");
@@ -82,7 +88,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
     				fprintf(output, "\timull \t%%edx, %%eax\n");
     break;
-    case TAC_DIV: 
+    case TAC_DIV:
             fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
     				fprintf(output, "\tidivl \t%%edx, %%eax\n");
@@ -90,7 +96,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_LABEL:
                         fprintf(output, ".%s:\n", tac->res->text);
     break;
-    case TAC_IFZ: 
+    case TAC_IFZ:
                 fprintf(output, ".%s\n", tac->res->text);
     break;
     case TAC_BEGINFUN:
@@ -99,11 +105,11 @@ void convert_assembly_single(TAC* tac, FILE* output)
       sprintf(buffer, "%d", functionLabelCounter++);
       fprintf(output, "%s:\n", buffer);
       fprintf(output, "\t.cfi_startproc\n");
-      fprintf(output, "\tpushq %%rbp\n");
-      fprintf(output, "\tmovq	%%rsp, %%rbp\n");
+      fprintf(output, "\tpushq \t%%rbp\n");
+      fprintf(output, "\tmovq	\t%%rsp, %%rbp\n");
     break;
     case TAC_ENDFUN:
-      fprintf(output, "\tpopq %%rbp\n");
+      fprintf(output, "\tpopq \t%%rbp\n");
       fprintf(output, "\tret\n");
       fprintf(output, "\t.cfi_endproc\n");
     break;
@@ -112,15 +118,15 @@ void convert_assembly_single(TAC* tac, FILE* output)
                         fprintf(output, "%s \n", tac->res->text);
     break;
     case TAC_CALL:
-      fprintf(output, "\tmovl $0, %%eax\n");
-      fprintf(output, "\tcall %s\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tmovl \t$0, %%eax\n");
+      fprintf(output, "\tcall \t%s\n", tac->op1?tac->op1->name:0);
       // move o resultado de %eax para temporário de retorno da função
-      fprintf(output, "\tmovl	%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
+      fprintf(output, "\tmovl	\t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_RET:
       // Retorna sempre no %eax
-      fprintf(output, "\tmovl	%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
-      fprintf(output, "\tpopq	%%rbp\n");
+      fprintf(output, "\tmovl	\t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tpopq	\t%%rbp\n");
       fprintf(output, "\tret\n");
     break;
     case TAC_PRINT:
@@ -155,19 +161,19 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
-    case TAC_LTZ: 
+    case TAC_LTZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\tjnge\t");
     break;
-    case TAC_GTZ: 
+    case TAC_GTZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\tjnle\t");
     break;
-    case TAC_LEZ: 
+    case TAC_LEZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\tjg\t");
     break;
-    case TAC_GEZ: 
+    case TAC_GEZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\t jge\t");
     break;
@@ -175,7 +181,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_OR: fprintf(output, "TAC_OR");
     break;
-    case TAC_EQZ: 
+    case TAC_EQZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\tjne\t");
     break;
