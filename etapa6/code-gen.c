@@ -241,7 +241,7 @@ TAC* generateCode(TREE* node)
       return makeWhile(code[0], code[1]);
     case TREE_COMM_RETURN:
       return tacJoin(code[0],
-            tacCreate(TAC_RET, hash_make_temp(), code[0]?code[0]->res:0, 0));
+            tacCreate(TAC_RET, 0, code[0]?code[0]->res:0, 0));
     case TREE_EXPR_ARIT_FUNCALL:
       return tacJoin(makeParameters(node, TAC_ARG), // The code of the expressions in the parameters
             tacCreate(TAC_CALL, hash_make_temp(), code[0]?code[0]->res:0, 0));

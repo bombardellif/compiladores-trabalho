@@ -1,0 +1,9 @@
+
+real a:0;
+int b:0;
+char c:0;
+
+int main() {
+  input a,b,c
+  output a,"-",b,c,"\n"
+};

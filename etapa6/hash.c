@@ -142,10 +142,15 @@ HASH* hash_make_temp(void)
 {
   static int nextTemp = 0;
   char *buffer;
+  HASH* new;
 
   buffer = (char*)malloc(sizeof(char)*10);
   sprintf(buffer, "_Temp_%d", nextTemp++);
-  return hash_add(SYMBOL_IDENTIFIER, buffer);
+  new = hash_add(SYMBOL_IDENTIFIER, buffer);
+  new->dataType.identifierType = ID_TYPE_SCALAR;
+  new->dataType.valueType = VAL_TYPE_REAL; /*FIXME: Indicar qual será o tipo do temporário */
+
+  return new;
 }
 
 void hash_set_new_name(HASH* node)
@@ -159,34 +164,34 @@ void hash_set_new_name(HASH* node)
 void hash_output_declaration(FILE* output, HASH* node, char* value, ID_TYPE identifierType, VAL_TYPE valueType)
 {
   switch (identifierType) {
-  case ID_TYPE_SCALAR:
-    fprintf(output, "\t.globl %s\n", node->name);
-    fprintf(output, "\t.type %s, @object\n", node->name);
-    switch (valueType) {
-      case VAL_TYPE_INT:
-      case VAL_TYPE_BOOL:
-        fprintf(output, "\t.align 4\n");
-        fprintf(output, "\t.size %s, 4\n", node->name);
-        fprintf(output, "%s:\n\t.long %s\n", node->name, value);
-      break;
-      case VAL_TYPE_REAL:
-        fprintf(output, "\t.align 4\n");
-        fprintf(output, "\t.size %s, 4\n", node->name);
-        fprintf(output, "%s:\n\t.float %s\n", node->name, value);
-      break;
-      case VAL_TYPE_CHAR:
-        fprintf(output, "\t.size %s, 1\n", node->name);
-        fprintf(output, "%s:\n\t.byte %s\n", node->name, value);
-      break;
-      break;
-      case VAL_TYPE_STRING:
-        fprintf(output, "\t.size %s, %d\n", node->name, strlen(value)+1);
-        fprintf(output, "%s:\n\t.string \"%s\"\n", node->name, value);
-    }
-  break;
-  case ID_TYPE_FUNCTION:
-    fprintf(output, "\t.globl	%s\n", node->name);
-    fprintf(output, "\t.type %s, @function\n", node->name);
+    case ID_TYPE_SCALAR:
+      fprintf(output, "\t.globl %s\n", node->name);
+      fprintf(output, "\t.type %s, @object\n", node->name);
+      switch (valueType) {
+        case VAL_TYPE_INT:
+        case VAL_TYPE_BOOL:
+          fprintf(output, "\t.align 4\n");
+          fprintf(output, "\t.size %s, 4\n", node->name);
+          fprintf(output, "%s:\n\t.long %s\n", node->name, value?value:"0");
+        break;
+        case VAL_TYPE_REAL:
+          fprintf(output, "\t.align 4\n");
+          fprintf(output, "\t.size %s, 4\n", node->name);
+          fprintf(output, "%s:\n\t.float %s\n", node->name, value?value:"0");
+        break;
+        case VAL_TYPE_CHAR:
+          fprintf(output, "\t.size %s, 1\n", node->name);
+          fprintf(output, "%s:\n\t.byte %s\n", node->name, value?value:"0");
+        break;
+        break;
+        case VAL_TYPE_STRING:
+          fprintf(output, "\t.size %s, %d\n", node->name, strlen(value)+1);
+          fprintf(output, "%s:\n\t.string \"%s\"\n", node->name, value?value:"");
+      }
+    break;
+    case ID_TYPE_FUNCTION:
+      fprintf(output, "\t.globl	%s\n", node->name);
+      fprintf(output, "\t.type %s, @function\n", node->name);
   }
 }
 

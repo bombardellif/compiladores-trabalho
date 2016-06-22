@@ -45,15 +45,23 @@ TAC* output_assemblyReverse(TAC* tac)
   return t;
 }
 
+void assembly_move(HASH *to, HASH* from, FILE* output)
+{
+  fprintf(output, "\tmovl %s(%%rip), %%eax\n", from?from->name:0);
+  fprintf(output, "\tmovl %%eax, %s(%%rip)\n", to?to->name:0);
+}
+
 void convert_assembly_single(TAC* tac, FILE* output)
 {
       if (!tac)
     return;
 
   switch (tac->type) {
-    case TAC_SYMBOL:// fprintf(output, "TAC_SYMBOL"); /*TODO: AQUELAS QUE AINDA TEM TAC*/
+    case TAC_SYMBOL: /*TODO: AQUELAS QUE AINDA TEM TAC*/
     break;
-    case TAC_MOVE: fprintf(output, "TAC_MOVE");
+    case TAC_MOVE:  // MOVE e ARG têm a mesma semântica na nossa linguagem
+    case TAC_ARG:
+      assembly_move(tac->res, tac->op1, output);
     break;
     case TAC_STRIDX: fprintf(output, "TAC_STRIDX");
     break;
@@ -82,11 +90,11 @@ void convert_assembly_single(TAC* tac, FILE* output)
       sprintf(buffer, "%d", functionLabelCounter++);
       fprintf(output, "%s:\n", buffer);
       fprintf(output, "\t.cfi_startproc\n");
-      fprintf(output, "\tpushq	%%rbp\n");
+      fprintf(output, "\tpushq %%rbp\n");
       fprintf(output, "\tmovq	%%rsp, %%rbp\n");
     break;
     case TAC_ENDFUN:
-      fprintf(output, "\tpopq	%%rbp\n");
+      fprintf(output, "\tpopq %%rbp\n");
       fprintf(output, "\tret\n");
       fprintf(output, "\t.cfi_endproc\n");
     break;
@@ -94,11 +102,17 @@ void convert_assembly_single(TAC* tac, FILE* output)
                         fprintf(output, "\tjmp .");
                         fprintf(output, "%s \n", tac->res->text);
     break;
-    case TAC_CALL: fprintf(output, "TAC_CALL");
+    case TAC_CALL:
+      fprintf(output, "\tmovl $0, %%eax\n");
+      fprintf(output, "\tcall %s\n", tac->op1?tac->op1->name:0);
+      // move o resultado de %eax para temporário de retorno da função
+      fprintf(output, "\tmovl	%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
-    case TAC_ARG: fprintf(output, "TAC_ARG");
-    break;
-    case TAC_RET: fprintf(output, "TAC_RET");
+    case TAC_RET:
+      // Retorna sempre no %eax
+      fprintf(output, "\tmovl	%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tpopq	%%rbp\n");
+      fprintf(output, "\tret\n");
     break;
     case TAC_PRINT:
       // Send parameters depending on the type of the variables
@@ -122,13 +136,13 @@ void convert_assembly_single(TAC* tac, FILE* output)
       }
     break;
     case TAC_READ:
-      fprintf(output, "\tmovl $%s, %%esi\n", tac->op1?tac->op1->name:""); // Send address of data parameter
-      fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+      fprintf(output, "\tmovl $%s, %%esi\n", tac->op1?tac->op1->name:0); // Send address of data parameter
+      fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:0); // The format
       fprintf(output, "\tmovl $0, %%eax\n");
       fprintf(output, "\tcall __isoc99_scanf\n");
     break;
     case TAC_NOP:
-                    fprintf(output, "\tnop\n");
+      fprintf(output, "\tnop\n");
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
@@ -145,10 +159,6 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_OR: fprintf(output, "TAC_OR");
     break;
     case TAC_EQZ: fprintf(output, "TAC_EQZ");
-    break;
-    case TAC_PUSH: fprintf(output, "TAC_PUSH");
-    break;
-    case TAC_CLNSTACK: fprintf(output, "TAC_CLNSTACK");
     break;
     default: fprintf(output, "TAC_DEFAULT");
   }

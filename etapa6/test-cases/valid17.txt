@@ -1,0 +1,10 @@
+int foo(int b){
+  return 5
+};
+
+int a:1;
+
+int main() {
+  a = foo(a)
+  output a
+};
