@@ -68,28 +68,29 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_LOADIDX: fprintf(output, "TAC_LOADIDX");
     break;
     case TAC_ADD:
-    				fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+            printf("%s %s\n", tac->op1->text, tac->op2->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\taddl \t%%edx, %%eax\n");
-            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->text);
+            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_SUB: 
-            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\tsubl \t%%edx, %%eax\n");
-            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->text);
+            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_MUL:
-            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\timull \t%%edx, %%eax\n");
-            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->text);
+            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_DIV: 
-            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\tidivl \t%%edx, %%eax\n");
-            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->text);
+            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_LABEL:
                         fprintf(output, ".%s:\n", tac->res->text);
