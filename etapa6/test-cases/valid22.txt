@@ -1,0 +1,5 @@
+int main ()
+  {
+  if (10 >= 3) output "TRUE\n" else  output "FALSE\n"  
+  };
+

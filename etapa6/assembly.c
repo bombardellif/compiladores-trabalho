@@ -68,21 +68,30 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_LOADIDX: fprintf(output, "TAC_LOADIDX");
     break;
     case TAC_ADD:
-    				fprintf(output, "\tmovl\t_%s(%%rip), %%edx\n",tac->op1->text);
-    				fprintf(output, "\tmovl\t_%s(%%rip), %%eax\n",tac->op2->text);
-    				fprintf(output, "\taddl\t%%edx, %%eax\n");
-    				fprintf(output, "\tmovl\t%%eax, + %s(%%rip)\n",tac->res->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+    				fprintf(output, "\taddl \t%%edx, %%eax\n");
     break;
-    case TAC_SUB: fprintf(output, "TAC_SUB");
+    case TAC_SUB: 
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+    				fprintf(output, "\tsubl \t%%edx, %%eax\n");
     break;
-    case TAC_MUL: fprintf(output, "TAC_MUL");
+    case TAC_MUL:
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+    				fprintf(output, "\timull \t%%edx, %%eax\n");
     break;
-    case TAC_DIV: fprintf(output, "TAC_DIV");
+    case TAC_DIV: 
+            fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->text);
+    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->text);
+    				fprintf(output, "\tidivl \t%%edx, %%eax\n");
     break;
     case TAC_LABEL:
-                        fprintf(output, ".%s\n", tac->res->text);
+                        fprintf(output, ".%s:\n", tac->res->text);
     break;
-    case TAC_IFZ: fprintf(output, "TAC_IFZ");
+    case TAC_IFZ: 
+                fprintf(output, ".%s\n", tac->res->text);
     break;
     case TAC_BEGINFUN:
       fprintf(output, "%s:\n", tac->op1?tac->op1->text:"");
@@ -119,46 +128,56 @@ void convert_assembly_single(TAC* tac, FILE* output)
       if (tac->op1 && tac->op2) {
         switch (hash_get_valtype_memsize(tac->op1)) {
           case VAL_TYPE_INT:
-            fprintf(output, "\tmovl %s(%%rip), %%esi\n", tac->op1->name);
-            fprintf(output, "\tmovl $0, %%eax\n");
+            fprintf(output, "\tmovl\t%s(%%rip), %%esi\n", tac->op1->name);
+            fprintf(output, "\tmovl\t$0, %%eax\n");
           break;
           case VAL_TYPE_STRING:
-            fprintf(output, "\tmovl $%s, %%esi\n", tac->op1->name);
-            fprintf(output, "\tmovl $0, %%eax\n");
+            fprintf(output, "\tmovl\t$%s, %%esi\n", tac->op1->name);
+            fprintf(output, "\tmovl\t$0, %%eax\n");
           break;
           case VAL_TYPE_REAL:
           default:
-            fprintf(output, "\tmovss %s(%%rip), %%xmm0\n\tunpcklps	%%xmm0, %%xmm0\n\tcvtps2pd	%%xmm0, %%xmm0\n", tac->op1->name);
-            fprintf(output, "\tmovl $1, %%eax\n");
+            fprintf(output, "\tmovss\t%s(%%rip), %%xmm0\n\tunpcklps	%%xmm0, %%xmm0\n\tcvtps2pd	%%xmm0, %%xmm0\n", tac->op1->name);
+            fprintf(output, "\tmovl\t$1, %%eax\n");
         }
-        fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
-        fprintf(output, "\tcall printf\n");
+        fprintf(output, "\tmovl\t$%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+        fprintf(output, "\tcall\tprintf\n");
       }
     break;
     case TAC_READ:
-      fprintf(output, "\tmovl $%s, %%esi\n", tac->op1?tac->op1->name:0); // Send address of data parameter
-      fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:0); // The format
-      fprintf(output, "\tmovl $0, %%eax\n");
-      fprintf(output, "\tcall __isoc99_scanf\n");
+      fprintf(output, "\tmovl\t$%s, %%esi\n", tac->op1?tac->op1->name:""); // Send address of data parameter
+      fprintf(output, "\tmovl\t$%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+      fprintf(output, "\tmovl\t$0, %%eax\n");
+      fprintf(output, "\tcall\t__isoc99_scanf\n");
     break;
     case TAC_NOP:
       fprintf(output, "\tnop\n");
     break;
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
-    case TAC_LTZ: fprintf(output, "TAC_LTZ");
+    case TAC_LTZ: 
+                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
+                fprintf(output, "\tjnge\t");
     break;
-    case TAC_GTZ: fprintf(output, "TAC_GTZ");
+    case TAC_GTZ: 
+                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
+                fprintf(output, "\tjnle\t");
     break;
-    case TAC_LEZ: fprintf(output, "TAC_LEZ");
+    case TAC_LEZ: 
+                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
+                fprintf(output, "\tjg\t");
     break;
-    case TAC_GEZ: fprintf(output, "TAC_GEZ");
+    case TAC_GEZ: 
+                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
+                fprintf(output, "\t jge\t");
     break;
     case TAC_AND: fprintf(output, "TAC_AND");
     break;
     case TAC_OR: fprintf(output, "TAC_OR");
     break;
-    case TAC_EQZ: fprintf(output, "TAC_EQZ");
+    case TAC_EQZ: 
+                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
+                fprintf(output, "\tjne\t");
     break;
     default: fprintf(output, "TAC_DEFAULT");
   }
