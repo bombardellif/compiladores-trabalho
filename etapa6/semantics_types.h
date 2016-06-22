@@ -34,6 +34,7 @@ typedef struct data_type
   VAL_TYPE valueType;        /* value of the expression containing the symbol,
                               * e.g. INT if it's a vector of int, or CHAR if it's a function returning char, etc. */
   PARAM_LIST *params;         /* used for functions, stores the types of the params of the function*/
+  int arrayLength;
 } DATA_TYPE;
 
 #endif

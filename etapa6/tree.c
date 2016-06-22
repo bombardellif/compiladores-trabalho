@@ -103,7 +103,7 @@ void print_tree(TREE* root, int spaces)
 }
 
 char* get_value(TREE* root, char* varname)
-{	
+{
 	int i, arrayLength, symbolLength=0;
 	char* buffer = NULL, *temp = NULL;
 	if(root != NULL)
@@ -119,15 +119,29 @@ char* get_value(TREE* root, char* varname)
 				{
 					arrayLength = atoi(root->children[2]->symbol->text);
 					root = root->children[3];
-					for(i = 0; i < arrayLength; i++)
+					for(i = 0; root && (i < arrayLength); i++)
 					{
 						symbolLength += 1+strlen(root->children[0]->symbol->text);
 						temp = realloc(buffer, (symbolLength) * sizeof *temp);
 						buffer = temp;
 						strcat(buffer, root->children[0]->symbol->text);
-						if( i != arrayLength -1) strcat(buffer, ",");
+						strcat(buffer, ",");
+
 						root = root->children[1];
 					}
+					// If the array wasn't completelly initialized, complement it with 0s
+					if (i < arrayLength) {
+						symbolLength += (arrayLength - i) * 2;
+						temp = realloc(buffer, symbolLength * sizeof(char));
+						buffer = temp;
+						for (; i<arrayLength; i++)
+							strcat(buffer, "0,");
+					}
+					// Remove the last character (the comma)
+					if (i != 0) {
+						buffer[strlen(buffer)-1] = '\0';
+					}
+
 					return buffer;
 				}
 			break;
@@ -137,7 +151,7 @@ char* get_value(TREE* root, char* varname)
 				return buffer;
     }
 	return NULL;
-    
+
 }
 
 char* find_declaration_value(char* varname)

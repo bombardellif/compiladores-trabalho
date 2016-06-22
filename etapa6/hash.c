@@ -45,6 +45,7 @@ HASH* hash_add(int type, char *text)
       node->dataType.identifierType = ID_TYPE_UNDEF;
       node->dataType.valueType = -1;
       node->dataType.params = NULL;
+      node->dataType.arrayLength = 1;
       node->name = NULL;
 
       node->next = symbol_table[address];
@@ -68,7 +69,7 @@ HASH* get_hash_node(char * text)
     return NULL;
 }
 
-int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params)
+int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int arrayLength)
 {
     int i;
     HASH *node;
@@ -80,6 +81,7 @@ int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *
     				node->dataType.identifierType = idType;
     				node->dataType.valueType = valType;
         		node->dataType.params = params;
+            node->dataType.arrayLength = arrayLength;
     				return 1;
     			}
     			else
@@ -161,26 +163,49 @@ void hash_set_new_name(HASH* node)
   sprintf(node->name, "_abs_%d", nextNameIdx++);
 }
 
+int hash_get_memsize(HASH* node)
+{
+  switch (node->type) {
+    case SYMBOL_LITERAL_INT:
+    case SYMBOL_LITERAL_REAL:
+    case SYMBOL_LITERAL_BOOL:
+      return 4;
+    case SYMBOL_LITERAL_CHAR:
+      return 1;
+    case SYMBOL_IDENTIFIER:
+      switch (node->dataType.valueType) {
+        case VAL_TYPE_INT:
+        case VAL_TYPE_REAL:
+        case VAL_TYPE_BOOL:
+          return 4 * node->dataType.arrayLength;
+        case VAL_TYPE_CHAR:
+          return node->dataType.arrayLength;
+      }
+  }
+  return 0;
+}
+
 void hash_output_declaration(FILE* output, HASH* node, char* value, ID_TYPE identifierType, VAL_TYPE valueType)
 {
   switch (identifierType) {
     case ID_TYPE_SCALAR:
+    case ID_TYPE_VECTOR:
       fprintf(output, "\t.globl %s\n", node->name);
       fprintf(output, "\t.type %s, @object\n", node->name);
       switch (valueType) {
         case VAL_TYPE_INT:
         case VAL_TYPE_BOOL:
           fprintf(output, "\t.align 4\n");
-          fprintf(output, "\t.size %s, 4\n", node->name);
+          fprintf(output, "\t.size %s, %d\n", node->name, hash_get_memsize(node));
           fprintf(output, "%s:\n\t.long %s\n", node->name, value?value:"0");
         break;
         case VAL_TYPE_REAL:
           fprintf(output, "\t.align 4\n");
-          fprintf(output, "\t.size %s, 4\n", node->name);
+          fprintf(output, "\t.size %s, %d\n", node->name, hash_get_memsize(node));
           fprintf(output, "%s:\n\t.float %s\n", node->name, value?value:"0");
         break;
         case VAL_TYPE_CHAR:
-          fprintf(output, "\t.size %s, 1\n", node->name);
+          fprintf(output, "\t.size %s, %d\n", node->name, hash_get_memsize(node));
           fprintf(output, "%s:\n\t.byte %s\n", node->name, value?value:"0");
         break;
         break;
@@ -279,7 +304,6 @@ VAL_TYPE hash_get_valtype_memsize(HASH* node)
     case SYMBOL_LITERAL_CHAR:
     case SYMBOL_LITERAL_BOOL:
       return VAL_TYPE_INT;
-    break;
     case SYMBOL_LITERAL_REAL:
       return VAL_TYPE_REAL;
     case SYMBOL_LITERAL_STRING:

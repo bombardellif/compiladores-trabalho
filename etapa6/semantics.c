@@ -18,7 +18,7 @@ void update_hash_function_variables(TREE* node)
 	if(node == NULL)
 		return;
 
-	if(! hash_update_type( node->children[1]->symbol->text, ID_TYPE_SCALAR, node->children[0]->type + 10, NULL))
+	if(! hash_update_type( node->children[1]->symbol->text, ID_TYPE_SCALAR, node->children[0]->type + 10, NULL, 1))
 	{
 		printf("%s already declared!\n", node->children[1]->symbol->text);
 		semanticFailure = 1;
@@ -112,6 +112,7 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 	ID_TYPE idType;
 	VAL_TYPE valueType;
 	PARAM_LIST *params;
+	int arrayLength = 1;
 
 	if (!node) {
 		return VAL_TYPE_UNIT;
@@ -126,6 +127,7 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 			// This case should not happen
 			return;
 		case TREE_DECL_VECT:
+			arrayLength = atoi(node->children[2]->symbol->text);
 		case TREE_DECL_SINGLE:
 		case TREE_DECL_FUNC:
 			idType = node->type - 9;
@@ -138,7 +140,7 @@ VAL_TYPE semanticsCheckVariables(TREE* node)
 				update_hash_function_variables(node->children[2]);
 			}
 
-			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params))
+			if(! hash_update_type( node->children[1]->symbol->text, idType, valueType, params, arrayLength))
 			{
 				printf("Error in node %d : %s already declared!\n",node->type, node->children[1]->symbol->text);
 				semanticFailure = 1;
