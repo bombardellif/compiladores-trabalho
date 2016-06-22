@@ -51,7 +51,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     return;
 
   switch (tac->type) {
-    case TAC_SYMBOL: fprintf(output, "TAC_SYMBOL"); /*TODO: AQUELAS QUE AINDA TEM TAC*/
+    case TAC_SYMBOL:// fprintf(output, "TAC_SYMBOL"); /*TODO: AQUELAS QUE AINDA TEM TAC*/
     break;
     case TAC_MOVE: fprintf(output, "TAC_MOVE");
     break;
@@ -101,12 +101,25 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_RET: fprintf(output, "TAC_RET");
     break;
     case TAC_PRINT:
-      // Store variable in register eax
-			fprintf(output, "\tmovl _%s(%%rip), %%eax\n", tac->op1?tac->op1->name:"");
-			fprintf(output, "\tmovl %%eax, %%esi\n"); // Send data parameter
-			fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
-			fprintf(output, "\tmovl $0, %%eax\n");
-			fprintf(output, "\tcall printf\n");
+      // Send parameters depending on the type of the variables
+      if (tac->op1 && tac->op2) {
+        switch (hash_get_valtype_memsize(tac->op1)) {
+          case VAL_TYPE_INT:
+            fprintf(output, "\tmovl %s(%%rip), %%esi\n", tac->op1->name);
+            fprintf(output, "\tmovl $0, %%eax\n");
+          break;
+          case VAL_TYPE_STRING:
+            fprintf(output, "\tmovl $%s, %%esi\n", tac->op1->name);
+            fprintf(output, "\tmovl $0, %%eax\n");
+          break;
+          case VAL_TYPE_REAL:
+          default:
+            fprintf(output, "\tmovss %s(%%rip), %%xmm0\n\tunpcklps	%%xmm0, %%xmm0\n\tcvtps2pd	%%xmm0, %%xmm0\n", tac->op1->name);
+            fprintf(output, "\tmovl $1, %%eax\n");
+        }
+        fprintf(output, "\tmovl $%s, %%edi\n", tac->op2?tac->op2->name:""); // The format
+        fprintf(output, "\tcall printf\n");
+      }
     break;
     case TAC_READ:
       fprintf(output, "\tmovl $%s, %%esi\n", tac->op1?tac->op1->name:""); // Send address of data parameter

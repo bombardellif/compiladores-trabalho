@@ -164,6 +164,7 @@ void hash_output_declaration(FILE* output, HASH* node, char* value, ID_TYPE iden
     fprintf(output, "\t.type %s, @object\n", node->name);
     switch (valueType) {
       case VAL_TYPE_INT:
+      case VAL_TYPE_BOOL:
         fprintf(output, "\t.align 4\n");
         fprintf(output, "\t.size %s, 4\n", node->name);
         fprintf(output, "%s:\n\t.long %s\n", node->name, value);
@@ -175,12 +176,8 @@ void hash_output_declaration(FILE* output, HASH* node, char* value, ID_TYPE iden
       break;
       case VAL_TYPE_CHAR:
         fprintf(output, "\t.size %s, 1\n", node->name);
-        fprintf(output, "%s:\n\t.byte %d\n", node->name, *value);
+        fprintf(output, "%s:\n\t.byte %s\n", node->name, value);
       break;
-      case VAL_TYPE_BOOL:
-        fprintf(output, "\t.align 4\n");
-        fprintf(output, "\t.size %s, 4\n", node->name);
-        fprintf(output, "%s:\n\t.long %s\n", node->name, value);
       break;
       case VAL_TYPE_STRING:
         fprintf(output, "\t.size %s, %d\n", node->name, strlen(value)+1);
@@ -243,12 +240,10 @@ void hash_output_assembly(FILE* output)
         case SYMBOL_IDENTIFIER:
           // Nome da variável no código assembly é o msm nome da variável no código C
           node->name = node->text;
-          if (node->dataType.identifierType != ID_TYPE_FUNCTION) {
-            hash_output_declaration(output, node,
-              find_declaration_value(node->name),
-              node->dataType.identifierType,
-              node->dataType.valueType);
-          }
+          hash_output_declaration(output, node,
+            find_declaration_value(node->name),
+            node->dataType.identifierType,
+            node->dataType.valueType);
         }
     }
 }
@@ -270,4 +265,31 @@ HASH* hash_add_absolute(int value)
   buffer = (char*)malloc(sizeof(char)*5);
   sprintf(buffer, "%d", value);
   return hash_add(SYMBOL_LITERAL_INT, buffer);
+}
+
+VAL_TYPE hash_get_valtype_memsize(HASH* node)
+{
+  switch (node->type) {
+    case SYMBOL_LITERAL_INT:
+    case SYMBOL_LITERAL_CHAR:
+    case SYMBOL_LITERAL_BOOL:
+      return VAL_TYPE_INT;
+    break;
+    case SYMBOL_LITERAL_REAL:
+      return VAL_TYPE_REAL;
+    case SYMBOL_LITERAL_STRING:
+      return VAL_TYPE_STRING;
+    case SYMBOL_IDENTIFIER:
+      switch (node->dataType.valueType) {
+        case VAL_TYPE_INT:
+        case VAL_TYPE_CHAR:
+        case VAL_TYPE_BOOL:
+          return VAL_TYPE_INT;
+        case VAL_TYPE_REAL:
+          return VAL_TYPE_REAL;
+        case VAL_TYPE_STRING:
+          return VAL_TYPE_STRING;
+      }
+  }
+  return VAL_TYPE_UNIT;
 }

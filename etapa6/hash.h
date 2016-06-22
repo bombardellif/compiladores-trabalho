@@ -40,5 +40,6 @@ HASH* hash_make_temp(void);
 HASH* hash_make_label(void);
 void hash_output_assembly(FILE* output);
 HASH* hash_add_absolute(int value);
+VAL_TYPE hash_get_valtype_memsize(HASH* node);
 
 #endif
