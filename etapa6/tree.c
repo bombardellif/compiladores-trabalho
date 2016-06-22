@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "tree.h"
+#include <string.h>
 
 void print_tree(TREE* root, int spaces)
 {
@@ -103,8 +104,8 @@ void print_tree(TREE* root, int spaces)
 
 char* get_value(TREE* root, char* varname)
 {	
-	int i;
-	char* buffer;
+	int i, arrayLength, symbolLength=0;
+	char* buffer = NULL, *temp = NULL;
 	if(root != NULL)
 	{
 		switch (root->type)
@@ -112,6 +113,23 @@ char* get_value(TREE* root, char* varname)
 			case TREE_DECL_SINGLE:
 				if(!strcmp(varname, root->children[1]->symbol->text))
 					return root->children[2]->symbol->text;
+			break;
+			case TREE_DECL_VECT:
+				if(!strcmp(varname, root->children[1]->symbol->text))
+				{
+					arrayLength = atoi(root->children[2]->symbol->text);
+					root = root->children[3];
+					for(i = 0; i < arrayLength; i++)
+					{
+						symbolLength += 1+strlen(root->children[0]->symbol->text);
+						temp = realloc(buffer, (symbolLength) * sizeof *temp);
+						buffer = temp;
+						strcat(buffer, root->children[0]->symbol->text);
+						if( i != arrayLength -1) strcat(buffer, ",");
+						root = root->children[1];
+					}
+					return buffer;
+				}
 			break;
 		}
 		for(i=0;i<MAX_CHILDREN; i++)
