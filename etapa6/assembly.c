@@ -14,12 +14,15 @@ int convert_assembly(TAC* tac, char* filename)
       fprintf(outfile, "\t.file	\"");
       fprintf(outfile, "%s", filename);
       fprintf(outfile, "\"\n");
-      fprintf(outfile, "\t.data\n");
-      fprintf(outfile, "\t.align 4\n");
 
+      // Segmento de dados
+      fprintf(outfile, "\t.data\n");
       hash_output_assembly(outfile);
 
+      // Segmento de código
+      fprintf(outfile, "\t.text\n");
       AssemblyPrintListNext(output_assemblyReverse(tac), outfile);
+
       fclose(outfile);
       return 1;
 }
@@ -136,8 +139,4 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     default: fprintf(output, "TAC_DEFAULT");
   }
-  fprintf(output, ",%s", tac->res ? tac->res->text : "_");
-  fprintf(output, ",%s", tac->op1 ? tac->op1->text : "_");
-  fprintf(output, ",%s)\n", tac->op2 ? tac->op2->text : "_");
-
 }

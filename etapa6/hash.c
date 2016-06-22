@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "hash.h"
+#include "tree.h"
 
 HASH *symbol_table[HASH_SIZE];
 
@@ -155,7 +156,7 @@ void hash_set_new_name(HASH* node)
   sprintf(node->name, "_abs_%d", nextNameIdx++);
 }
 
-void hash_output_declaration(FILE* output, HASH* node, ID_TYPE identifierType, VAL_TYPE valueType)
+void hash_output_declaration(FILE* output, HASH* node, char* value, ID_TYPE identifierType, VAL_TYPE valueType)
 {
   switch (identifierType) {
   case ID_TYPE_SCALAR:
@@ -163,14 +164,32 @@ void hash_output_declaration(FILE* output, HASH* node, ID_TYPE identifierType, V
     fprintf(output, "\t.type %s, @object\n", node->name);
     switch (valueType) {
       case VAL_TYPE_INT:
-      case VAL_TYPE_REAL:
+        fprintf(output, "\t.align 4\n");
         fprintf(output, "\t.size %s, 4\n", node->name);
-        fprintf(output, "%s:\n\t.long ", node->name);
-        fprintf(output, "%s\n", find_declaration_value(node->name));
+        fprintf(output, "%s:\n\t.long %s\n", node->name, value);
+      break;
+      case VAL_TYPE_REAL:
+        fprintf(output, "\t.align 4\n");
+        fprintf(output, "\t.size %s, 4\n", node->name);
+        fprintf(output, "%s:\n\t.float %s\n", node->name, value);
+      break;
+      case VAL_TYPE_CHAR:
+        fprintf(output, "\t.size %s, 1\n", node->name);
+        fprintf(output, "%s:\n\t.byte %d\n", node->name, *value);
+      break;
+      case VAL_TYPE_BOOL:
+        fprintf(output, "\t.align 4\n");
+        fprintf(output, "\t.size %s, 4\n", node->name);
+        fprintf(output, "%s:\n\t.long %s\n", node->name, value);
+      break;
+      case VAL_TYPE_STRING:
+        fprintf(output, "\t.size %s, %d\n", node->name, strlen(value)+1);
+        fprintf(output, "%s:\n\t.string \"%s\"\n", node->name, value);
     }
   break;
   case ID_TYPE_FUNCTION:
-    fprintf(output, "\t.globl	%s\n\t.type %s, @function\n", node->name, node->name);
+    fprintf(output, "\t.globl	%s\n", node->name);
+    fprintf(output, "\t.type %s, @function\n", node->name);
   }
 }
 
@@ -188,28 +207,48 @@ void hash_output_assembly(FILE* output)
         case SYMBOL_LITERAL_INT:
           // Constantes no código C são declaradas como variáveis em códgo assembly
           hash_set_new_name(node);
-          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_INT);
+          hash_output_declaration(output, node,
+            node->text,
+            ID_TYPE_SCALAR,
+            VAL_TYPE_INT);
         break;
         case SYMBOL_LITERAL_REAL:
           hash_set_new_name(node);
-          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_REAL);
+          hash_output_declaration(output, node,
+            node->text,
+            ID_TYPE_SCALAR,
+            VAL_TYPE_REAL);
         break;
         case SYMBOL_LITERAL_CHAR:
           hash_set_new_name(node);
-          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_CHAR);
+          hash_output_declaration(output, node,
+            node->text,
+            ID_TYPE_SCALAR,
+            VAL_TYPE_CHAR);
         break;
         case SYMBOL_LITERAL_BOOL:
           hash_set_new_name(node);
-          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_BOOL);
+          hash_output_declaration(output, node,
+            node->text,
+            ID_TYPE_SCALAR,
+            VAL_TYPE_BOOL);
         break;
         case SYMBOL_LITERAL_STRING:
           hash_set_new_name(node);
-          hash_output_declaration(output, node, ID_TYPE_SCALAR, VAL_TYPE_STRING);
+          hash_output_declaration(output, node,
+            node->text,
+            ID_TYPE_SCALAR,
+            VAL_TYPE_STRING);
         break;
         case SYMBOL_IDENTIFIER:
           // Nome da variável no código assembly é o msm nome da variável no código C
           node->name = node->text;
-          hash_output_declaration(output, node, node->dataType.identifierType, node->dataType.valueType);
+          if (node->dataType.identifierType != ID_TYPE_FUNCTION) {
+            hash_output_declaration(output, node,
+              find_declaration_value(node->name),
+              node->dataType.identifierType,
+              node->dataType.valueType);
+          }
         }
     }
 }

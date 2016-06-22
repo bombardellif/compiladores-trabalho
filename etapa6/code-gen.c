@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CODEGEN_VAR_TRUE "_True"
-#define CODEGEN_VAR_FALSE "_False"
+#define CODEGEN_VAL_TRUE "1"
+#define CODEGEN_VAL_FALSE "0"
 #define CODEGEN_FORMAT_D "%d"
 #define CODEGEN_FORMAT_F "%f"
 #define CODEGEN_FORMAT_C "%c"
@@ -20,12 +20,14 @@
 HASH *gbl_format_d,
   *gbl_format_f,
   *gbl_format_c,
-  *gbl_format_s;
+  *gbl_format_s,
+  *gbl_value_true,
+  *gbl_value_false;
 
 void initSymbolTable()
 {
-  hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAR_TRUE);
-  hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAR_FALSE);
+  gbl_value_true = hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAL_TRUE);
+  gbl_value_false = hash_add(SYMBOL_LITERAL_BOOL, CODEGEN_VAL_FALSE);
   gbl_format_d = hash_add(SYMBOL_LITERAL_STRING, CODEGEN_FORMAT_D);
   gbl_format_f = hash_add(SYMBOL_LITERAL_STRING, CODEGEN_FORMAT_F);
   gbl_format_c = hash_add(SYMBOL_LITERAL_STRING, CODEGEN_FORMAT_C);
@@ -207,9 +209,9 @@ TAC* generateCode(TREE* node)
     case TREE_SYMBOL:
       return tacCreate(TAC_SYMBOL, node->symbol, 0, 0);
     case TREE_VAL_TRUE:
-      return tacCreate(TAC_SYMBOL, get_hash_node(CODEGEN_VAR_TRUE), 0, 0);
+      return tacCreate(TAC_SYMBOL, gbl_value_true, 0, 0);
     case TREE_VAL_FALSE:
-      return tacCreate(TAC_SYMBOL, get_hash_node(CODEGEN_VAR_FALSE), 0, 0);
+      return tacCreate(TAC_SYMBOL, gbl_value_true, 0, 0);
     case TREE_DECL_FUNC:
       return tacJoin3(
         tacCreate(TAC_BEGINFUN, 0, node->children[1]?node->children[1]->symbol:0, 0),
