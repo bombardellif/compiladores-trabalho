@@ -263,17 +263,17 @@ TAC* generateCode(TREE* node)
     case TREE_EXPR_ARIT_DIV:
       return makeBinOp(TAC_DIV, code[0], code[1]);
     case TREE_EXPR_BOOL_LT:
-    	return makeBinOp(TAC_LTZ, code[0], code[1]);
+    	return makeLogicOp(TAC_LTZ, code[0], code[1]);
     case TREE_EXPR_BOOL_GT:
-    	return makeBinOp(TAC_GTZ, code[0], code[1]);
+    	return makeLogicOp(TAC_GTZ, code[0], code[1]);
     case TREE_EXPR_BOOL_LE:
-    	return makeBinOp(TAC_LEZ, code[0], code[1]);
+    	return makeLogicOp(TAC_LEZ, code[0], code[1]);
     case TREE_EXPR_BOOL_GE:
-    	return makeBinOp(TAC_GEZ, code[0], code[1]);
+    	return makeLogicOp(TAC_GEZ, code[0], code[1]);
     case TREE_EXPR_BOOL_EQ:
-    	return makeBinOp(TAC_EQZ, code[0], code[1]);
+    	return makeLogicOp(TAC_EQZ, code[0], code[1]);
     case TREE_EXPR_BOOL_NE:
-    	return makeBinOp(TAC_ANEG, code[0],code[1]);
+    	return makeLogicOp(TAC_ANEG, code[0],code[1]);
     case TREE_EXPR_BOOL_AND:
     	return makeLogicOp(TAC_AND, code[0], code[1]);
     case TREE_EXPR_BOOL_OR:

@@ -1,0 +1,20 @@
+int i:1;
+int j:2;
+
+bool b:0;
+
+int main ()
+{
+  b = i != j
+  output b,"\n"
+  b = i == j
+  output b,"\n"
+  b = i != i
+  output b,"\n"
+  b = j == j
+  output b,"\n"
+  b = 0 == 0
+  output b,"\n"
+  b = 0 != 0
+  output b,"\n"
+};

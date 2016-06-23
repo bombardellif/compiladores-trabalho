@@ -358,7 +358,13 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_NOP:
       fprintf(output, "\tnop\n");
     break;
-    case TAC_ANEG: fprintf(output, "TAC_ANEG");
+    case TAC_ANEG:
+      fprintf(output, "\tmovl \t%s(%%rip), %%edx\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      fprintf(output, "\tcmpl \t%%eax, %%edx\n");
+      fprintf(output, "\tsetne \t%%al\n");
+      fprintf(output, "\tmovzbl \t%%al, %%eax\n");
+      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_LTZ:
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
@@ -374,7 +380,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                 fprintf(output, "\tcmpl \t%%edx, %%eax\n");
                 fprintf(output, "\tsetg \t%%al\n");
                 fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
-                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);                
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_LEZ:
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
@@ -438,6 +444,5 @@ void convert_assembly_single(TAC* tac, FILE* output)
                 fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
                 fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
-    default: fprintf(output, "TAC_DEFAULT");
   }
 }

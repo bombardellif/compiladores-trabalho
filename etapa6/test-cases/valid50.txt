@@ -1,0 +1,27 @@
+int i:1;
+int j:2;
+real f:9;
+
+bool b:0;
+bool b1:0;
+
+int main ()
+{
+  b = (TRUE && TRUE)
+  output b,"\n"
+  b = (TRUE && FALSE)
+  output b,"\n"
+  b = (FALSE && TRUE)
+  output b,"\n"
+  b = (FALSE && FALSE)
+  output b,"\n"
+
+  b1 = (TRUE || TRUE)
+  output b1,"\n"
+  b1 = (TRUE || FALSE)
+  output b1,"\n"
+  b1 = (FALSE || TRUE)
+  output b1,"\n"
+  b1 = (FALSE || FALSE)
+  output b1,"\n"
+};
