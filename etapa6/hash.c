@@ -155,6 +155,15 @@ HASH* hash_make_temp(void)
   return new;
 }
 
+HASH* hash_make_temp_int(void)
+{
+  HASH *result;
+  result = hash_make_temp();
+  result->dataType.valueType = VAL_TYPE_INT;
+
+  return result;
+}
+
 void hash_set_new_name(HASH* node)
 {
   static int nextNameIdx = 0;
