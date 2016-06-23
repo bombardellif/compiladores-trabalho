@@ -51,10 +51,10 @@ void assembly_move(HASH *to, HASH* from, FILE* output)
   fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
 }
 
-
 void convert_assembly_single(TAC* tac, FILE* output)
 {
-      if (!tac)
+  int lValueType, rValueType;
+  if (!tac)
     return;
 
   switch (tac->type) {
@@ -65,14 +65,49 @@ void convert_assembly_single(TAC* tac, FILE* output)
       assembly_move(tac->res, tac->op1, output);
     break;
     case TAC_STRIDX:
-      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
-      fprintf(output, "\tmovl \t%s(%%rip), %%edx\n\tcltq\n", tac->op2?tac->op2->name:0);
-      fprintf(output, "\tmovl \t%%edx, %s(,%%rax,4)\n", tac->res?tac->res->name:0);
+      lValueType = hash_get_valtype_memsize(tac->res);
+      rValueType = hash_get_valtype_memsize(tac->op2);
+      // Se o índice [op1] for do tipo float, realiza conversão para int
+      if (hash_get_valtype_memsize(tac->op1) == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtss2si %s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      } else {
+        fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      }
+      fprintf(output, "\tcltq\n");
+
+      // Se o r-value [op2] for do tipo int e l-value float, realiza conversão para float e move pra memória
+      if (rValueType == VAL_TYPE_INT
+      && lValueType == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtsi2ss %s(%%rip), %%xmm0\n", tac->op2?tac->op2->name:0);
+        fprintf(output, "\tmovss \t%%xmm0, %s(,%%rax,4)\n", tac->res?tac->res->name:0);
+      }
+      else {
+        // Se o r-value [op2] for do tipo float e l-value int, realiza conversão para int
+        if (rValueType == VAL_TYPE_REAL
+        && lValueType == VAL_TYPE_INT) {
+          fprintf(output, "\tcvtss2si %s(%%rip), %%edx\n", tac->op2?tac->op2->name:0);
+        } else {
+          fprintf(output, "\tmovl \t%s(%%rip), %%edx\n", tac->op2?tac->op2->name:0);
+        }
+        fprintf(output, "\tmovl \t%%edx, %s(,%%rax,4)\n", tac->res?tac->res->name:0);
+      }
     break;
     case TAC_LOADIDX:
-      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n\tcltq\n", tac->op2?tac->op2->name:0);
-      fprintf(output, "\tmovl \t%s(,%%rax,4), %%eax\n", tac->op1?tac->op1->name:0);
-      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
+      // Se o índice for do tipo float, realiza conversão para int
+      if (hash_get_valtype_memsize(tac->op2) == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtss2si %s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      } else {
+        fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      }
+      fprintf(output, "\tcltq\n");
+
+      // Se o tipo do vetor for int converte para float
+      if (hash_get_valtype_memsize(tac->op1) == VAL_TYPE_INT) {
+        fprintf(output, "\tcvtsi2ss \t%s(,%%rax,4), %%xmm0\n", tac->op1?tac->op1->name:0);
+      } else {
+        fprintf(output, "\tmovss \t%s(,%%rax,4), %%xmm0\n", tac->op1?tac->op1->name:0);
+      }
+      fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
         if (tac->op1 && tac->op2) 
