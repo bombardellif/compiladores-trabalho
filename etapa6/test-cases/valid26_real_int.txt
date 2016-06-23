@@ -1,0 +1,8 @@
+real j:31;
+int i:12;
+real c:0;
+int main ()
+  {
+  c = j + i
+  output c
+  };

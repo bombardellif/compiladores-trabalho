@@ -1,0 +1,7 @@
+real i:1;
+real j:2;
+int main ()
+  {
+  i = j + i
+  output i
+  };

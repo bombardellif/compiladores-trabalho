@@ -51,6 +51,12 @@ void assembly_move(HASH *to, HASH* from, FILE* output)
   fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
 }
 
+
+/*
+
+mas repara q é simples, em vez de movl fica movss e em vez de edx e eax fica xmm0 e xmm1
+
+*/
 void convert_assembly_single(TAC* tac, FILE* output)
 {
   int lValueType, rValueType;
@@ -103,11 +109,42 @@ void convert_assembly_single(TAC* tac, FILE* output)
       fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
-            printf("%s %s\n", tac->op1->text, tac->op2->text);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
-    				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
-    				fprintf(output, "\taddl \t%%edx, %%eax\n");
-            fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
+    
+        if (tac->op1 && tac->op2) 
+        {
+            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
+            {
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
+                {                      
+                      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                      fprintf(output, "\taddl \t%%edx, %%eax\n");
+                      fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n"); //to Float
+                }
+                else if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_REAL)
+                {
+                      fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
+                      fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
+                      fprintf(output, "\taddss \t%%xmm1, %%xmm0\n");
+                } 
+            }
+            else if(hash_get_valtype_memsize(tac->op1)==VAL_TYPE_REAL)
+            {
+                fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op1->name);
+                if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_REAL)
+                {
+                      fprintf(output, "\tmovss \t%s(%%rip), %%xmm0\n",tac->op2->name);
+                      fprintf(output, "\taddss \t%%xmm1, %%xmm0\n");
+                }
+                else if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
+                {
+                      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                      fprintf(output, "\tcvtsi2ss	%%eax, %%xmm1\n");
+                      fprintf(output, "\taddss \t%%xmm1, %%xmm0\n");
+                }
+            }
+            fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res->name);
+        }
     break;
     case TAC_SUB:
             fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
