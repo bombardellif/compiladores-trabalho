@@ -53,7 +53,8 @@ void assembly_move(HASH *to, HASH* from, FILE* output)
 
 void convert_assembly_single(TAC* tac, FILE* output)
 {
-      if (!tac)
+  int lValueType, rValueType;
+  if (!tac)
     return;
 
   switch (tac->type) {
@@ -64,14 +65,42 @@ void convert_assembly_single(TAC* tac, FILE* output)
       assembly_move(tac->res, tac->op1, output);
     break;
     case TAC_STRIDX:
-      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
-      fprintf(output, "\tmovl \t%s(%%rip), %%edx\n\tcltq\n", tac->op2?tac->op2->name:0);
+      lValueType = hash_get_valtype_memsize(tac->res);
+      rValueType = hash_get_valtype_memsize(tac->op2);
+      // Se o índice [op1] for do tipo float, realiza conversão para int
+      if (hash_get_valtype_memsize(tac->op1) == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtss2si %s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      } else {
+        fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      }
+
+      // Se o r-value [op2] for do tipo float e l-value int, realiza conversão para int
+      if (rValueType == VAL_TYPE_REAL
+      && lValueType == VAL_TYPE_INT) {
+        fprintf(output, "\tcvtss2si %s(%%rip), %%edx\n", tac->op2?tac->op2->name:0);
+      }
+      // Se o r-value [op2] for do tipo int e l-value float, realiza conversão para float
+      else if (rValueType == VAL_TYPE_INT
+      && lValueType == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtsi2ss %s(%%rip), %%xmm0\n", tac->op2?tac->op2->name:0);
+      } else {
+        fprintf(output, "\tmovl \t%s(%%rip), %%edx\n", tac->op2?tac->op2->name:0);
+      }
+      fprintf(output, "\tcltq\n");
       fprintf(output, "\tmovl \t%%edx, %s(,%%rax,4)\n", tac->res?tac->res->name:0);
     break;
     case TAC_LOADIDX:
-      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n\tcltq\n", tac->op2?tac->op2->name:0);
+      // Se o índice for do tipo float, realiza conversão para int
+      if (hash_get_valtype_memsize(tac->op2) == VAL_TYPE_REAL) {
+        fprintf(output, "\tcvtss2si %s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      } else {
+        fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      }
+      fprintf(output, "\tcltq\n");
       fprintf(output, "\tmovl \t%s(,%%rax,4), %%eax\n", tac->op1?tac->op1->name:0);
-      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
+      // Retorna no temporário um float (conversão)
+      fprintf(output, "\tcvtsi2ss %%eax, %%xmm0\n");
+      fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
             printf("%s %s\n", tac->op1->text, tac->op2->text);
@@ -80,7 +109,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     				fprintf(output, "\taddl \t%%edx, %%eax\n");
             fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
-    case TAC_SUB: 
+    case TAC_SUB:
             fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\tsubl \t%%edx, %%eax\n");
@@ -92,7 +121,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     				fprintf(output, "\timull \t%%edx, %%eax\n");
             fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
-    case TAC_DIV: 
+    case TAC_DIV:
             fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
     				fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
     				fprintf(output, "\tidivl \t%%edx, %%eax\n");
