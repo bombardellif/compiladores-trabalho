@@ -298,7 +298,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_IFZ:
                 fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op1->name);
                 fprintf(output, "\ttestl \t%%eax, %%eax\n");
-                fprintf(output, "\tje \t.%s\n", tac->res->text);
+                fprintf(output, "\tjne \t.%s\n", tac->res->text);
     break;
     case TAC_BEGINFUN:
       fprintf(output, "%s:\n", tac->op1?tac->op1->text:"");

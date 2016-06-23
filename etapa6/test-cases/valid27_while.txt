@@ -1,10 +1,10 @@
-real i:15;
+real i:0;
 int main()
 {
-    while(i > 10)
+    while(i < 10)
     {
     output i
-        i = i - 1
+    output "\n"
+        i = i + 1
     }
-    output i
 };
