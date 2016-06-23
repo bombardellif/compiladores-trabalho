@@ -1,4 +1,6 @@
 int main ()
   {
   if (3 >= 10) output "TRUE\n" else  output "FALSE\n"  
+
+  if (30 >= 10) output "TRUE\n" else  output "FALSE\n"  
   };
