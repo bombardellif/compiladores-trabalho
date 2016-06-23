@@ -3,6 +3,6 @@ int i:12;
 real c:0;
 int main ()
   {
-  c = j + i
+  c = j / i
   output c
   };
