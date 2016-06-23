@@ -267,7 +267,7 @@ TAC* generateCode(TREE* node)
     case TREE_EXPR_BOOL_GE:
     	return makeBinOp(TAC_GEZ, code[0], code[1]);
     case TREE_EXPR_BOOL_EQ:
-    	return makeBinOp(TAC_DIV, code[0], code[1]);
+    	return makeBinOp(TAC_EQZ, code[0], code[1]);
     case TREE_EXPR_BOOL_NE:
     	return makeBinOp(TAC_ANEG, code[0],code[1]);
     case TREE_EXPR_BOOL_AND:
