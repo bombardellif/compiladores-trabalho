@@ -361,20 +361,36 @@ void convert_assembly_single(TAC* tac, FILE* output)
     case TAC_ANEG: fprintf(output, "TAC_ANEG");
     break;
     case TAC_LTZ:
-                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\tjnge\t");
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                fprintf(output, "\tcmpl \t%%edx, %%eax\n");
+                fprintf(output, "\tsetl \t%%al\n");
+                fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_GTZ:
-                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\tjng\t");
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                fprintf(output, "\tcmpl \t%%edx, %%eax\n");
+                fprintf(output, "\tsetg \t%%al\n");
+                fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);                
     break;
     case TAC_LEZ:
-                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\tjg\t");
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                fprintf(output, "\tcmpl \t%%edx, %%eax\n");
+                fprintf(output, "\tsetle \t%%al\n");
+                fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_GEZ:
-                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\t jge\t");
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                fprintf(output, "\tcmpl \t%%edx, %%eax\n");
+                fprintf(output, "\tsetge \t%%al\n");
+                fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     case TAC_AND:
       jmpCounterFalse = jmpCounter++;
@@ -415,8 +431,12 @@ void convert_assembly_single(TAC* tac, FILE* output)
       fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_EQZ:
-                fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\tjne\t");
+                fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
+                fprintf(output, "\tcmpl \t%%edx, %%eax\n");
+                fprintf(output, "\tsete \t%%al\n");
+                fprintf(output, "\tmovzbl \t%%al, \t%%eax\n");
+                fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res->name);
     break;
     default: fprintf(output, "TAC_DEFAULT");
   }
