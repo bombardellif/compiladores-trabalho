@@ -464,8 +464,8 @@ VAL_TYPE semanticsCheckType(TREE* node)
 			rightExprType = semanticsCheckType(node->children[1]);
 
 			// Both expressions should be compatible with int, because they'll be tested for zero
-			if (semanticsIsCompatible(VAL_TYPE_INT, leftExprType)
-			&& semanticsIsCompatible(VAL_TYPE_INT, rightExprType)) {
+			if ((semanticsIsCompatible(VAL_TYPE_INT, leftExprType) || leftExprType == VAL_TYPE_BOOL)
+			&& (semanticsIsCompatible(VAL_TYPE_INT, rightExprType) || rightExprType == VAL_TYPE_BOOL)) {
 				return VAL_TYPE_BOOL;
 			} else {
 				semanticFailure = 1;

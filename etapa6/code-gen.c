@@ -38,10 +38,14 @@ void initSymbolTable()
 
 TAC* makeBinOp(int type, TAC* code0, TAC* code1)
 {
-
-
   		return tacJoin(tacJoin(code0, code1),
             			tacCreate(type, hash_make_temp(), code0 ? code0->res : 0, code1 ? code1->res : 0));
+}
+
+TAC* makeLogicOp(int type, TAC* code0, TAC* code1)
+{
+  return tacJoin(tacJoin(code0, code1),
+              tacCreate(type, hash_make_temp_int(), code0 ? code0->res : 0, code1 ? code1->res : 0));
 }
 
 TAC* makeIfThenElse(TAC* codeTest, TAC* codeThen, TAC* codeElse)
@@ -211,7 +215,7 @@ TAC* generateCode(TREE* node)
     case TREE_VAL_TRUE:
       return tacCreate(TAC_SYMBOL, gbl_value_true, 0, 0);
     case TREE_VAL_FALSE:
-      return tacCreate(TAC_SYMBOL, gbl_value_true, 0, 0);
+      return tacCreate(TAC_SYMBOL, gbl_value_false, 0, 0);
     case TREE_DECL_FUNC:
       return tacJoin3(
         tacCreate(TAC_BEGINFUN, 0, node->children[1]?node->children[1]->symbol:0, 0),
@@ -271,9 +275,9 @@ TAC* generateCode(TREE* node)
     case TREE_EXPR_BOOL_NE:
     	return makeBinOp(TAC_ANEG, code[0],code[1]);
     case TREE_EXPR_BOOL_AND:
-    	return makeBinOp(TAC_AND, code[0], code[1]);
+    	return makeLogicOp(TAC_AND, code[0], code[1]);
     case TREE_EXPR_BOOL_OR:
-    	return makeBinOp(TAC_OR, code[0], code[1]);
+    	return makeLogicOp(TAC_OR, code[0], code[1]);
     default:
     break;
   }

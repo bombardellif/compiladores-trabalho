@@ -70,6 +70,9 @@ void assembly_move(HASH *to, HASH* from, FILE* output)
 void convert_assembly_single(TAC* tac, FILE* output)
 {
   int lValueType, rValueType;
+  int jmpCounterFalse, jmpCounterTrue, jmpCounterOverFalse;
+  static int jmpCounter = 2;
+
   if (!tac)
     return;
 
@@ -373,9 +376,43 @@ void convert_assembly_single(TAC* tac, FILE* output)
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
                 fprintf(output, "\t jge\t");
     break;
-    case TAC_AND: fprintf(output, "TAC_AND");
+    case TAC_AND:
+      jmpCounterFalse = jmpCounter++;
+      jmpCounterTrue = jmpCounter++;
+      // operandos op1 e op2 são sempre inteiros
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\ttestl \t%%eax, %%eax\n");
+      fprintf(output, "\tje \t.L%d\n", jmpCounterFalse);
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      fprintf(output, "\ttestl \t%%eax, %%eax\n");
+      fprintf(output, "\tje \t.L%d\n", jmpCounterFalse);
+      fprintf(output, "\tmovl \t$1, %%eax\n");
+      fprintf(output, "\tjmp \t.L%d\n", jmpCounterTrue);
+      fprintf(output, ".L%d:\n", jmpCounterFalse);
+      fprintf(output, "\tmovl \t$0, %%eax\n");
+      fprintf(output, ".L%d:\n", jmpCounterTrue);
+      // resultado é sempre inteiro
+      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
-    case TAC_OR: fprintf(output, "TAC_OR");
+    case TAC_OR:
+      jmpCounterFalse = jmpCounter++;
+      jmpCounterTrue = jmpCounter++;
+      jmpCounterOverFalse = jmpCounter++;
+      // operandos op1 e op2 são sempre inteiros
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op1?tac->op1->name:0);
+      fprintf(output, "\ttestl \t%%eax, %%eax\n");
+      fprintf(output, "\tjne \t.L%d\n", jmpCounterTrue);
+      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", tac->op2?tac->op2->name:0);
+      fprintf(output, "\ttestl \t%%eax, %%eax\n");
+      fprintf(output, "\tje \t.L%d\n", jmpCounterFalse);
+      fprintf(output, ".L%d:\n", jmpCounterTrue);
+      fprintf(output, "\tmovl \t$1, %%eax\n");
+      fprintf(output, "\tjmp \t.L%d\n", jmpCounterOverFalse);
+      fprintf(output, ".L%d:\n", jmpCounterFalse);
+      fprintf(output, "\tmovl \t$0, %%eax\n");
+      fprintf(output, ".L%d:\n", jmpCounterOverFalse);
+      // resultado é sempre inteiro
+      fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_EQZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");

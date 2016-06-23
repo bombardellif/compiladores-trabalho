@@ -37,6 +37,7 @@ HASH* get_hash_node(char * text);
 HASH* hash_add(int type, char *text);
 int hash_update_type(char * text, ID_TYPE idType, VAL_TYPE valType, PARAM_LIST *params, int arrayLength); // Retorna 1 se dataType é atualizado, 0 se contrário
 HASH* hash_make_temp(void);
+HASH* hash_make_temp_int(void);
 HASH* hash_make_label(void);
 void hash_output_assembly(FILE* output);
 HASH* hash_add_absolute(int value);
