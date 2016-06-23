@@ -2,6 +2,6 @@ int j:31;
 real i:12;
 int main ()
   {
-  i = j * i
+  i = j / i
   output i
   };

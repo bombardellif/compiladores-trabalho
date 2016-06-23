@@ -312,7 +312,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
     break;
     case TAC_GTZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
-                fprintf(output, "\tjnle\t");
+                fprintf(output, "\tjng\t");
     break;
     case TAC_LEZ:
                 fprintf(output, "\tcmpl\t$0, -4(%%rbp)\n");
