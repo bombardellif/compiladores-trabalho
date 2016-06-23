@@ -80,7 +80,6 @@ void convert_assembly_single(TAC* tac, FILE* output)
       fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
-    
         if (tac->op1 && tac->op2) 
         {
             if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
@@ -90,7 +89,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                 {                      
                       fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
                       fprintf(output, "\taddl \t%%edx, %%eax\n");
-                      fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n"); //to Float
+                      fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n");
                 }
                 else if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_REAL)
                 {
@@ -109,8 +108,12 @@ void convert_assembly_single(TAC* tac, FILE* output)
                 }
                 else if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
                 {
-                      fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
-                      fprintf(output, "\tcvtsi2ss	%%eax, %%xmm1\n");
+                      HASH* temp = tac->op2;
+                      tac->op2 = tac->op1;
+                      tac->op1 = temp;
+                      fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
+                      fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
+                      fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
                       fprintf(output, "\taddss \t%%xmm1, %%xmm0\n");
                 }
             }
