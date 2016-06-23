@@ -1,10 +1,35 @@
-int foo(int b){
-  return 5
-};
+// int foo(int b){
+//   return 5
+// };
 
-int a:1;
+real a:3;
+real b:4;
+int arr[4]:0 0 0 0;
+int out:0;
+
+real rarr[4]:0 0 0 0;
+real ra:7;
+real rb:8;
 
 int main() {
-  a = foo(a)
-  output a
+  // Teste STRIDX l-value int
+  arr[0] = 1; // int int int
+  arr[arr[0]] = 2; // int real int
+  // out = arr[0];
+  // output out,"\n";
+  // out = arr[1];
+  // output out,"\n";
+  arr[2] = a; // int int real
+  arr[arr[2]] = b; //int real real
+  output arr[0],",",arr[1],",",arr[2],",",arr[3],"\n";
+
+  // Teste STRIDX l-value real
+  arr[0] = 1
+  arr[1] = 3
+
+  rarr[0] = 5; // real int int
+  rarr[arr[0]] = 6; // real real int
+  rarr[2] = ra; // real int real
+  rarr[arr[1]] = rb; // real real real
+  output rarr[0],",",rarr[1],",",rarr[2],",",rarr[3],"\n";
 };

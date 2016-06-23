@@ -47,8 +47,24 @@ TAC* output_assemblyReverse(TAC* tac)
 
 void assembly_move(HASH *to, HASH* from, FILE* output)
 {
-  fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", from?from->name:0);
-  fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
+  int lValueType, rValueType;
+
+  lValueType = hash_get_valtype_memsize(to);
+  rValueType = hash_get_valtype_memsize(from);
+  if (lValueType == VAL_TYPE_INT
+  && rValueType == VAL_TYPE_REAL) {
+    // Conversão real => int
+    fprintf(output, "\tcvtss2si \t%s(%%rip), %%eax\n", from?from->name:0);
+    fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
+  } else if (lValueType == VAL_TYPE_REAL
+  && rValueType == VAL_TYPE_INT) {
+    // Conversão int => real
+    fprintf(output, "\tcvtsi2ss \t%s(%%rip), %%xmm0\n", from?from->name:0);
+    fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", to?to->name:0);
+  } else {
+    fprintf(output, "\tmovl \t%s(%%rip), %%eax\n", from?from->name:0);
+    fprintf(output, "\tmovl \t%%eax, %s(%%rip)\n", to?to->name:0);
+  }
 }
 
 void convert_assembly_single(TAC* tac, FILE* output)
@@ -110,13 +126,13 @@ void convert_assembly_single(TAC* tac, FILE* output)
       fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res?tac->res->name:0);
     break;
     case TAC_ADD:
-        if (tac->op1 && tac->op2) 
+        if (tac->op1 && tac->op2)
         {
-            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
+            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT)
             {
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
                 if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
-                {                      
+                {
                       fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
                       fprintf(output, "\taddl \t%%edx, %%eax\n");
                       fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n");
@@ -126,7 +142,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                       fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
                       fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
                       fprintf(output, "\taddss \t%%xmm1, %%xmm0\n");
-                } 
+                }
             }
             else if(hash_get_valtype_memsize(tac->op1)==VAL_TYPE_REAL)
             {
@@ -150,14 +166,14 @@ void convert_assembly_single(TAC* tac, FILE* output)
             fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res->name);
         }
     break;
-    case TAC_SUB: 
-         if (tac->op1 && tac->op2) 
+    case TAC_SUB:
+         if (tac->op1 && tac->op2)
         {
-            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
+            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT)
             {
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
                 if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
-                {                      
+                {
                       fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
                       fprintf(output, "\tsubl \t%%edx, %%eax\n");
                       fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n");
@@ -167,7 +183,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                       fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
                       fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
                       fprintf(output, "\tsubss \t%%xmm1, %%xmm0\n");
-                } 
+                }
             }
             else if(hash_get_valtype_memsize(tac->op1)==VAL_TYPE_REAL)
             {
@@ -192,13 +208,13 @@ void convert_assembly_single(TAC* tac, FILE* output)
         }
     break;
     case TAC_MUL:
-        if (tac->op1 && tac->op2) 
+        if (tac->op1 && tac->op2)
         {
-            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
+            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT)
             {
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
                 if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
-                {                      
+                {
                       fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
                       fprintf(output, "\timull \t%%edx, %%eax\n");
                       fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n");
@@ -208,7 +224,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                       fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
                       fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
                       fprintf(output, "\tmulss \t%%xmm1, %%xmm0\n");
-                } 
+                }
             }
             else if(hash_get_valtype_memsize(tac->op1)==VAL_TYPE_REAL)
             {
@@ -232,14 +248,14 @@ void convert_assembly_single(TAC* tac, FILE* output)
             fprintf(output, "\tmovss \t%%xmm0, %s(%%rip)\n", tac->res->name);
         }
     break;
-    case TAC_DIV: 
-         if (tac->op1 && tac->op2) 
+    case TAC_DIV:
+         if (tac->op1 && tac->op2)
         {
-            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT) 
+            if (hash_get_valtype_memsize(tac->op1)==VAL_TYPE_INT)
             {
                 fprintf(output, "\tmovl \t%s(%%rip), %%edx\n",tac->op1->name);
                 if(hash_get_valtype_memsize(tac->op2)==VAL_TYPE_INT)
-                {                      
+                {
                       fprintf(output, "\tmovl \t%s(%%rip), %%eax\n",tac->op2->name);
                       fprintf(output, "\tidivl \t%%edx, %%eax\n");
                       fprintf(output, "\tcvtsi2ss	%%eax, %%xmm0\n");
@@ -249,7 +265,7 @@ void convert_assembly_single(TAC* tac, FILE* output)
                       fprintf(output, "\tmovss \t%s(%%rip), %%xmm1\n",tac->op2->name);
                       fprintf(output, "\tcvtsi2ss	%%edx, %%xmm0\n");
                       fprintf(output, "\tdivss \t%%xmm1, %%xmm0\n");
-                } 
+                }
             }
             else if(hash_get_valtype_memsize(tac->op1)==VAL_TYPE_REAL)
             {
