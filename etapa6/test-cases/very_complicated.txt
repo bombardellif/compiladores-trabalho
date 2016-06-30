@@ -1,0 +1,84 @@
+real r : 0;
+int v: 3;
+int i:3;
+int test:90;
+bool a:0;
+int anotherVar: 90;
+real vector[10]: 21 2 51 2 3 10 3 44 25 17;
+int main ()
+  {
+  a = 1 < 10
+  output "1  < 10 : ", a, "\n"
+  a = 10 < 10
+  output "10 < 10 : ", a, "\n"
+  a = 10 < 1
+  output "10 < 1 : ", a, "\n"
+  a = 1 > 10
+  output "1  > 10 : ", a, "\n"
+  a = 10 > 10
+  output "10 > 10 : ", a, "\n"
+  a = 10 > 1
+  output "10 > 1 : ", a, "\n"
+
+  a = 1 <= 10
+  output "1 <= 10 : ", a, "\n"
+  a = 10 <= 10
+  output "10 <= 10 : ", a, "\n"
+  a = 10 <= 1
+  output "10 <= 1 : ", a, "\n"
+  a = 1 >= 10
+  output "1 >= 10 : ", a, "\n"
+  a = 10 >= 10
+  output "10 >= 10 : ", a, "\n"
+  a = 10 >= 1
+  output "10 >= 1 : ", a, "\n"
+
+  a = 10 == 10
+  output "10 == 10 : ", a, "\n"
+  a = 10 == 1
+  output "10 == 1 : ", a, "\n"
+  a = 10 != 10
+  output "10 != 10 : ", a, "\n"
+  a = 10 != 1
+  output "10 != 1 : ", a, "\n\n"
+
+
+  r = 3*4/2
+  output "3*4/2 = ", r, "\n"
+
+  r = 9 -3 + 5*1
+  output "9 -3 + 5*1 = ", r, "\n"
+
+  v = 90+r;
+  output "90 + ", r, " = ", v, "\n\n"
+
+  if (i >= 10) output "Should not be printed\n" else  output "3 is not >= 10\n"  
+
+  if (30 >= i) output "30 is >= 10 \n" else  output "Should not be printed\n" 
+
+  if (10 == 10) output "10 is == 10 \n" else  output "Should not be printed\n" 
+
+  if (i != 10) output "3 is != 10 \n" else  output "Should not be printed\n" 
+
+  if (8 > 8) output "Should not be printed\n" else  output "8 is not > 8\n" 
+
+  if (8 > 7) output "8 is > 7 \n" else  output "Should not be printed\n" 
+
+  if (7 > 8) output "Should not be printed \n" else  output "7 is not > 8\n" 
+
+  i = 1
+  output "\n\n"
+  if(test == anotherVar)
+  {
+    output "Printing vector: \n"
+    while (i < 10 && (89 > 9 || 8 != 6)) 
+    {
+        output vector[i], "\n"
+        i = i + 1
+    };
+   }else output "Variable test is not 90\n";
+
+   output "Type a number\n"
+   input i
+   output "Number typed: ",i, "\n" 
+};
